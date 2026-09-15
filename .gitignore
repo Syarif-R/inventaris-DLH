@@ -1,0 +1,22 @@
+# Delphi temporary and recovery directories
+__history/
+__recovery/
+
+# Delphi temporary cache and object files
+*.identcache
+*.stat
+*.local
+*.dsk
+*.tvsconfig
+*.dcu
+*.obj
+*.o
+
+# Compiled binaries (keep source and DB)
+Win32/Debug/*.exe
+Win32/Release/*.exe
+*.exe
+
+# OS metadata
+[Dd]esktop.ini
+Thumbs.db
