@@ -1,0 +1,263 @@
+object Form4: TForm4
+  Left = 0
+  Top = 0
+  Caption = 'Validasi Arsip & Pemotongan Stok Fisik - DLH Banjarmasin'
+  ClientHeight = 600
+  ClientWidth = 800
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  WindowState = wsMaximized
+  OnCreate = FormCreate
+  OnShow = FormShow
+  TextHeight = 15
+  object PnlBg: TPanel
+    Left = 0
+    Top = 0
+    Width = 800
+    Height = 600
+    Align = alClient
+    BevelOuter = bvNone
+    Color = clWhitesmoke
+    ParentBackground = False
+    TabOrder = 0
+    ExplicitWidth = 798
+    ExplicitHeight = 592
+    object PnlHeader: TPanel
+      Left = 0
+      Top = 0
+      Width = 800
+      Height = 60
+      Align = alTop
+      BevelOuter = bvNone
+      Color = 3308846
+      ParentBackground = False
+      TabOrder = 0
+      ExplicitWidth = 798
+      DesignSize = (
+        800
+        60)
+      object LblJudul: TLabel
+        Left = 20
+        Top = 15
+        Width = 333
+        Height = 25
+        Caption = 'Validasi Arsip & Pemotongan Stok Fisik'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWhite
+        Font.Height = -19
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object BtnKembali: TButton
+        Left = 670
+        Top = 12
+        Width = 110
+        Height = 36
+        Anchors = [akTop, akRight]
+        Caption = '<- Kembali'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -14
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        OnClick = BtnKembaliClick
+        ExplicitLeft = 668
+      end
+    end
+    object PnlKiri: TPanel
+      Left = 0
+      Top = 60
+      Width = 360
+      Height = 540
+      Align = alLeft
+      BevelOuter = bvNone
+      Color = clWhitesmoke
+      Padding.Left = 20
+      Padding.Top = 15
+      Padding.Right = 20
+      Padding.Bottom = 20
+      ParentBackground = False
+      TabOrder = 1
+      ExplicitHeight = 532
+      object LblPengajuan: TLabel
+        Left = 20
+        Top = 15
+        Width = 208
+        Height = 20
+        Caption = '1. Pilih Pengajuan Menunggu:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object LblUpload: TLabel
+        Left = 20
+        Top = 90
+        Width = 255
+        Height = 20
+        Caption = '2. Upload Bukti Tanda Terima (TTD):'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object CboPengajuan: TComboBox
+        Left = 20
+        Top = 40
+        Width = 320
+        Height = 28
+        Style = csDropDownList
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+      end
+      object BtnUpload: TButton
+        Left = 20
+        Top = 120
+        Width = 320
+        Height = 40
+        Cursor = crHandPoint
+        Caption = 'Cari File Foto / Scan Dokumen...'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -14
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 1
+        OnClick = BtnUploadClick
+      end
+      object BtnResetFoto: TButton
+        Left = 20
+        Top = 168
+        Width = 320
+        Height = 35
+        Cursor = crHandPoint
+        Caption = 'Batal / Hapus Foto'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        OnClick = BtnResetFotoClick
+      end
+      object PnlStatus: TPanel
+        Left = 20
+        Top = 215
+        Width = 320
+        Height = 110
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Color = clInfoBk
+        ParentBackground = False
+        TabOrder = 3
+        object LblInfo: TLabel
+          Left = 0
+          Top = 0
+          Width = 316
+          Height = 106
+          Align = alClient
+          Caption = 
+            'INFO: Stok di aplikasi belum terpotong sebelum dokumen fisik ber' +
+            '-stempel dan tanda terima diunggah.'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -13
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsItalic]
+          ParentFont = False
+          WordWrap = True
+          ExplicitLeft = 12
+          ExplicitTop = 12
+          ExplicitWidth = 267
+          ExplicitHeight = 51
+        end
+      end
+    end
+    object PnlKanan: TPanel
+      Left = 360
+      Top = 60
+      Width = 440
+      Height = 540
+      Align = alClient
+      BevelOuter = bvNone
+      Color = clWhite
+      Padding.Left = 20
+      Padding.Top = 15
+      Padding.Right = 20
+      Padding.Bottom = 20
+      ParentBackground = False
+      TabOrder = 2
+      ExplicitWidth = 438
+      ExplicitHeight = 532
+      object LblPreview: TLabel
+        Left = 20
+        Top = 15
+        Width = 400
+        Height = 20
+        Align = alTop
+        Caption = 'Pratinjau Dokumen'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        ExplicitWidth = 135
+      end
+      object ImgBukti: TImage
+        Left = 20
+        Top = 35
+        Width = 400
+        Height = 430
+        Align = alClient
+        Center = True
+        Proportional = True
+        Stretch = True
+        ExplicitTop = 45
+        ExplicitHeight = 400
+      end
+      object BtnValidasi: TButton
+        Left = 20
+        Top = 465
+        Width = 400
+        Height = 55
+        Cursor = crHandPoint
+        Align = alBottom
+        Caption = 'Validasi & Potong Stok Sekarang'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        OnClick = BtnValidasiClick
+        ExplicitTop = 457
+        ExplicitWidth = 398
+      end
+    end
+  end
+  object OpenDialog1: TOpenDialog
+    Filter = 'File Gambar|*.jpg;*.jpeg;*.png;*.bmp'
+    Left = 400
+    Top = 20
+  end
+end
