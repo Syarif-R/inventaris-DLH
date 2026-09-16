@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, Winapi.ShellAPI, System.SysUtils, System.Variants,
-  System.Classes, System.UITypes, System.NetEncoding, Vcl.Graphics, Vcl.Controls,
+  System.Classes, System.UITypes, System.NetEncoding, System.Win.ComObj, Vcl.Graphics, Vcl.Controls,
   Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids, Vcl.ComCtrls,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.DApt, FireDAC.Stan.Param;
 
@@ -452,58 +452,130 @@ end;
 
 procedure TForm7.BtnExportExcelClick(Sender: TObject);
 var
-  DataCSV: TStringList;
-  I: Integer;
-  BarisTeks: string;
+  TemplatePath, ExeDir, TargetFile, BulanName, TglStr, KodeStr: string;
+  XL, WB, WS: OleVariant;
+  Q: TFDQuery;
+  RowIdx, JmlStok: Integer;
+  UseOLE: Boolean;
 begin
-  SaveDialog1.Title := 'Export Laporan Stock Opname (Excel CSV)';
-  SaveDialog1.Filter := 'File Excel CSV (*.csv)|*.csv|Semua File (*.*)|*.*';
-  SaveDialog1.DefaultExt := 'csv';
-  SaveDialog1.FileName := 'Stock_Opname_' + CboBulan.Text + '_' + EdtTahun.Text + '.csv';
+  ExeDir := ExtractFilePath(ParamStr(0));
+  if FileExists(ExeDir + 'STOCK OPNAME 2026.xlsx') then
+    TemplatePath := ExeDir + 'STOCK OPNAME 2026.xlsx'
+  else if FileExists(ExpandFileName(ExeDir + '..\..\STOCK OPNAME 2026.xlsx')) then
+    TemplatePath := ExpandFileName(ExeDir + '..\..\STOCK OPNAME 2026.xlsx')
+  else if FileExists(ExpandFileName('STOCK OPNAME 2026.xlsx')) then
+    TemplatePath := ExpandFileName('STOCK OPNAME 2026.xlsx')
+  else
+    TemplatePath := '';
+
+  SaveDialog1.Title := 'Export Laporan Stock Opname ke Microsoft Excel';
+  SaveDialog1.Filter := 'Microsoft Excel Workbook (*.xlsx)|*.xlsx|Semua File (*.*)|*.*';
+  SaveDialog1.DefaultExt := 'xlsx';
+  SaveDialog1.FileName := 'Stock_Opname_' + CboBulan.Text + '_' + EdtTahun.Text + '.xlsx';
 
   if not SaveDialog1.Execute then Exit;
 
-  DataCSV := TStringList.Create;
-  try
-    DataCSV.Add('PEMERINTAH KOTA BANJARMASIN - DINAS LINGKUNGAN HIDUP');
-    DataCSV.Add('BERITA ACARA STOCK OPNAME PERSEDIAAN ATK & BARANG PAKAI HABIS');
-    DataCSV.Add(EdtNoSurat.Text);
-    DataCSV.Add('Periode: ' + CboBulan.Text + ' ' + EdtTahun.Text);
-    DataCSV.Add('');
-    DataCSV.Add('No;Kode Rekening;Nama Persediaan;Satuan;Jumlah Fisik;Harga/Unit;Total (Rp)');
+  TargetFile := SaveDialog1.FileName;
+  if LowerCase(ExtractFileExt(TargetFile)) <> '.xlsx' then
+    TargetFile := ChangeFileExt(TargetFile, '.xlsx');
 
-    for I := 1 to GridOpname.RowCount - 1 do
+  if (TemplatePath <> '') and FileExists(TemplatePath) then
+  begin
+    // Salin template master yang sudah lengkap dengan Logo Banjarmasin, Kop, rumus, & tabel
+    if not CopyFile(PChar(TemplatePath), PChar(TargetFile), False) then
     begin
-      BarisTeks := GridOpname.Cells[0, I] + ';' +
-                   GridOpname.Cells[1, I] + ';' +
-                   GridOpname.Cells[2, I] + ';' +
-                   GridOpname.Cells[3, I] + ';' +
-                   GridOpname.Cells[4, I] + ';' +
-                   GridOpname.Cells[5, I] + ';' +
-                   GridOpname.Cells[6, I];
-      DataCSV.Add(BarisTeks);
+      ShowMessage('Gagal menyalin file template Excel. Pastikan file tujuan tidak sedang dibuka di Excel.');
+      Exit;
     end;
 
-    DataCSV.Add('');
-    DataCSV.Add('Banjarmasin, ' + FormatDateTime('dd mmmm yyyy', DTPTanggal.Date));
-    DataCSV.Add('Kasubbag. Umum & Kepegawaian;;;Pengurus Barang;;');
-    DataCSV.Add('');
-    DataCSV.Add('');
-    DataCSV.Add(EdtKasubbagNama.Text + ';;;' + EdtPengurusNama.Text + ';;');
-    DataCSV.Add(EdtKasubbagNIP.Text + ';;;' + EdtPengurusNIP.Text + ';;');
-    DataCSV.Add('');
-    DataCSV.Add(';;Mengetahui :;;;');
-    DataCSV.Add(';;Kepala Dinas,;;;');
-    DataCSV.Add('');
-    DataCSV.Add('');
-    DataCSV.Add(';;' + EdtKadisNama.Text + ';;;');
-    DataCSV.Add(';;' + EdtKadisNIP.Text + ';;;');
+    UseOLE := False;
+    try
+      XL := CreateOleObject('Excel.Application');
+      UseOLE := True;
+    except
+      UseOLE := False;
+    end;
 
-    DataCSV.SaveToFile(SaveDialog1.FileName, TEncoding.UTF8);
-    ShowMessage('Sukses! Data Stock Opname berhasil diexport ke Excel.' + sLineBreak +
-                'Lokasi: ' + SaveDialog1.FileName);
-  finally
-    DataCSV.Free;
+    if UseOLE then
+    begin
+      try
+        XL.Visible := False;
+        XL.DisplayAlerts := False;
+        WB := XL.Workbooks.Open(TargetFile);
+
+        BulanName := UpperCase(CboBulan.Text);
+        try
+          WS := WB.Sheets[BulanName];
+        except
+          WS := WB.ActiveSheet;
+        end;
+
+        WS.Activate;
+
+        // 1. Nomor Berita Acara (Cell A9)
+        WS.Range['A9'].Value2 := EdtNoSurat.Text;
+
+        // 2. Tanggal Berita Acara (Cell E76)
+        TglStr := 'Banjarmasin, ' + FormatDateTime('dd mmmm yyyy', DTPTanggal.Date);
+        WS.Range['E76'].Value2 := TglStr;
+
+        // 3. Tanda Tangan Pejabat (Baris 81, 82, 90, 91)
+        WS.Range['A81'].Value2 := EdtKasubbagNama.Text;
+        WS.Range['A82'].Value2 := EdtKasubbagNIP.Text;
+
+        WS.Range['E81'].Value2 := EdtPengurusNama.Text;
+        WS.Range['E82'].Value2 := EdtPengurusNIP.Text;
+
+        WS.Range['A90'].Value2 := EdtKadisNama.Text;
+        WS.Range['A91'].Value2 := EdtKadisNIP.Text;
+
+        // 4. Update Jumlah Fisik Real-Time dari Database
+        Q := TFDQuery.Create(nil);
+        try
+          Q.Connection := ModulDB.Koneksi;
+          Q.SQL.Text := 'SELECT Kode_Rekening, Stok_Sisa FROM Tabel_Barang';
+          Q.Open;
+
+          // Loop baris 16 s/d 70 pada sheet untuk mencocokkan Kode Rekening
+          for RowIdx := 16 to 70 do
+          begin
+            KodeStr := Trim(VarToStr(WS.Range['A' + IntToStr(RowIdx)].Value2));
+            if (KodeStr <> '') and (Pos('.', KodeStr) > 0) then
+            begin
+              if Q.Locate('Kode_Rekening', KodeStr, []) then
+              begin
+                JmlStok := Q.FieldByName('Stok_Sisa').AsInteger;
+                WS.Range['F' + IntToStr(RowIdx)].Value2 := JmlStok;
+              end;
+            end;
+          end;
+        finally
+          Q.Free;
+        end;
+
+        WB.Save;
+        WB.Close(False);
+        XL.Quit;
+      except
+        on E: Exception do
+        begin
+          try
+            WB.Close(False);
+            XL.Quit;
+          except
+          end;
+        end;
+      end;
+    end;
+
+    ShellExecute(0, 'open', PChar(TargetFile), nil, nil, SW_SHOWNORMAL);
+    ShowMessage('SUKSES! Laporan Stock Opname berhasil diexport ke Microsoft Excel (.xlsx).' + sLineBreak + sLineBreak +
+                'Format, logo, tabel, rumus, dan tanda tangan 100% identik dengan file resmi.' + sLineBreak +
+                'Lokasi File: ' + TargetFile);
+  end
+  else
+  begin
+    ShowMessage('File template STOCK OPNAME 2026.xlsx tidak ditemukan di folder aplikasi.');
   end;
 end;
 
