@@ -8,7 +8,8 @@ uses
   FireDAC.Phys.Intf, FireDAC.Stan.Def, FireDAC.Stan.Pool, FireDAC.Stan.Async,
   FireDAC.Phys, FireDAC.VCLUI.Wait, FireDAC.Comp.Client, FireDAC.Comp.DataSet,
   FireDAC.DApt, FireDAC.Phys.SQLite, FireDAC.Phys.SQLiteDef,
-  FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteWrapper.Stat;
+  FireDAC.Stan.ExprFuncs, FireDAC.Phys.SQLiteWrapper.Stat, FireDAC.Stan.Param,
+  FireDAC.DatS, FireDAC.DApt.Intf;
 
 type
   TModulDB = class(TDataModule)
@@ -56,6 +57,18 @@ begin
 
   try
     Koneksi.Connected := True;
+
+    // Auto Migrasi Kolom jika belum ada
+    try
+      Koneksi.ExecSQL('ALTER TABLE Tabel_Keluar ADD COLUMN No_Pengajuan VARCHAR(50)');
+    except
+    end;
+
+    try
+      Koneksi.ExecSQL('ALTER TABLE Tabel_Pengajuan ADD COLUMN Bukti_Foto VARCHAR(255)');
+    except
+    end;
+
     if not QBarang.Active then
       QBarang.Open;
   except

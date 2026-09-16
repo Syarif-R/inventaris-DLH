@@ -156,8 +156,9 @@ begin
     Q.Connection := ModulDB.Koneksi;
     QDetail.Connection := ModulDB.Koneksi;
 
-    // 1. Update Status Pengajuan ke DIVALIDASI
-    Q.SQL.Text := 'UPDATE Tabel_Pengajuan SET Status = ''DIVALIDASI'' WHERE No_Pengajuan = :no';
+    // 1. Update Status Pengajuan ke DIVALIDASI dan Simpan Lokasi Bukti Foto
+    Q.SQL.Text := 'UPDATE Tabel_Pengajuan SET Status = ''DIVALIDASI'', Bukti_Foto = :foto WHERE No_Pengajuan = :no';
+    Q.ParamByName('foto').AsString := TargetFile;
     Q.ParamByName('no').AsString := NoPengajuan;
     Q.ExecSQL;
 
