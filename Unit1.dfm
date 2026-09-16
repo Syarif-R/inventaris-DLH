@@ -152,7 +152,7 @@ object Form1: TForm1
       Left = 15
       Top = 15
       Width = 870
-      Height = 450
+      Height = 220
       Align = alTop
       BevelOuter = bvNone
       ColumnCollection = <
@@ -165,41 +165,28 @@ object Form1: TForm1
       ControlCollection = <
         item
           Column = 0
-          Control = ChartTanaman
+          Control = ChartKategori
           Row = 0
         end
         item
           Column = 1
-          Control = ChartATK
+          Control = ChartTopStok
           Row = 0
-        end
-        item
-          Column = 0
-          Control = ChartKertas
-          Row = 1
-        end
-        item
-          Column = 1
-          Control = ChartKomputer
-          Row = 1
         end>
       RowCollection = <
         item
-          Value = 50.000000000000000000
-        end
-        item
-          Value = 50.000000000000000000
+          Value = 100.000000000000000000
         end>
       TabOrder = 0
-      object ChartTanaman: TChart
+      object ChartKategori: TChart
         Left = 0
         Top = 0
         Width = 435
-        Height = 225
+        Height = 220
         Title.Font.Name = 'Segoe UI'
         Title.Font.Style = [fsBold]
         Title.Text.Strings = (
-          'BAHAN / BIBIT TANAMAN')
+          'TOTAL STOK PER KATEGORI PERSEDIAAN')
         View3D = False
         Align = alClient
         Color = clWhite
@@ -207,51 +194,19 @@ object Form1: TForm1
         DefaultCanvas = 'TGDIPlusCanvas'
         ColorPaletteIndex = 13
       end
-      object ChartATK: TChart
+      object ChartTopStok: TChart
         Left = 435
         Top = 0
         Width = 435
-        Height = 225
+        Height = 220
         Title.Font.Name = 'Segoe UI'
         Title.Font.Style = [fsBold]
         Title.Text.Strings = (
-          'ALAT TULIS KANTOR')
+          'TOP BARANG STOK TERBANYAK (STOK > 0)')
         View3D = False
         Align = alClient
         Color = clWhite
         TabOrder = 1
-        DefaultCanvas = 'TGDIPlusCanvas'
-        ColorPaletteIndex = 13
-      end
-      object ChartKertas: TChart
-        Left = 0
-        Top = 225
-        Width = 435
-        Height = 225
-        Title.Font.Name = 'Segoe UI'
-        Title.Font.Style = [fsBold]
-        Title.Text.Strings = (
-          'KERTAS DAN COVER')
-        View3D = False
-        Align = alClient
-        Color = clWhite
-        TabOrder = 2
-        DefaultCanvas = 'TGDIPlusCanvas'
-        ColorPaletteIndex = 13
-      end
-      object ChartKomputer: TChart
-        Left = 435
-        Top = 225
-        Width = 435
-        Height = 225
-        Title.Font.Name = 'Segoe UI'
-        Title.Font.Style = [fsBold]
-        Title.Text.Strings = (
-          'BAHAN KOMPUTER')
-        View3D = False
-        Align = alClient
-        Color = clWhite
-        TabOrder = 3
         DefaultCanvas = 'TGDIPlusCanvas'
         ColorPaletteIndex = 13
       end
@@ -330,6 +285,8 @@ object Form1: TForm1
         Width = 145
         Height = 22
         Caption = 'Sembunyikan Stok 0'
+        Checked = True
+        State = cbChecked
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -11

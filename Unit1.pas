@@ -20,10 +20,8 @@ type
     BtnStockOpname: TButton;
     PnlUtama: TPanel;
     PnlCharts: TGridPanel;
-    ChartTanaman: TChart;
-    ChartATK: TChart;
-    ChartKertas: TChart;
-    ChartKomputer: TChart;
+    ChartKategori: TChart;
+    ChartTopStok: TChart;
     PnlSpacer: TPanel;
     PnlCari: TPanel;
     LblCari: TLabel;
@@ -49,10 +47,8 @@ type
     procedure ChkHideZeroClick(Sender: TObject);
     procedure BtnDownloadClick(Sender: TObject);
   private
-    SeriesTanaman: TBarSeries;
-    SeriesATK: TBarSeries;
-    SeriesKertas: TBarSeries;
-    SeriesKomputer: TBarSeries;
+    SeriesKategori: TBarSeries;
+    SeriesTopStok: TBarSeries;
     procedure InitCharts;
     procedure TampilDataAwal;
     procedure LoadKategoriCombo;
@@ -70,42 +66,25 @@ uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, UnitDB;
 
 procedure TForm1.InitCharts;
 begin
-  // Sembunyikan legenda samping yang menutupi/memotong angka besar
-  ChartTanaman.Legend.Visible := False;
-  ChartTanaman.FreeAllSeries;
-  SeriesTanaman := TBarSeries.Create(ChartTanaman);
-  SeriesTanaman.ParentChart := ChartTanaman;
-  SeriesTanaman.ColorEachPoint := True;
-  SeriesTanaman.Marks.Visible := True;
-  SeriesTanaman.Marks.Style := smsValue;
-  SeriesTanaman.ValueFormat := '0'; // Format angka bulat murni tanpa titik pemisah ribuan
+  // Chart 1: Total Stok per Kategori Persediaan
+  ChartKategori.Legend.Visible := False;
+  ChartKategori.FreeAllSeries;
+  SeriesKategori := TBarSeries.Create(ChartKategori);
+  SeriesKategori.ParentChart := ChartKategori;
+  SeriesKategori.ColorEachPoint := True;
+  SeriesKategori.Marks.Visible := True;
+  SeriesKategori.Marks.Style := smsValue;
+  SeriesKategori.ValueFormat := '0';
 
-  ChartATK.Legend.Visible := False;
-  ChartATK.FreeAllSeries;
-  SeriesATK := TBarSeries.Create(ChartATK);
-  SeriesATK.ParentChart := ChartATK;
-  SeriesATK.ColorEachPoint := True;
-  SeriesATK.Marks.Visible := True;
-  SeriesATK.Marks.Style := smsValue;
-  SeriesATK.ValueFormat := '0';
-
-  ChartKertas.Legend.Visible := False;
-  ChartKertas.FreeAllSeries;
-  SeriesKertas := TBarSeries.Create(ChartKertas);
-  SeriesKertas.ParentChart := ChartKertas;
-  SeriesKertas.ColorEachPoint := True;
-  SeriesKertas.Marks.Visible := True;
-  SeriesKertas.Marks.Style := smsValue;
-  SeriesKertas.ValueFormat := '0';
-
-  ChartKomputer.Legend.Visible := False;
-  ChartKomputer.FreeAllSeries;
-  SeriesKomputer := TBarSeries.Create(ChartKomputer);
-  SeriesKomputer.ParentChart := ChartKomputer;
-  SeriesKomputer.ColorEachPoint := True;
-  SeriesKomputer.Marks.Visible := True;
-  SeriesKomputer.Marks.Style := smsValue;
-  SeriesKomputer.ValueFormat := '0';
+  // Chart 2: Top Barang Stok Terbanyak (Stok > 0)
+  ChartTopStok.Legend.Visible := False;
+  ChartTopStok.FreeAllSeries;
+  SeriesTopStok := TBarSeries.Create(ChartTopStok);
+  SeriesTopStok.ParentChart := ChartTopStok;
+  SeriesTopStok.ColorEachPoint := True;
+  SeriesTopStok.Marks.Visible := True;
+  SeriesTopStok.Marks.Style := smsValue;
+  SeriesTopStok.ValueFormat := '0';
 end;
 
 procedure TForm1.LoadKategoriCombo;
@@ -154,6 +133,7 @@ begin
   GridStok.Cells[4, 0] := 'Satuan';
   GridStok.Cells[5, 0] := 'Sisa Stok';
 
+  ChkHideZero.Checked := True;
   InitCharts;
   LoadKategoriCombo;
   TampilDataAwal;
@@ -187,14 +167,10 @@ var
   BarisTabel: Integer;
   SearchKey, SelectedKat, Kat, SisaStokStr: string;
   StokSisa: Integer;
-  Q: TFDQuery;
+  Q, QKat, QTop: TFDQuery;
   MatchSearch, MatchKat, MatchStok: Boolean;
 begin
-  SeriesTanaman.Clear;
-  SeriesATK.Clear;
-  SeriesKertas.Clear;
-  SeriesKomputer.Clear;
-
+  // 1. Tampilkan Data Grid Stok (Prioritaskan stok > 0 terlebih dahulu)
   GridStok.RowCount := 2;
   GridStok.Rows[1].Clear;
   BarisTabel := 1;
@@ -205,7 +181,9 @@ begin
   Q := TFDQuery.Create(nil);
   try
     Q.Connection := ModulDB.Koneksi;
-    Q.SQL.Text := 'SELECT Kode_Rekening, Nama_Barang, Kategori, Satuan, Stok_Sisa FROM Tabel_Barang ORDER BY Nama_Barang ASC';
+    // ORDER BY CASE WHEN Stok_Sisa > 0 THEN 0 ELSE 1 END -> barang bersaldo 0 tidak akan muncul pertama
+    Q.SQL.Text := 'SELECT Kode_Rekening, Nama_Barang, Kategori, Satuan, Stok_Sisa FROM Tabel_Barang ' +
+                  'ORDER BY CASE WHEN Stok_Sisa > 0 THEN 0 ELSE 1 END, Nama_Barang ASC';
     Q.Open;
 
     while not Q.Eof do
@@ -235,21 +213,59 @@ begin
         GridStok.Cells[4, BarisTabel] := Q.FieldByName('Satuan').AsString;
         GridStok.Cells[5, BarisTabel] := SisaStokStr;
 
-        if Kat = 'Bibit Tanaman' then
-          SeriesTanaman.Add(StokSisa, Q.FieldByName('Nama_Barang').AsString)
-        else if Kat = 'ATK' then
-          SeriesATK.Add(StokSisa, Q.FieldByName('Nama_Barang').AsString)
-        else if Kat = 'Kertas & Cover' then
-          SeriesKertas.Add(StokSisa, Q.FieldByName('Nama_Barang').AsString)
-        else if Kat = 'Bahan Komputer' then
-          SeriesKomputer.Add(StokSisa, Q.FieldByName('Nama_Barang').AsString);
-
         Inc(BarisTabel);
       end;
       Q.Next;
     end;
   finally
     Q.Free;
+  end;
+
+  // 2. Tampilkan Chart 1: Ringkasan Total Stok per Kategori (Rapi, Hanya 5 Baris Kategori)
+  SeriesKategori.Clear;
+  QKat := TFDQuery.Create(nil);
+  try
+    QKat.Connection := ModulDB.Koneksi;
+    QKat.SQL.Text := 'SELECT Kategori, SUM(Stok_Sisa) AS TotalStok FROM Tabel_Barang ' +
+                     'WHERE Kategori IS NOT NULL AND Kategori <> '''' ' +
+                     'GROUP BY Kategori ORDER BY TotalStok DESC';
+    QKat.Open;
+    while not QKat.Eof do
+    begin
+      if not (ChkHideZero.Checked and (QKat.FieldByName('TotalStok').AsInteger <= 0)) then
+        SeriesKategori.Add(QKat.FieldByName('TotalStok').AsInteger, QKat.FieldByName('Kategori').AsString);
+      QKat.Next;
+    end;
+  finally
+    QKat.Free;
+  end;
+
+  // 3. Tampilkan Chart 2: Top Barang Stok Terbanyak (Hanya Stok > 0, Max 7 Item Agar Tidak Penuh)
+  SeriesTopStok.Clear;
+  QTop := TFDQuery.Create(nil);
+  try
+    QTop.Connection := ModulDB.Koneksi;
+    if (SelectedKat = '') or (SelectedKat = 'Semua Kategori') then
+    begin
+      ChartTopStok.Title.Text.Text := 'TOP 7 BARANG STOK TERBANYAK (STOK > 0)';
+      QTop.SQL.Text := 'SELECT Nama_Barang, Stok_Sisa FROM Tabel_Barang ' +
+                       'WHERE Stok_Sisa > 0 ORDER BY Stok_Sisa DESC LIMIT 7';
+    end
+    else
+    begin
+      ChartTopStok.Title.Text.Text := 'TOP STOK: ' + UpperCase(SelectedKat) + ' (STOK > 0)';
+      QTop.SQL.Text := 'SELECT Nama_Barang, Stok_Sisa FROM Tabel_Barang ' +
+                       'WHERE Stok_Sisa > 0 AND Kategori = :kat ORDER BY Stok_Sisa DESC LIMIT 7';
+      QTop.ParamByName('kat').AsString := SelectedKat;
+    end;
+    QTop.Open;
+    while not QTop.Eof do
+    begin
+      SeriesTopStok.Add(QTop.FieldByName('Stok_Sisa').AsInteger, QTop.FieldByName('Nama_Barang').AsString);
+      QTop.Next;
+    end;
+  finally
+    QTop.Free;
   end;
 end;
 
