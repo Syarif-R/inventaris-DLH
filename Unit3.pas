@@ -638,16 +638,6 @@ begin
           SuratText.Add('  </tbody>');
           SuratText.Add('</table>');
 
-          // Petunjuk Pengambilan
-          SuratText.Add('<div class="notes">');
-          SuratText.Add('  <strong>Petunjuk Pengambilan Barang Gudang:</strong>');
-          SuratText.Add('  <ol>');
-          SuratText.Add('    <li>Cetak / simpan dokumen ini dan minta tanda tangan dari Penanggung Jawab ' + CboBidang.Text + '.</li>');
-          SuratText.Add('    <li>Serahkan dokumen fisik ber-TTD ke Petugas Gudang DLH saat verifikasi pengambilan.</li>');
-          SuratText.Add('    <li>Unggah foto/scan surat ber-TTD pada menu Validasi Aplikasi untuk pemotongan stok otomatis.</li>');
-          SuratText.Add('  </ol>');
-          SuratText.Add('</div>');
-
           // TTD Pemohon (Ditulis Bidang Mewakilkan / Penanggung Jawab) & Petugas Gudang
           SuratText.Add('<table class="sig-table">');
           SuratText.Add('  <tr>');
