@@ -31,6 +31,7 @@ type
     LblDaftar: TLabel;
     GridKeranjang: TStringGrid;
     BtnSimpanCetak: TButton;
+    SaveDialog1: TSaveDialog;
 
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -402,6 +403,7 @@ var
   I, Jml, PosDash: Integer;
   KodeRek, NamaBrg, NoPengajuan, TglNow: string;
   Q: TFDQuery;
+  SuratText: TStringList;
 begin
   if CboBidang.Text = '' then
   begin
@@ -465,10 +467,77 @@ begin
 
     ModulDB.Koneksi.Commit;
 
-    ShowMessage('PENGAJUAN BERHASIL DISIMPAN!' + sLineBreak +
-                'No. Pengajuan: ' + NoPengajuan + sLineBreak +
-                'Status: PENDING (Menunggu Validasi Bukti TTD Fisik)' + sLineBreak + sLineBreak +
-                'Silakan selesaikan pengambilan barang & upload bukti fisik pada Menu Validasi.');
+    // Pengarah Download dengan Dialog Pemilih Tempat Penyimpanan File
+    SaveDialog1.Title := 'Pilih Lokasi Penyimpanan Surat Izin / Tanda Terima Pengajuan Barang';
+    SaveDialog1.Filter := 'Dokumen Teks / Surat (*.txt)|*.txt|File Laporan (*.csv)|*.csv|Semua File (*.*)|*.*';
+    SaveDialog1.DefaultExt := 'txt';
+    SaveDialog1.FileName := 'Surat_Izin_Pengajuan_' + NoPengajuan + '.txt';
+
+    if SaveDialog1.Execute then
+    begin
+      SuratText := TStringList.Create;
+      try
+        SuratText.Add('================================================================================');
+        SuratText.Add('          PEMERINTAH KOTA BANJARMASIN - DINAS LINGKUNGAN HIDUP (DLH)');
+        SuratText.Add('                SURAT IZIN & TANDA TERIMA PENGAJUAN BARANG GUDANG');
+        SuratText.Add('================================================================================');
+        SuratText.Add('No. Pengajuan : ' + NoPengajuan);
+        SuratText.Add('Tanggal       : ' + TglNow);
+        SuratText.Add('Bidang Pemohon: ' + CboBidang.Text);
+        SuratText.Add('Status        : PENDING (Menunggu Validasi Bukti TTD Fisik)');
+        SuratText.Add('');
+        SuratText.Add('DAFTAR BARANG YANG DIAJUKAN:');
+        SuratText.Add('--------------------------------------------------------------------------------');
+        SuratText.Add(Format('%-4s | %-22s | %-32s | %s', ['No', 'Kode Rekening', 'Nama Barang', 'Jumlah & Satuan']));
+        SuratText.Add('--------------------------------------------------------------------------------');
+
+        for I := 1 to BarisKeranjang - 1 do
+        begin
+          PosDash := Pos(' - ', GridKeranjang.Cells[1, I]);
+          if PosDash > 0 then
+          begin
+            KodeRek := Trim(Copy(GridKeranjang.Cells[1, I], 1, PosDash - 1));
+            NamaBrg := Trim(Copy(GridKeranjang.Cells[1, I], PosDash + 3, Length(GridKeranjang.Cells[1, I])));
+          end
+          else
+          begin
+            KodeRek := Trim(GridKeranjang.Cells[1, I]);
+            NamaBrg := GridKeranjang.Cells[1, I];
+          end;
+
+          SuratText.Add(Format('%-4d | %-22s | %-32s | %s %s',
+            [I, KodeRek, Copy(NamaBrg, 1, 32), GridKeranjang.Cells[2, I], GridKeranjang.Cells[3, I]]));
+        end;
+
+        SuratText.Add('--------------------------------------------------------------------------------');
+        SuratText.Add('');
+        SuratText.Add('Petunjuk Pengambilan Barang:');
+        SuratText.Add('1. Cetak / simpan surat ini dan minta tanda tangan penanggung jawab Bidang Pemohon.');
+        SuratText.Add('2. Serahkan dokumen fisik ke Petugas Gudang DLH untuk verifikasi pengambilan.');
+        SuratText.Add('3. Unggah foto/scan surat ber-TTD pada menu Validasi Aplikasi untuk pemotongan stok.');
+        SuratText.Add('');
+        SuratText.Add('                                           Banjarmasin, ' + FormatDateTime('dd mmmm yyyy', Now));
+        SuratText.Add('  Petugas Gudang,                          Pemohon / Penanggung Jawab,');
+        SuratText.Add('');
+        SuratText.Add('');
+        SuratText.Add('  ( ....................... )              ( ....................... )');
+        SuratText.Add('================================================================================');
+
+        SuratText.SaveToFile(SaveDialog1.FileName, TEncoding.UTF8);
+        ShowMessage('PENGAJUAN BERHASIL DISIMPAN & SURAT IZIN TERUNDUH!' + sLineBreak + sLineBreak +
+                    'No. Pengajuan: ' + NoPengajuan + sLineBreak +
+                    'Surat Izin telah diunduh ke: ' + SaveDialog1.FileName + sLineBreak + sLineBreak +
+                    'Silakan selesaikan pengambilan barang & upload bukti fisik pada Menu Validasi.');
+      finally
+        SuratText.Free;
+      end;
+    end
+    else
+    begin
+      ShowMessage('PENGAJUAN BERHASIL DISIMPAN!' + sLineBreak +
+                  'No. Pengajuan: ' + NoPengajuan + sLineBreak +
+                  'Status: PENDING (Menunggu Validasi Bukti TTD Fisik)');
+    end;
 
     // Reset Form
     BarisKeranjang := 1;

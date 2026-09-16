@@ -25,6 +25,8 @@ object Form3: TForm3
     Color = clWhitesmoke
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 798
+    ExplicitHeight = 592
     object PnlHeader: TPanel
       Left = 0
       Top = 0
@@ -35,6 +37,7 @@ object Form3: TForm3
       Color = 3308846
       ParentBackground = False
       TabOrder = 0
+      ExplicitWidth = 798
       DesignSize = (
         800
         60)
@@ -66,6 +69,7 @@ object Form3: TForm3
         ParentFont = False
         TabOrder = 0
         OnClick = BtnKembaliClick
+        ExplicitLeft = 668
       end
     end
     object PnlKiri: TPanel
@@ -82,6 +86,7 @@ object Form3: TForm3
       Padding.Bottom = 20
       ParentBackground = False
       TabOrder = 1
+      ExplicitHeight = 532
       object LblBidang: TLabel
         Left = 20
         Top = 15
@@ -147,6 +152,19 @@ object Form3: TForm3
         Font.Style = []
         ParentFont = False
       end
+      object LblHasilCari: TLabel
+        Left = 20
+        Top = 190
+        Width = 279
+        Height = 13
+        Caption = '[Info] Ketik nama/kode barang di atas untuk mencari.'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 3308846
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
       object CboBidang: TComboBox
         Left = 20
         Top = 38
@@ -191,19 +209,6 @@ object Form3: TForm3
         ParentFont = False
         TabOrder = 2
         OnChange = CboBarangChange
-      end
-      object LblHasilCari: TLabel
-        Left = 20
-        Top = 190
-        Width = 300
-        Height = 15
-        Caption = '[Info] Ketik nama/kode barang di atas untuk mencari.'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = 3308846
-        Font.Height = -11
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
       end
       object EdtJumlah: TEdit
         Left = 20
@@ -282,10 +287,12 @@ object Form3: TForm3
       Padding.Bottom = 20
       ParentBackground = False
       TabOrder = 2
+      ExplicitWidth = 458
+      ExplicitHeight = 532
       object LblDaftar: TLabel
         Left = 20
         Top = 15
-        Width = 210
+        Width = 420
         Height = 20
         Align = alTop
         Caption = 'Keranjang Permintaan Barang'
@@ -295,12 +302,13 @@ object Form3: TForm3
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitWidth = 210
       end
       object GridKeranjang: TStringGrid
         Left = 20
-        Top = 45
+        Top = 35
         Width = 420
-        Height = 400
+        Height = 430
         Align = alClient
         ColCount = 4
         FixedCols = 0
@@ -308,6 +316,8 @@ object Form3: TForm3
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
         TabOrder = 0
         OnDblClick = GridKeranjangDblClick
+        ExplicitWidth = 418
+        ExplicitHeight = 422
         ColWidths = (
           50
           200
@@ -330,7 +340,13 @@ object Form3: TForm3
         ParentFont = False
         TabOrder = 1
         OnClick = BtnSimpanCetakClick
+        ExplicitTop = 457
+        ExplicitWidth = 418
       end
     end
+  end
+  object SaveDialog1: TSaveDialog
+    Left = 400
+    Top = 20
   end
 end
