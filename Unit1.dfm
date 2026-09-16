@@ -96,7 +96,7 @@ object Form1: TForm1
       Caption = 'Laporan Stock Opname'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -12
+      Font.Height = -13
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False

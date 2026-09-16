@@ -280,7 +280,7 @@ object Form6: TForm6
         Font.Color = clWindowText
         Font.Height = -13
         Font.Name = 'Segoe UI'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 8
         OnClick = BtnBatalClick
@@ -294,9 +294,9 @@ object Form6: TForm6
       Align = alClient
       BevelOuter = bvNone
       Color = clWhite
-      Padding.Left = 15
+      Padding.Left = 20
       Padding.Top = 15
-      Padding.Right = 15
+      Padding.Right = 20
       Padding.Bottom = 15
       ParentBackground = False
       TabOrder = 2
@@ -383,7 +383,7 @@ object Form6: TForm6
           Caption = 'Sembunyikan Stok 0'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
-          Font.Height = -11
+          Font.Height = -12
           Font.Name = 'Segoe UI'
           Font.Style = [fsBold]
           ParentFont = False

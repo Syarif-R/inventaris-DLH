@@ -10,7 +10,7 @@ object Form7: TForm7
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  Position = poScreenCenter
+  WindowState = wsMaximized
   OnCreate = FormCreate
   OnShow = FormShow
   OnResize = FormResize
@@ -19,17 +19,17 @@ object Form7: TForm7
     Left = 0
     Top = 0
     Width = 1080
-    Height = 55
+    Height = 60
     Align = alTop
     Color = 3308846
     ParentBackground = False
     TabOrder = 0
     object LblJudul: TLabel
       Left = 20
-      Top = 14
+      Top = 15
       Width = 490
       Height = 25
-      Caption = 'LAPORAN & BERITA ACARA STOCK OPNAME DLH'
+      Caption = 'Laporan && Berita Acara Stock Opname'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
       Font.Height = -19
@@ -39,15 +39,14 @@ object Form7: TForm7
     end
     object BtnKembali: TButton
       Left = 960
-      Top = 10
-      Width = 100
-      Height = 35
+      Top = 12
+      Width = 110
+      Height = 36
       Anchors = [akTop, akRight]
-      Cursor = crHandPoint
-      Caption = 'Kembali'
+      Caption = '<- Kembali'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -14
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
@@ -57,7 +56,7 @@ object Form7: TForm7
   end
   object PnlPengaturan: TPanel
     Left = 0
-    Top = 55
+    Top = 60
     Width = 1080
     Height = 150
     Align = alTop

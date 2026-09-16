@@ -74,7 +74,7 @@ object Form4: TForm4
     object PnlKiri: TPanel
       Left = 0
       Top = 60
-      Width = 360
+      Width = 340
       Height = 540
       Align = alLeft
       BevelOuter = bvNone
@@ -94,7 +94,7 @@ object Form4: TForm4
         Caption = 'Pilih Pengajuan Menunggu:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
@@ -107,7 +107,7 @@ object Form4: TForm4
         Caption = 'Upload Bukti Berkas (PDF / Foto):'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
@@ -115,12 +115,12 @@ object Form4: TForm4
       object CboPengajuan: TComboBox
         Left = 20
         Top = 40
-        Width = 320
-        Height = 28
+        Width = 300
+        Height = 25
         Style = csDropDownList
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
@@ -129,7 +129,7 @@ object Form4: TForm4
       object BtnUpload: TButton
         Left = 20
         Top = 120
-        Width = 320
+        Width = 300
         Height = 40
         Cursor = crHandPoint
         Caption = 'Cari File PDF / Foto Dokumen...'
@@ -137,7 +137,7 @@ object Form4: TForm4
         Font.Color = clWindowText
         Font.Height = -14
         Font.Name = 'Segoe UI'
-        Font.Style = []
+        Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
         OnClick = BtnUploadClick
@@ -145,7 +145,7 @@ object Form4: TForm4
       object BtnResetFoto: TButton
         Left = 20
         Top = 168
-        Width = 320
+        Width = 300
         Height = 35
         Cursor = crHandPoint
         Caption = 'Batal / Hapus Berkas'
@@ -161,7 +161,7 @@ object Form4: TForm4
       object PnlStatus: TPanel
         Left = 20
         Top = 215
-        Width = 320
+        Width = 300
         Height = 110
         BevelKind = bkFlat
         BevelOuter = bvNone
@@ -217,7 +217,7 @@ object Form4: TForm4
         Caption = 'Pratinjau Dokumen'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
@@ -241,13 +241,13 @@ object Form4: TForm4
         Left = 20
         Top = 465
         Width = 400
-        Height = 55
+        Height = 50
         Cursor = crHandPoint
         Align = alBottom
         Caption = 'Validasi & Potong Stok Sekarang'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False

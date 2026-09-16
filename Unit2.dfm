@@ -131,12 +131,12 @@ object Form2: TForm2
       object LblBarang: TLabel
         Left = 20
         Top = 88
-        Width = 105
+        Width = 88
         Height = 20
-        Caption = '1. Pilih Barang:'
+        Caption = 'Pilih Barang:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
@@ -145,11 +145,11 @@ object Form2: TForm2
         Left = 20
         Top = 110
         Width = 300
-        Height = 28
+        Height = 25
         Style = csDropDownList
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
@@ -172,12 +172,12 @@ object Form2: TForm2
       object LblJumlah: TLabel
         Left = 20
         Top = 170
-        Width = 123
+        Width = 96
         Height = 20
-        Caption = '2. Jumlah Masuk:'
+        Caption = 'Jumlah Masuk:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
@@ -190,7 +190,7 @@ object Form2: TForm2
         Caption = 'Satuan:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
@@ -199,10 +199,10 @@ object Form2: TForm2
         Left = 20
         Top = 192
         Width = 130
-        Height = 28
+        Height = 25
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = []
         NumbersOnly = True
@@ -214,11 +214,11 @@ object Form2: TForm2
         Left = 170
         Top = 192
         Width = 150
-        Height = 28
+        Height = 25
         Enabled = False
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
@@ -234,7 +234,7 @@ object Form2: TForm2
         Caption = '+ Tambah ke Daftar Masuk'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -14
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
@@ -283,7 +283,7 @@ object Form2: TForm2
         Caption = 'Daftar Barang Masuk'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
@@ -313,13 +313,13 @@ object Form2: TForm2
         Left = 20
         Top = 465
         Width = 420
-        Height = 55
+        Height = 50
         Cursor = crHandPoint
         Align = alBottom
         Caption = 'Simpan Semua Barang Masuk'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -15
+        Font.Height = -13
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
