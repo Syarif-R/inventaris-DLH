@@ -488,7 +488,6 @@ begin
       Exit;
     end;
 
-    UseOLE := False;
     try
       XL := CreateOleObject('Excel.Application');
       UseOLE := True;
@@ -502,69 +501,72 @@ begin
         XL.Visible := False;
         XL.DisplayAlerts := False;
         WB := XL.Workbooks.Open(TargetFile);
-
-        BulanName := UpperCase(CboBulan.Text);
         try
-          WS := WB.Sheets[BulanName];
-        except
-          WS := WB.ActiveSheet;
-        end;
+          BulanName := UpperCase(CboBulan.Text);
+          try
+            WS := WB.Sheets[BulanName];
+          except
+            WS := WB.ActiveSheet;
+          end;
 
-        WS.Activate;
+          WS.Activate;
 
-        // 1. Nomor Berita Acara (Cell A9)
-        WS.Range['A9'].Value2 := EdtNoSurat.Text;
+          // 1. Nomor Berita Acara (Cell A9)
+          WS.Range['A9'].Value2 := EdtNoSurat.Text;
 
-        // 2. Tanggal Berita Acara (Cell E76)
-        TglStr := 'Banjarmasin, ' + FormatDateTime('dd mmmm yyyy', DTPTanggal.Date);
-        WS.Range['E76'].Value2 := TglStr;
+          // 2. Tanggal Berita Acara (Cell E76)
+          TglStr := 'Banjarmasin, ' + FormatDateTime('dd mmmm yyyy', DTPTanggal.Date);
+          WS.Range['E76'].Value2 := TglStr;
 
-        // 3. Tanda Tangan Pejabat (Baris 81, 82, 90, 91)
-        WS.Range['A81'].Value2 := EdtKasubbagNama.Text;
-        WS.Range['A82'].Value2 := EdtKasubbagNIP.Text;
+          // 3. Tanda Tangan Pejabat (Baris 81, 82, 90, 91)
+          WS.Range['A81'].Value2 := EdtKasubbagNama.Text;
+          WS.Range['A82'].Value2 := EdtKasubbagNIP.Text;
 
-        WS.Range['E81'].Value2 := EdtPengurusNama.Text;
-        WS.Range['E82'].Value2 := EdtPengurusNIP.Text;
+          WS.Range['E81'].Value2 := EdtPengurusNama.Text;
+          WS.Range['E82'].Value2 := EdtPengurusNIP.Text;
 
-        WS.Range['A90'].Value2 := EdtKadisNama.Text;
-        WS.Range['A91'].Value2 := EdtKadisNIP.Text;
+          WS.Range['A90'].Value2 := EdtKadisNama.Text;
+          WS.Range['A91'].Value2 := EdtKadisNIP.Text;
 
-        // 4. Update Jumlah Fisik Real-Time dari Database
-        Q := TFDQuery.Create(nil);
-        try
-          Q.Connection := ModulDB.Koneksi;
-          Q.SQL.Text := 'SELECT Kode_Rekening, Stok_Sisa FROM Tabel_Barang';
-          Q.Open;
+          // 4. Update Jumlah Fisik Real-Time dari Database
+          Q := TFDQuery.Create(nil);
+          try
+            Q.Connection := ModulDB.Koneksi;
+            Q.SQL.Text := 'SELECT Kode_Rekening, Stok_Sisa FROM Tabel_Barang';
+            Q.Open;
 
-          // Loop baris 16 s/d 70 pada sheet untuk mencocokkan Kode Rekening
-          for RowIdx := 16 to 70 do
-          begin
-            KodeStr := Trim(VarToStr(WS.Range['A' + IntToStr(RowIdx)].Value2));
-            if (KodeStr <> '') and (Pos('.', KodeStr) > 0) then
+            // Loop baris 16 s/d 70 pada sheet untuk mencocokkan Kode Rekening
+            for RowIdx := 16 to 70 do
             begin
-              if Q.Locate('Kode_Rekening', KodeStr, []) then
+              KodeStr := Trim(VarToStr(WS.Range['A' + IntToStr(RowIdx)].Value2));
+              if (KodeStr <> '') and (Pos('.', KodeStr) > 0) then
               begin
-                JmlStok := Q.FieldByName('Stok_Sisa').AsInteger;
-                WS.Range['F' + IntToStr(RowIdx)].Value2 := JmlStok;
+                if Q.Locate('Kode_Rekening', KodeStr, []) then
+                begin
+                  JmlStok := Q.FieldByName('Stok_Sisa').AsInteger;
+                  WS.Range['F' + IntToStr(RowIdx)].Value2 := JmlStok;
+                end;
               end;
             end;
+          finally
+            Q.Free;
           end;
-        finally
-          Q.Free;
-        end;
 
-        WB.Save;
-        WB.Close(False);
-        XL.Quit;
-      except
-        on E: Exception do
-        begin
+          WB.Save;
+        finally
           try
             WB.Close(False);
-            XL.Quit;
           except
           end;
         end;
+      finally
+        try
+          XL.Quit;
+        except
+        end;
+        XL := Unassigned;
+        WB := Unassigned;
+        WS := Unassigned;
       end;
     end;
 
