@@ -77,7 +77,7 @@ object Form1: TForm1
       Width = 160
       Height = 45
       Cursor = crHandPoint
-      Caption = 'Validasi & Arsip'
+      Caption = 'Validasi && Arsip'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -87,25 +87,9 @@ object Form1: TForm1
       TabOrder = 2
       OnClick = BtnValidasiClick
     end
-    object BtnStockOpname: TButton
-      Left = 20
-      Top = 184
-      Width = 160
-      Height = 45
-      Cursor = crHandPoint
-      Caption = 'Laporan Stock Opname'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -13
-      Font.Name = 'Segoe UI'
-      Font.Style = [fsBold]
-      ParentFont = False
-      TabOrder = 3
-      OnClick = BtnStockOpnameClick
-    end
     object BtnHistory: TButton
       Left = 20
-      Top = 237
+      Top = 184
       Width = 160
       Height = 45
       Cursor = crHandPoint
@@ -116,8 +100,24 @@ object Form1: TForm1
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 3
       OnClick = BtnHistoryClick
+    end
+    object BtnStockOpname: TButton
+      Left = 20
+      Top = 237
+      Width = 160
+      Height = 45
+      Cursor = crHandPoint
+      Caption = 'Laporan Stock Opname'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 4
+      OnClick = BtnStockOpnameClick
     end
     object BtnMaster: TButton
       Left = 20
