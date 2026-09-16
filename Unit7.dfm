@@ -235,6 +235,23 @@ object Form7: TForm7
       TabOrder = 3
       OnChange = DTPTanggalChange
     end
+    object ChkHideZero: TCheckBox
+      Left = 740
+      Top = 37
+      Width = 160
+      Height = 22
+      Caption = 'Sembunyikan Stok 0'
+      Checked = True
+      State = cbChecked
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 4
+      OnClick = ChkHideZeroClick
+    end
     object EdtKasubbagNama: TEdit
       Left = 20
       Top = 95

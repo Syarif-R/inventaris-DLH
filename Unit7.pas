@@ -31,6 +31,7 @@ type
     EdtPengurusNIP: TEdit;
     EdtKadisNama: TEdit;
     EdtKadisNIP: TEdit;
+    ChkHideZero: TCheckBox;
     PnlBawah: TPanel;
     LblTotalNilai: TLabel;
     BtnCetakPDF: TButton;
@@ -44,6 +45,7 @@ type
     procedure CboBulanChange(Sender: TObject);
     procedure EdtTahunChange(Sender: TObject);
     procedure DTPTanggalChange(Sender: TObject);
+    procedure ChkHideZeroClick(Sender: TObject);
     procedure BtnCetakPDFClick(Sender: TObject);
     procedure BtnExportExcelClick(Sender: TObject);
     procedure BtnKembaliClick(Sender: TObject);
@@ -176,12 +178,18 @@ begin
   TampilStockOpname;
 end;
 
+procedure TForm7.ChkHideZeroClick(Sender: TObject);
+begin
+  TampilStockOpname;
+end;
+
 procedure TForm7.TampilStockOpname;
 var
   QKat, QBarang: TFDQuery;
   Baris, SubJml, NoUrut, JmlFisik: Integer;
   KatName, KatLabel, TglCutoff: string;
   Harga, SubNilai, ItemTotal: Double;
+  KatHeaderWritten: Boolean;
 begin
   TglCutoff := FormatDateTime('yyyy-mm-dd', DTPTanggal.Date);
   GridOpname.RowCount := 2;
@@ -216,18 +224,6 @@ begin
       else if KatName = 'Persediaan Masyarakat' then KatLabel := 'PERSEDIAAN UNTUK DIJUAL/DISERAHKAN KEPADA MASYARAKAT'
       else KatLabel := UpperCase(KatName);
 
-      if Baris >= GridOpname.RowCount then
-        GridOpname.RowCount := Baris + 1;
-
-      GridOpname.Cells[0, Baris] := '';
-      GridOpname.Cells[1, Baris] := KatLabel;
-      GridOpname.Cells[2, Baris] := '';
-      GridOpname.Cells[3, Baris] := '';
-      GridOpname.Cells[4, Baris] := '';
-      GridOpname.Cells[5, Baris] := '';
-      GridOpname.Cells[6, Baris] := '';
-      Inc(Baris);
-
       QBarang.Close;
       QBarang.SQL.Text := 
         'SELECT B.Kode_Rekening, B.Nama_Barang, B.Satuan, B.Harga_Satuan, ' +
@@ -243,13 +239,39 @@ begin
       SubJml := 0;
       SubNilai := 0;
       NoUrut := 1;
+      KatHeaderWritten := False;
 
       while not QBarang.Eof do
       begin
+        JmlFisik := QBarang.FieldByName('Stok_Fisik').AsInteger;
+
+        // Jika opsi Sembunyikan Stok 0 aktif dan stok <= 0, lewati
+        if ChkHideZero.Checked and (JmlFisik <= 0) then
+        begin
+          QBarang.Next;
+          Continue;
+        end;
+
+        // Tulis header kategori hanya jika ada item yang ditampilkan
+        if not KatHeaderWritten then
+        begin
+          if Baris >= GridOpname.RowCount then
+            GridOpname.RowCount := Baris + 1;
+
+          GridOpname.Cells[0, Baris] := '';
+          GridOpname.Cells[1, Baris] := KatLabel;
+          GridOpname.Cells[2, Baris] := '';
+          GridOpname.Cells[3, Baris] := '';
+          GridOpname.Cells[4, Baris] := '';
+          GridOpname.Cells[5, Baris] := '';
+          GridOpname.Cells[6, Baris] := '';
+          Inc(Baris);
+          KatHeaderWritten := True;
+        end;
+
         if Baris >= GridOpname.RowCount then
           GridOpname.RowCount := Baris + 1;
 
-        JmlFisik := QBarang.FieldByName('Stok_Fisik').AsInteger;
         Harga := QBarang.FieldByName('Harga_Satuan').AsFloat;
         ItemTotal := JmlFisik * Harga;
 
@@ -269,20 +291,33 @@ begin
         QBarang.Next;
       end;
 
-      if Baris >= GridOpname.RowCount then
-        GridOpname.RowCount := Baris + 1;
+      // Hanya tampilkan subtotal jika kategori tersebut memiliki item yang ditampilkan (atau jika ChkHideZero tidak dicentang)
+      if KatHeaderWritten or (not ChkHideZero.Checked) then
+      begin
+        if not KatHeaderWritten then
+        begin
+          if Baris >= GridOpname.RowCount then
+            GridOpname.RowCount := Baris + 1;
+          GridOpname.Cells[0, Baris] := '';
+          GridOpname.Cells[1, Baris] := KatLabel;
+          Inc(Baris);
+        end;
 
-      GridOpname.Cells[0, Baris] := '';
-      GridOpname.Cells[1, Baris] := 'Total ' + KatLabel + ' :';
-      GridOpname.Cells[2, Baris] := '';
-      GridOpname.Cells[3, Baris] := '';
-      GridOpname.Cells[4, Baris] := IntToStr(SubJml);
-      GridOpname.Cells[5, Baris] := '';
-      GridOpname.Cells[6, Baris] := FormatFloat('#,##0', SubNilai);
-      Inc(Baris);
+        if Baris >= GridOpname.RowCount then
+          GridOpname.RowCount := Baris + 1;
 
-      GrandTotalJumlah := GrandTotalJumlah + SubJml;
-      GrandTotalNilai := GrandTotalNilai + SubNilai;
+        GridOpname.Cells[0, Baris] := '';
+        GridOpname.Cells[1, Baris] := 'Total ' + KatLabel + ' :';
+        GridOpname.Cells[2, Baris] := '';
+        GridOpname.Cells[3, Baris] := '';
+        GridOpname.Cells[4, Baris] := IntToStr(SubJml);
+        GridOpname.Cells[5, Baris] := '';
+        GridOpname.Cells[6, Baris] := FormatFloat('#,##0', SubNilai);
+        Inc(Baris);
+
+        GrandTotalJumlah := GrandTotalJumlah + SubJml;
+        GrandTotalNilai := GrandTotalNilai + SubNilai;
+      end;
 
       QKat.Next;
     end;
@@ -614,6 +649,11 @@ begin
                   WS.Range['F' + IntToStr(RowIdx)].Value2 := JmlStok;
                   WS.Range['G' + IntToStr(RowIdx)].Value2 := HargaItem;
                   WS.Range['H' + IntToStr(RowIdx)].Value2 := TotalItem;
+
+                  if ChkHideZero.Checked and (JmlStok <= 0) then
+                    WS.Rows[RowIdx].Hidden := True
+                  else
+                    WS.Rows[RowIdx].Hidden := False;
 
                   CurrentSubF := CurrentSubF + JmlStok;
                   CurrentSubH := CurrentSubH + TotalItem;
