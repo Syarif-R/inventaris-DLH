@@ -233,6 +233,7 @@ object Form7: TForm7
       Font.Style = []
       ParentFont = False
       TabOrder = 3
+      OnChange = DTPTanggalChange
     end
     object EdtKasubbagNama: TEdit
       Left = 20

@@ -4,8 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, Winapi.ShellAPI, System.SysUtils, System.Variants,
-  System.Classes, System.UITypes, System.NetEncoding, System.Win.ComObj, Vcl.Graphics, Vcl.Controls,
-  Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids, Vcl.ComCtrls,
+  System.Classes, System.UITypes, System.NetEncoding, System.Win.ComObj, System.DateUtils,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids, Vcl.ComCtrls,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.DApt, FireDAC.Stan.Param;
 
 type
@@ -43,6 +43,7 @@ type
     procedure FormResize(Sender: TObject);
     procedure CboBulanChange(Sender: TObject);
     procedure EdtTahunChange(Sender: TObject);
+    procedure DTPTanggalChange(Sender: TObject);
     procedure BtnCetakPDFClick(Sender: TObject);
     procedure BtnExportExcelClick(Sender: TObject);
     procedure BtnKembaliClick(Sender: TObject);
@@ -138,23 +139,51 @@ begin
 end;
 
 procedure TForm7.CboBulanChange(Sender: TObject);
+var
+  Thn, Bln, LastDay: Integer;
 begin
+  Thn := StrToIntDef(Trim(EdtTahun.Text), YearOf(Now));
+  Bln := CboBulan.ItemIndex + 1;
+  if (Thn = YearOf(Now)) and (Bln = MonthOf(Now)) then
+    DTPTanggal.Date := Now
+  else
+  begin
+    LastDay := DaysInAMonth(Thn, Bln);
+    DTPTanggal.Date := EncodeDate(Thn, Bln, LastDay);
+  end;
   TampilStockOpname;
 end;
 
 procedure TForm7.EdtTahunChange(Sender: TObject);
+var
+  Thn, Bln, LastDay: Integer;
 begin
   EdtNoSurat.Text := '000.2.3.1 /      /Set-DLH /' + EdtTahun.Text;
+  Thn := StrToIntDef(Trim(EdtTahun.Text), YearOf(Now));
+  Bln := CboBulan.ItemIndex + 1;
+  if (Thn = YearOf(Now)) and (Bln = MonthOf(Now)) then
+    DTPTanggal.Date := Now
+  else
+  begin
+    LastDay := DaysInAMonth(Thn, Bln);
+    DTPTanggal.Date := EncodeDate(Thn, Bln, LastDay);
+  end;
+  TampilStockOpname;
+end;
+
+procedure TForm7.DTPTanggalChange(Sender: TObject);
+begin
   TampilStockOpname;
 end;
 
 procedure TForm7.TampilStockOpname;
 var
   QKat, QBarang: TFDQuery;
-  Baris, SubJml, NoUrut: Integer;
-  KatName, KatLabel: string;
+  Baris, SubJml, NoUrut, JmlFisik: Integer;
+  KatName, KatLabel, TglCutoff: string;
   Harga, SubNilai, ItemTotal: Double;
 begin
+  TglCutoff := FormatDateTime('yyyy-mm-dd', DTPTanggal.Date);
   GridOpname.RowCount := 2;
   GridOpname.Rows[1].Clear;
   Baris := 1;
@@ -200,9 +229,15 @@ begin
       Inc(Baris);
 
       QBarang.Close;
-      QBarang.SQL.Text := 'SELECT Kode_Rekening, Nama_Barang, Satuan, Stok_Sisa, Harga_Satuan ' +
-                          'FROM Tabel_Barang WHERE Kategori = :kat ORDER BY Nama_Barang ASC';
+      QBarang.SQL.Text := 
+        'SELECT B.Kode_Rekening, B.Nama_Barang, B.Satuan, B.Harga_Satuan, ' +
+        '  (B.Stok_Sisa ' +
+        '   - COALESCE((SELECT SUM(Jumlah) FROM Tabel_Masuk WHERE Kode_Rekening = B.Kode_Rekening AND Tanggal > :tgl_cutoff), 0) ' +
+        '   + COALESCE((SELECT SUM(Jumlah) FROM Tabel_Keluar WHERE Kode_Rekening = B.Kode_Rekening AND Tanggal > :tgl_cutoff), 0) ' +
+        '  ) AS Stok_Fisik ' +
+        'FROM Tabel_Barang B WHERE B.Kategori = :kat ORDER BY B.Nama_Barang ASC';
       QBarang.ParamByName('kat').AsString := KatName;
+      QBarang.ParamByName('tgl_cutoff').AsString := TglCutoff;
       QBarang.Open;
 
       SubJml := 0;
@@ -214,18 +249,19 @@ begin
         if Baris >= GridOpname.RowCount then
           GridOpname.RowCount := Baris + 1;
 
+        JmlFisik := QBarang.FieldByName('Stok_Fisik').AsInteger;
         Harga := QBarang.FieldByName('Harga_Satuan').AsFloat;
-        ItemTotal := QBarang.FieldByName('Stok_Sisa').AsInteger * Harga;
+        ItemTotal := JmlFisik * Harga;
 
         GridOpname.Cells[0, Baris] := IntToStr(NoUrut);
         GridOpname.Cells[1, Baris] := QBarang.FieldByName('Kode_Rekening').AsString;
         GridOpname.Cells[2, Baris] := QBarang.FieldByName('Nama_Barang').AsString;
         GridOpname.Cells[3, Baris] := QBarang.FieldByName('Satuan').AsString;
-        GridOpname.Cells[4, Baris] := IntToStr(QBarang.FieldByName('Stok_Sisa').AsInteger);
+        GridOpname.Cells[4, Baris] := IntToStr(JmlFisik);
         GridOpname.Cells[5, Baris] := FormatFloat('#,##0', Harga);
         GridOpname.Cells[6, Baris] := FormatFloat('#,##0', ItemTotal);
 
-        SubJml := SubJml + QBarang.FieldByName('Stok_Sisa').AsInteger;
+        SubJml := SubJml + JmlFisik;
         SubNilai := SubNilai + ItemTotal;
 
         Inc(NoUrut);
@@ -452,11 +488,12 @@ end;
 
 procedure TForm7.BtnExportExcelClick(Sender: TObject);
 var
-  TemplatePath, ExeDir, TargetFile, BulanName, TglStr, KodeStr: string;
+  TemplatePath, ExeDir, TargetFile, BulanName, TglStr, KodeStr, TglCutoff: string;
   XL, WB, WS, WS_Temp: OleVariant;
   Q: TFDQuery;
   RowIdx, JmlStok, I: Integer;
-  UseOLE: Boolean;
+  UseOLE, IsGrandHeader: Boolean;
+  HargaItem, TotalItem, CurrentSubF, CurrentSubH, GrandTotalFisik, GrandTotalNilai: Double;
 begin
   ExeDir := ExtractFilePath(ParamStr(0));
   if FileExists(ExeDir + 'STOCK OPNAME 2026.xlsx') then
@@ -541,23 +578,71 @@ begin
           WS.Range['A90'].Value2 := EdtKadisNama.Text;
           WS.Range['A91'].Value2 := EdtKadisNIP.Text;
 
-          // 4. Update Jumlah Fisik Real-Time dari Database
+          // 4. Update Jumlah Fisik Real-Time & Nilai dari Database sesuai Kapan Masuk/Keluar
+          TglCutoff := FormatDateTime('yyyy-mm-dd', DTPTanggal.Date);
           Q := TFDQuery.Create(nil);
           try
             Q.Connection := ModulDB.Koneksi;
-            Q.SQL.Text := 'SELECT Kode_Rekening, Stok_Sisa FROM Tabel_Barang';
+            Q.SQL.Text := 
+              'SELECT B.Kode_Rekening, B.Nama_Barang, B.Satuan, B.Harga_Satuan, ' +
+              '  (B.Stok_Sisa ' +
+              '   - COALESCE((SELECT SUM(Jumlah) FROM Tabel_Masuk WHERE Kode_Rekening = B.Kode_Rekening AND Tanggal > :tgl_cutoff), 0) ' +
+              '   + COALESCE((SELECT SUM(Jumlah) FROM Tabel_Keluar WHERE Kode_Rekening = B.Kode_Rekening AND Tanggal > :tgl_cutoff), 0) ' +
+              '  ) AS Stok_Fisik ' +
+              'FROM Tabel_Barang B';
+            Q.ParamByName('tgl_cutoff').AsString := TglCutoff;
             Q.Open;
 
-            // Loop baris 16 s/d 70 pada sheet untuk mencocokkan Kode Rekening
-            for RowIdx := 16 to 70 do
+            CurrentSubF := 0;
+            CurrentSubH := 0;
+            GrandTotalFisik := 0;
+            GrandTotalNilai := 0;
+            IsGrandHeader := False;
+
+            for RowIdx := 16 to 75 do
             begin
               KodeStr := Trim(VarToStr(WS.Range['A' + IntToStr(RowIdx)].Value2));
-              if (KodeStr <> '') and (Pos('.', KodeStr) > 0) then
+
+              if (KodeStr <> '') and (Pos('117.', KodeStr) = 1) then
               begin
                 if Q.Locate('Kode_Rekening', KodeStr, []) then
                 begin
-                  JmlStok := Q.FieldByName('Stok_Sisa').AsInteger;
+                  JmlStok := Q.FieldByName('Stok_Fisik').AsInteger;
+                  HargaItem := Q.FieldByName('Harga_Satuan').AsFloat;
+                  TotalItem := JmlStok * HargaItem;
+
                   WS.Range['F' + IntToStr(RowIdx)].Value2 := JmlStok;
+                  WS.Range['G' + IntToStr(RowIdx)].Value2 := HargaItem;
+                  WS.Range['H' + IntToStr(RowIdx)].Value2 := TotalItem;
+
+                  CurrentSubF := CurrentSubF + JmlStok;
+                  CurrentSubH := CurrentSubH + TotalItem;
+                end;
+              end
+              else if Pos('TOTAL KESELURUHAN', UpperCase(KodeStr)) > 0 then
+              begin
+                IsGrandHeader := True;
+              end
+              else if Pos('TOTAL', UpperCase(KodeStr)) > 0 then
+              begin
+                if IsGrandHeader then
+                begin
+                  // Baris Grand Total (Baris 72)
+                  WS.Range['F' + IntToStr(RowIdx)].Value2 := GrandTotalFisik;
+                  WS.Range['H' + IntToStr(RowIdx)].Value2 := GrandTotalNilai;
+                  Break;
+                end
+                else
+                begin
+                  // Baris Subtotal Kategori (Baris 20, 57, 65, 70)
+                  WS.Range['F' + IntToStr(RowIdx)].Value2 := CurrentSubF;
+                  WS.Range['H' + IntToStr(RowIdx)].Value2 := CurrentSubH;
+
+                  GrandTotalFisik := GrandTotalFisik + CurrentSubF;
+                  GrandTotalNilai := GrandTotalNilai + CurrentSubH;
+
+                  CurrentSubF := 0;
+                  CurrentSubH := 0;
                 end;
               end;
             end;
