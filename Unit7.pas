@@ -369,14 +369,17 @@ begin
 
     for I := 1 to GridOpname.RowCount - 1 do
     begin
-      IsHeaderKat := (GridOpname.Cells[0, I] = '') and (Pos('Total', GridOpname.Cells[1, I]) = 0) and (GridOpname.Cells[1, I] <> '');
-      IsSubtotal := (GridOpname.Cells[0, I] = '') and (Pos('Total ', GridOpname.Cells[1, I]) > 0);
-      IsGrandTotal := Pos('TOTAL KESELURUHAN', GridOpname.Cells[1, I]) > 0;
+      IsGrandTotal := Pos('TOTAL KESELURUHAN', UpperCase(GridOpname.Cells[1, I])) > 0;
+      IsSubtotal := (GridOpname.Cells[0, I] = '') and (Pos('TOTAL ', UpperCase(GridOpname.Cells[1, I])) > 0) and (not IsGrandTotal);
+      IsHeaderKat := (GridOpname.Cells[0, I] = '') and (not IsSubtotal) and (not IsGrandTotal) and (GridOpname.Cells[1, I] <> '');
 
-      if IsHeaderKat then
+      if IsGrandTotal then
       begin
-        SuratText.Add('    <tr class="cat-row">');
-        SuratText.Add('      <td colspan="7"><b>' + GridOpname.Cells[1, I] + '</b></td>');
+        SuratText.Add('    <tr class="grand-row">');
+        SuratText.Add('      <td colspan="4" class="right"><b>TOTAL KESELURUHAN :</b></td>');
+        SuratText.Add('      <td class="center"><b>' + GridOpname.Cells[4, I] + '</b></td>');
+        SuratText.Add('      <td></td>');
+        SuratText.Add('      <td class="right"><b>' + GridOpname.Cells[6, I] + '</b></td>');
         SuratText.Add('    </tr>');
       end
       else if IsSubtotal then
@@ -388,13 +391,10 @@ begin
         SuratText.Add('      <td class="right"><b>' + GridOpname.Cells[6, I] + '</b></td>');
         SuratText.Add('    </tr>');
       end
-      else if IsGrandTotal then
+      else if IsHeaderKat then
       begin
-        SuratText.Add('    <tr class="grand-row">');
-        SuratText.Add('      <td colspan="4" class="right"><b>' + GridOpname.Cells[1, I] + '</b></td>');
-        SuratText.Add('      <td class="center"><b>' + GridOpname.Cells[4, I] + '</b></td>');
-        SuratText.Add('      <td></td>');
-        SuratText.Add('      <td class="right"><b>' + GridOpname.Cells[6, I] + '</b></td>');
+        SuratText.Add('    <tr class="cat-row">');
+        SuratText.Add('      <td colspan="7"><b>' + GridOpname.Cells[1, I] + '</b></td>');
         SuratText.Add('    </tr>');
       end
       else
