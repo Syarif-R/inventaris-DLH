@@ -453,9 +453,9 @@ end;
 procedure TForm7.BtnExportExcelClick(Sender: TObject);
 var
   TemplatePath, ExeDir, TargetFile, BulanName, TglStr, KodeStr: string;
-  XL, WB, WS: OleVariant;
+  XL, WB, WS, WS_Temp: OleVariant;
   Q: TFDQuery;
-  RowIdx, JmlStok: Integer;
+  RowIdx, JmlStok, I: Integer;
   UseOLE: Boolean;
 begin
   ExeDir := ExtractFilePath(ParamStr(0));
@@ -502,7 +502,7 @@ begin
         XL.DisplayAlerts := False;
         WB := XL.Workbooks.Open(TargetFile);
         try
-          BulanName := UpperCase(CboBulan.Text);
+          BulanName := UpperCase(Trim(CboBulan.Text));
           try
             WS := WB.Sheets[BulanName];
           except
@@ -510,6 +510,19 @@ begin
           end;
 
           WS.Activate;
+
+          // Hapus sheet-sheet bulan lain sehingga HANYA sheet bulan terpilih yang tersisa
+          for I := WB.Sheets.Count downto 1 do
+          begin
+            WS_Temp := WB.Sheets[I];
+            if UpperCase(Trim(VarToStr(WS_Temp.Name))) <> BulanName then
+            begin
+              try
+                WS_Temp.Delete;
+              except
+              end;
+            end;
+          end;
 
           // 1. Nomor Berita Acara (Cell A9)
           WS.Range['A9'].Value2 := EdtNoSurat.Text;
@@ -567,13 +580,11 @@ begin
         XL := Unassigned;
         WB := Unassigned;
         WS := Unassigned;
+        WS_Temp := Unassigned;
       end;
     end;
 
     ShellExecute(0, 'open', PChar(TargetFile), nil, nil, SW_SHOWNORMAL);
-    ShowMessage('SUKSES! Laporan Stock Opname berhasil diexport ke Microsoft Excel (.xlsx).' + sLineBreak + sLineBreak +
-                'Format, logo, tabel, rumus, dan tanda tangan 100% identik dengan file resmi.' + sLineBreak +
-                'Lokasi File: ' + TargetFile);
   end
   else
   begin
