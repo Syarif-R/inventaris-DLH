@@ -3,7 +3,7 @@ unit Unit3;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.UITypes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, Winapi.ShellAPI, System.SysUtils, System.Variants, System.Classes, System.UITypes, System.NetEncoding, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.DApt, FireDAC.Stan.Param;
 
@@ -467,76 +467,260 @@ begin
 
     ModulDB.Koneksi.Commit;
 
-    // Pengarah Download dengan Dialog Pemilih Tempat Penyimpanan File
-    SaveDialog1.Title := 'Pilih Lokasi Penyimpanan Surat Izin / Tanda Terima Pengajuan Barang';
-    SaveDialog1.Filter := 'Dokumen Teks / Surat (*.txt)|*.txt|File Laporan (*.csv)|*.csv|Semua File (*.*)|*.*';
-    SaveDialog1.DefaultExt := 'txt';
-    SaveDialog1.FileName := 'Surat_Izin_Pengajuan_' + NoPengajuan + '.txt';
+function GetLogoBase64: string;
+var
+  ExeDir, LogoPath: string;
+  FS: TFileStream;
+  SS: TStringStream;
+begin
+  Result := '';
+  ExeDir := ExtractFilePath(ParamStr(0));
+
+  if FileExists(ExeDir + 'logo_banjarmasin.jpg') then
+    LogoPath := ExeDir + 'logo_banjarmasin.jpg'
+  else if FileExists(ExpandFileName(ExeDir + '..\..\logo_banjarmasin.jpg')) then
+    LogoPath := ExpandFileName(ExeDir + '..\..\logo_banjarmasin.jpg')
+  else if FileExists(ExpandFileName('logo_banjarmasin.jpg')) then
+    LogoPath := ExpandFileName('logo_banjarmasin.jpg')
+  else
+    Exit;
+
+  try
+    FS := TFileStream.Create(LogoPath, fmOpenRead or fmShareDenyNone);
+    try
+      SS := TStringStream.Create('');
+      try
+        TNetEncoding.Base64.Encode(FS, SS);
+        Result := SS.DataString;
+      finally
+        SS.Free;
+      end;
+    finally
+      FS.Free;
+    end;
+  except
+    Result := '';
+  end;
+end;
+
+procedure TForm3.BtnSimpanCetakClick(Sender: TObject);
+var
+  I, Jml, PosDash: Integer;
+  KodeRek, NamaBrg, NoPengajuan, TglNow, TglFormat, LogoB64, ExtFile: string;
+  Q: TFDQuery;
+  SuratText: TStringList;
+begin
+  if CboBidang.Text = '' then
+  begin
+    ShowMessage('VALIDASI GAGAL: Pilih bidang pemohon terlebih dahulu!');
+    Exit;
+  end;
+
+  if BarisKeranjang = 1 then
+  begin
+    ShowMessage('VALIDASI GAGAL: Keranjang permintaan barang masih kosong!');
+    Exit;
+  end;
+
+  if MessageDlg('KONFIRMASI PENGAJUAN BARANG:' + sLineBreak + sLineBreak +
+                'Bidang Pemohon: ' + CboBidang.Text + sLineBreak +
+                'Jumlah Jenis Barang: ' + IntToStr(BarisKeranjang - 1) + ' item' + sLineBreak + sLineBreak +
+                'Apakah Anda yakin data pengajuan ini sudah benar dan siap disimpan?',
+                mtConfirmation, [mbYes, mbNo], 0) <> mrYes then Exit;
+
+  TglNow := FormatDateTime('yyyy-mm-dd', Now);
+  NoPengajuan := 'PGJ-' + FormatDateTime('yyyymmdd-hhnnss', Now);
+
+  ModulDB.Koneksi.StartTransaction;
+  Q := TFDQuery.Create(nil);
+  try
+    Q.Connection := ModulDB.Koneksi;
+
+    // Header Pengajuan
+    Q.SQL.Text := 'INSERT INTO Tabel_Pengajuan (No_Pengajuan, Tanggal, Bidang, Status) VALUES (:no, :tgl, :bidang, ''PENDING'')';
+    Q.ParamByName('no').AsString := NoPengajuan;
+    Q.ParamByName('tgl').AsString := TglNow;
+    Q.ParamByName('bidang').AsString := CboBidang.Text;
+    Q.ExecSQL;
+
+    // Detail Pengajuan
+    for I := 1 to BarisKeranjang - 1 do
+    begin
+      PosDash := Pos(' - ', GridKeranjang.Cells[1, I]);
+      if PosDash > 0 then
+      begin
+        KodeRek := Trim(Copy(GridKeranjang.Cells[1, I], 1, PosDash - 1));
+        NamaBrg := Trim(Copy(GridKeranjang.Cells[1, I], PosDash + 3, Length(GridKeranjang.Cells[1, I])));
+      end
+      else
+      begin
+        KodeRek := Trim(GridKeranjang.Cells[1, I]);
+        NamaBrg := GridKeranjang.Cells[1, I];
+      end;
+
+      Jml := StrToIntDef(GridKeranjang.Cells[2, I], 0);
+
+      Q.SQL.Text := 'INSERT INTO Tabel_Pengajuan_Detail (No_Pengajuan, Kode_Rekening, Nama_Barang, Jumlah, Satuan) ' +
+                    'VALUES (:no, :kode, :nama, :jml, :satuan)';
+      Q.ParamByName('no').AsString := NoPengajuan;
+      Q.ParamByName('kode').AsString := KodeRek;
+      Q.ParamByName('nama').AsString := NamaBrg;
+      Q.ParamByName('jml').AsInteger := Jml;
+      Q.ParamByName('satuan').AsString := GridKeranjang.Cells[3, I];
+      Q.ExecSQL;
+    end;
+
+    ModulDB.Koneksi.Commit;
+
+    // Pengarah Download dengan Dialog Pemilih Tempat Penyimpanan File PDF/HTML
+    SaveDialog1.Title := 'Pilih Lokasi Penyimpanan Surat Izin Pengajuan Barang (PDF)';
+    SaveDialog1.Filter := 'Dokumen PDF / Web (*.pdf;*.html)|*.pdf;*.html|File Laporan CSV (*.csv)|*.csv|Dokumen Teks (*.txt)|*.txt';
+    SaveDialog1.DefaultExt := 'pdf';
+    SaveDialog1.FileName := 'Surat_Izin_Pengajuan_' + NoPengajuan + '.pdf';
 
     if SaveDialog1.Execute then
     begin
-      SuratText := TStringList.Create;
-      try
-        SuratText.Add('================================================================================');
-        SuratText.Add('          PEMERINTAH KOTA BANJARMASIN - DINAS LINGKUNGAN HIDUP (DLH)');
-        SuratText.Add('                SURAT IZIN & TANDA TERIMA PENGAJUAN BARANG GUDANG');
-        SuratText.Add('================================================================================');
-        SuratText.Add('No. Pengajuan : ' + NoPengajuan);
-        SuratText.Add('Tanggal       : ' + TglNow);
-        SuratText.Add('Bidang Pemohon: ' + CboBidang.Text);
-        SuratText.Add('Status        : PENDING (Menunggu Validasi Bukti TTD Fisik)');
-        SuratText.Add('');
-        SuratText.Add('DAFTAR BARANG YANG DIAJUKAN:');
-        SuratText.Add('--------------------------------------------------------------------------------');
-        SuratText.Add(Format('%-4s | %-22s | %-32s | %s', ['No', 'Kode Rekening', 'Nama Barang', 'Jumlah & Satuan']));
-        SuratText.Add('--------------------------------------------------------------------------------');
+      ExtFile := LowerCase(ExtractFileExt(SaveDialog1.FileName));
 
-        for I := 1 to BarisKeranjang - 1 do
-        begin
-          PosDash := Pos(' - ', GridKeranjang.Cells[1, I]);
-          if PosDash > 0 then
-          begin
-            KodeRek := Trim(Copy(GridKeranjang.Cells[1, I], 1, PosDash - 1));
-            NamaBrg := Trim(Copy(GridKeranjang.Cells[1, I], PosDash + 3, Length(GridKeranjang.Cells[1, I])));
-          end
+      if (ExtFile = '.pdf') or (ExtFile = '.html') or (ExtFile = '.htm') then
+      begin
+        LogoB64 := GetLogoBase64;
+        TglFormat := FormatDateTime('dd mmmm yyyy', Now);
+        SuratText := TStringList.Create;
+        try
+          SuratText.Add('<!DOCTYPE html>');
+          SuratText.Add('<html>');
+          SuratText.Add('<head>');
+          SuratText.Add('<meta charset="utf-8">');
+          SuratText.Add('<title>SURAT IZIN & TANDA TERIMA PENGAJUAN BARANG GUDANG</title>');
+          SuratText.Add('<style>');
+          SuratText.Add('  @page { size: A4 portrait; margin: 1.5cm; }');
+          SuratText.Add('  body { font-family: Arial, sans-serif; color: #000; background: #fff; margin: 0; padding: 25px; }');
+          SuratText.Add('  .kop-table { width: 100%; border-collapse: collapse; border-bottom: 3.5px solid #000; padding-bottom: 8px; margin-bottom: 12px; }');
+          SuratText.Add('  .kop-logo { width: 2.31cm; height: 3.3cm; object-fit: contain; }');
+          SuratText.Add('  .kop-text-container { text-align: center; vertical-align: middle; }');
+          SuratText.Add('  .kop-h1 { font-family: Arial, sans-serif; font-size: 18pt; font-weight: bold; margin: 0; line-height: 1.2; text-transform: uppercase; }');
+          SuratText.Add('  .kop-sub { font-family: Arial, sans-serif; font-size: 12pt; font-weight: normal; margin: 3px 0 0 0; line-height: 1.3; }');
+          SuratText.Add('  .kop-city { font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold; margin: 3px 0 0 0; }');
+          SuratText.Add('  .date-right { text-align: right; font-family: Arial, sans-serif; font-size: 11pt; margin-top: 10px; margin-bottom: 20px; }');
+          SuratText.Add('  .doc-title { text-align: center; font-family: Arial, sans-serif; font-size: 14pt; font-weight: bold; text-decoration: underline; margin-bottom: 25px; text-transform: uppercase; }');
+          SuratText.Add('  .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11pt; }');
+          SuratText.Add('  .meta-table td { padding: 5px 0; vertical-align: top; }');
+          SuratText.Add('  .meta-label { width: 150px; font-weight: bold; }');
+          SuratText.Add('  .item-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 11pt; }');
+          SuratText.Add('  .item-table th, .item-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; }');
+          SuratText.Add('  .item-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; }');
+          SuratText.Add('  .item-table td.center { text-align: center; }');
+          SuratText.Add('  .notes { font-size: 10.5pt; margin-bottom: 35px; line-height: 1.5; }');
+          SuratText.Add('  .notes ol { margin: 5px 0 0 20px; padding: 0; }');
+          SuratText.Add('  .sig-table { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 11pt; }');
+          SuratText.Add('  .sig-table td { width: 50%; text-align: center; vertical-align: top; }');
+          SuratText.Add('  .sig-space { height: 85px; }');
+          SuratText.Add('  .sig-name { font-weight: bold; text-decoration: underline; }');
+          SuratText.Add('</style>');
+          SuratText.Add('</head>');
+          SuratText.Add('<body>');
+
+          // Header Kop Surat Resmi
+          SuratText.Add('<table class="kop-table">');
+          SuratText.Add('  <tr>');
+          if LogoB64 <> '' then
+            SuratText.Add('    <td style="width: 2.5cm; vertical-align: middle;"><img class="kop-logo" src="data:image/jpeg;base64,' + LogoB64 + '" alt="Logo Banjarmasin"></td>')
           else
+            SuratText.Add('    <td style="width: 2.5cm; vertical-align: middle;"><img class="kop-logo" src="logo_banjarmasin.jpg" alt="Logo Banjarmasin"></td>');
+
+          SuratText.Add('    <td class="kop-text-container">');
+          SuratText.Add('      <div class="kop-h1">PEMERINTAH KOTA BANJARMASIN</div>');
+          SuratText.Add('      <div class="kop-h1">DINAS LINGKUNGAN HIDUP</div>');
+          SuratText.Add('      <div class="kop-sub">Jalan R.E. Martadinata No.1 Gedung Blok D Banjarmasin 70111</div>');
+          SuratText.Add('      <div class="kop-sub">Telp. (0511) 3363811, Fax. 3363811</div>');
+          SuratText.Add('      <div class="kop-city">BANJARMASIN</div>');
+          SuratText.Add('    </td>');
+          SuratText.Add('  </tr>');
+          SuratText.Add('</table>');
+
+          // Tanggal Surat Right Aligned
+          SuratText.Add('<div class="date-right">Banjarmasin, ' + TglFormat + '</div>');
+
+          // Judul Surat
+          SuratText.Add('<div class="doc-title">SURAT IZIN &amp; TANDA TERIMA PENGAJUAN BARANG GUDANG</div>');
+
+          // Informasi Metadata (Status Hilangkan sesuai instruksi!)
+          SuratText.Add('<table class="meta-table">');
+          SuratText.Add('  <tr><td class="meta-label">No. Pengajuan</td><td>: ' + NoPengajuan + '</td></tr>');
+          SuratText.Add('  <tr><td class="meta-label">Tanggal</td><td>: ' + TglNow + '</td></tr>');
+          SuratText.Add('  <tr><td class="meta-label">Bidang Pemohon</td><td>: ' + CboBidang.Text + '</td></tr>');
+          SuratText.Add('</table>');
+
+          // Tabel Daftar Barang
+          SuratText.Add('<table class="item-table">');
+          SuratText.Add('  <thead>');
+          SuratText.Add('    <tr><th style="width: 40px;">No</th><th style="width: 180px;">Kode Rekening</th><th>Nama Barang</th><th style="width: 130px;">Jumlah &amp; Satuan</th></tr>');
+          SuratText.Add('  </thead>');
+          SuratText.Add('  <tbody>');
+
+          for I := 1 to BarisKeranjang - 1 do
           begin
-            KodeRek := Trim(GridKeranjang.Cells[1, I]);
-            NamaBrg := GridKeranjang.Cells[1, I];
+            PosDash := Pos(' - ', GridKeranjang.Cells[1, I]);
+            if PosDash > 0 then
+            begin
+              KodeRek := Trim(Copy(GridKeranjang.Cells[1, I], 1, PosDash - 1));
+              NamaBrg := Trim(Copy(GridKeranjang.Cells[1, I], PosDash + 3, Length(GridKeranjang.Cells[1, I])));
+            end
+            else
+            begin
+              KodeRek := Trim(GridKeranjang.Cells[1, I]);
+              NamaBrg := GridKeranjang.Cells[1, I];
+            end;
+
+            SuratText.Add('    <tr>');
+            SuratText.Add('      <td class="center">' + IntToStr(I) + '</td>');
+            SuratText.Add('      <td>' + KodeRek + '</td>');
+            SuratText.Add('      <td>' + NamaBrg + '</td>');
+            SuratText.Add('      <td class="center">' + GridKeranjang.Cells[2, I] + ' ' + GridKeranjang.Cells[3, I] + '</td>');
+            SuratText.Add('    </tr>');
           end;
 
-          SuratText.Add(Format('%-4d | %-22s | %-32s | %s %s',
-            [I, KodeRek, Copy(NamaBrg, 1, 32), GridKeranjang.Cells[2, I], GridKeranjang.Cells[3, I]]));
+          SuratText.Add('  </tbody>');
+          SuratText.Add('</table>');
+
+          // Petunjuk Pengambilan
+          SuratText.Add('<div class="notes">');
+          SuratText.Add('  <strong>Petunjuk Pengambilan Barang Gudang:</strong>');
+          SuratText.Add('  <ol>');
+          SuratText.Add('    <li>Cetak / simpan dokumen ini dan minta tanda tangan dari Penanggung Jawab ' + CboBidang.Text + '.</li>');
+          SuratText.Add('    <li>Serahkan dokumen fisik ber-TTD ke Petugas Gudang DLH saat verifikasi pengambilan.</li>');
+          SuratText.Add('    <li>Unggah foto/scan surat ber-TTD pada menu Validasi Aplikasi untuk pemotongan stok otomatis.</li>');
+          SuratText.Add('  </ol>');
+          SuratText.Add('</div>');
+
+          // TTD Pemohon (Ditulis Bidang Mewakilkan / Penanggung Jawab) & Petugas Gudang
+          SuratText.Add('<table class="sig-table">');
+          SuratText.Add('  <tr>');
+          SuratText.Add('    <td>Petugas Gudang DLH,<div class="sig-space"></div><div class="sig-name">( .................................................... )</div></td>');
+          SuratText.Add('    <td>Pemohon / Penanggung Jawab<br><b>' + CboBidang.Text + '</b><div class="sig-space"></div><div class="sig-name">( .................................................... )</div></td>');
+          SuratText.Add('  </tr>');
+          SuratText.Add('</table>');
+
+          SuratText.Add('<script>window.onload = function() { window.print(); };</script>');
+          SuratText.Add('</body>');
+          SuratText.Add('</html>');
+
+          SuratText.SaveToFile(SaveDialog1.FileName, TEncoding.UTF8);
+          ShellExecute(0, 'open', PChar(SaveDialog1.FileName), nil, nil, SW_SHOWNORMAL);
+
+          ShowMessage('PENGAJUAN BERHASIL DISIMPAN & SURAT IZIN TERUNDUH!' + sLineBreak + sLineBreak +
+                      'No. Pengajuan: ' + NoPengajuan + sLineBreak +
+                      'File Surat Izin: ' + SaveDialog1.FileName);
+        finally
+          SuratText.Free;
         end;
-
-        SuratText.Add('--------------------------------------------------------------------------------');
-        SuratText.Add('');
-        SuratText.Add('Petunjuk Pengambilan Barang:');
-        SuratText.Add('1. Cetak / simpan surat ini dan minta tanda tangan penanggung jawab Bidang Pemohon.');
-        SuratText.Add('2. Serahkan dokumen fisik ke Petugas Gudang DLH untuk verifikasi pengambilan.');
-        SuratText.Add('3. Unggah foto/scan surat ber-TTD pada menu Validasi Aplikasi untuk pemotongan stok.');
-        SuratText.Add('');
-        SuratText.Add('                                           Banjarmasin, ' + FormatDateTime('dd mmmm yyyy', Now));
-        SuratText.Add('  Petugas Gudang,                          Pemohon / Penanggung Jawab,');
-        SuratText.Add('');
-        SuratText.Add('');
-        SuratText.Add('  ( ....................... )              ( ....................... )');
-        SuratText.Add('================================================================================');
-
-        SuratText.SaveToFile(SaveDialog1.FileName, TEncoding.UTF8);
-        ShowMessage('PENGAJUAN BERHASIL DISIMPAN & SURAT IZIN TERUNDUH!' + sLineBreak + sLineBreak +
-                    'No. Pengajuan: ' + NoPengajuan + sLineBreak +
-                    'Surat Izin telah diunduh ke: ' + SaveDialog1.FileName + sLineBreak + sLineBreak +
-                    'Silakan selesaikan pengambilan barang & upload bukti fisik pada Menu Validasi.');
-      finally
-        SuratText.Free;
       end;
     end
     else
     begin
       ShowMessage('PENGAJUAN BERHASIL DISIMPAN!' + sLineBreak +
-                  'No. Pengajuan: ' + NoPengajuan + sLineBreak +
-                  'Status: PENDING (Menunggu Validasi Bukti TTD Fisik)');
+                  'No. Pengajuan: ' + NoPengajuan);
     end;
 
     // Reset Form
