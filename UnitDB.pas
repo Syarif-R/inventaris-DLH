@@ -69,6 +69,11 @@ begin
     except
     end;
 
+    try
+      Koneksi.ExecSQL('ALTER TABLE Tabel_Barang ADD COLUMN Harga_Satuan REAL DEFAULT 0');
+    except
+    end;
+
     if not QBarang.Active then
       QBarang.Open;
   except

@@ -119,6 +119,22 @@ object Form1: TForm1
       TabOrder = 4
       OnClick = BtnMasterClick
     end
+    object BtnStockOpname: TButton
+      Left = 20
+      Top = 284
+      Width = 160
+      Height = 45
+      Cursor = crHandPoint
+      Caption = '6. Laporan Stock Opname'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -12
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 5
+      OnClick = BtnStockOpnameClick
+    end
   end
   object PnlUtama: TPanel
     Left = 200

@@ -17,6 +17,7 @@ type
     BtnValidasi: TButton;
     BtnHistory: TButton;
     BtnMaster: TButton;
+    BtnStockOpname: TButton;
     PnlUtama: TPanel;
     PnlCharts: TGridPanel;
     ChartTanaman: TChart;
@@ -42,6 +43,7 @@ type
     procedure BtnValidasiClick(Sender: TObject);
     procedure BtnHistoryClick(Sender: TObject);
     procedure BtnMasterClick(Sender: TObject);
+    procedure BtnStockOpnameClick(Sender: TObject);
     procedure EdCariChange(Sender: TObject);
     procedure CmbKategoriChange(Sender: TObject);
     procedure ChkHideZeroClick(Sender: TObject);
@@ -62,7 +64,7 @@ var
 
 implementation
 
-uses Unit2, Unit3, Unit4, Unit5, Unit6, UnitDB;
+uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, UnitDB;
 
 {$R *.dfm}
 
@@ -335,6 +337,12 @@ end;
 procedure TForm1.BtnMasterClick(Sender: TObject);
 begin
   Form6.ShowModal;
+  TampilDataAwal;
+end;
+
+procedure TForm1.BtnStockOpnameClick(Sender: TObject);
+begin
+  Form7.ShowModal;
   TampilDataAwal;
 end;
 
