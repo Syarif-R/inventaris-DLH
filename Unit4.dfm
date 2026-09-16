@@ -24,6 +24,8 @@ object Form4: TForm4
     Color = clWhitesmoke
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 798
+    ExplicitHeight = 592
     object PnlHeader: TPanel
       Left = 0
       Top = 0
@@ -34,6 +36,7 @@ object Form4: TForm4
       Color = 3308846
       ParentBackground = False
       TabOrder = 0
+      ExplicitWidth = 798
       DesignSize = (
         800
         60)
@@ -65,6 +68,7 @@ object Form4: TForm4
         ParentFont = False
         TabOrder = 0
         OnClick = BtnKembaliClick
+        ExplicitLeft = 668
       end
     end
     object PnlKiri: TPanel
@@ -81,6 +85,7 @@ object Form4: TForm4
       Padding.Bottom = 20
       ParentBackground = False
       TabOrder = 1
+      ExplicitHeight = 532
       object LblPengajuan: TLabel
         Left = 20
         Top = 15
@@ -164,10 +169,10 @@ object Form4: TForm4
         ParentBackground = False
         TabOrder = 3
         object LblInfo: TLabel
-          Left = 12
-          Top = 12
-          Width = 267
-          Height = 51
+          Left = 0
+          Top = 0
+          Width = 316
+          Height = 106
           Align = alClient
           Caption = 
             'INFO: Stok di aplikasi belum terpotong sebelum dokumen fisik ber' +
@@ -179,6 +184,10 @@ object Form4: TForm4
           Font.Style = [fsItalic]
           ParentFont = False
           WordWrap = True
+          ExplicitLeft = 12
+          ExplicitTop = 12
+          ExplicitWidth = 267
+          ExplicitHeight = 51
         end
       end
     end
@@ -196,10 +205,12 @@ object Form4: TForm4
       Padding.Bottom = 20
       ParentBackground = False
       TabOrder = 2
+      ExplicitWidth = 438
+      ExplicitHeight = 532
       object LblPreview: TLabel
         Left = 20
         Top = 15
-        Width = 135
+        Width = 400
         Height = 20
         Align = alTop
         Caption = 'Pratinjau Dokumen'
@@ -209,16 +220,19 @@ object Form4: TForm4
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitWidth = 135
       end
       object ImgBukti: TImage
         Left = 20
-        Top = 45
+        Top = 35
         Width = 400
-        Height = 400
+        Height = 430
         Align = alClient
         Center = True
         Proportional = True
         Stretch = True
+        ExplicitTop = 45
+        ExplicitHeight = 400
       end
       object BtnValidasi: TButton
         Left = 20
@@ -236,6 +250,8 @@ object Form4: TForm4
         ParentFont = False
         TabOrder = 0
         OnClick = BtnValidasiClick
+        ExplicitTop = 457
+        ExplicitWidth = 398
       end
     end
   end

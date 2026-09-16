@@ -25,6 +25,8 @@ object Form5: TForm5
     Color = clWhitesmoke
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 998
+    ExplicitHeight = 592
     object PnlHeader: TPanel
       Left = 0
       Top = 0
@@ -35,13 +37,14 @@ object Form5: TForm5
       Color = 3308846
       ParentBackground = False
       TabOrder = 0
+      ExplicitWidth = 998
       DesignSize = (
         1000
         60)
       object LblJudul: TLabel
         Left = 20
         Top = 15
-        Width = 277
+        Width = 254
         Height = 25
         Caption = 'Riwayat Transaksi & Audit Log'
         Font.Charset = DEFAULT_CHARSET
@@ -66,6 +69,7 @@ object Form5: TForm5
         ParentFont = False
         TabOrder = 0
         OnClick = BtnKembaliClick
+        ExplicitLeft = 868
       end
     end
     object PnlFilter: TPanel
@@ -78,13 +82,14 @@ object Form5: TForm5
       Color = clWhite
       ParentBackground = False
       TabOrder = 1
+      ExplicitWidth = 998
       DesignSize = (
         1000
         65)
       object LblKategori: TLabel
         Left = 20
         Top = 10
-        Width = 99
+        Width = 98
         Height = 15
         Caption = 'Kategori Riwayat:'
         Font.Charset = DEFAULT_CHARSET
@@ -97,7 +102,7 @@ object Form5: TForm5
       object LblCari: TLabel
         Left = 240
         Top = 10
-        Width = 73
+        Width = 71
         Height = 15
         Caption = 'Cari Riwayat:'
         Font.Charset = DEFAULT_CHARSET
@@ -110,7 +115,7 @@ object Form5: TForm5
       object LblDari: TLabel
         Left = 470
         Top = 10
-        Width = 72
+        Width = 71
         Height = 15
         Caption = 'Dari Tanggal:'
         Font.Charset = DEFAULT_CHARSET
@@ -123,7 +128,7 @@ object Form5: TForm5
       object LblSampai: TLabel
         Left = 595
         Top = 10
-        Width = 67
+        Width = 65
         Height = 15
         Caption = 's/d Tanggal:'
         Font.Charset = DEFAULT_CHARSET
@@ -172,7 +177,7 @@ object Form5: TForm5
         Width = 115
         Height = 25
         Date = 46279.000000000000000000
-        Time = 0.000000000000000000
+        Time = 46279.000000000000000000
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -188,7 +193,7 @@ object Form5: TForm5
         Width = 115
         Height = 25
         Date = 46279.000000000000000000
-        Time = 0.000000000000000000
+        Time = 46279.000000000000000000
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -228,6 +233,7 @@ object Form5: TForm5
         ParentFont = False
         TabOrder = 5
         OnClick = BtnCetakClick
+        ExplicitLeft = 828
       end
     end
     object GridHistory: TStringGrid
@@ -242,6 +248,8 @@ object Form5: TForm5
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
       TabOrder = 2
       OnDblClick = GridHistoryDblClick
+      ExplicitWidth = 998
+      ExplicitHeight = 417
       ColWidths = (
         50
         100
@@ -261,10 +269,12 @@ object Form5: TForm5
       Color = clWhite
       ParentBackground = False
       TabOrder = 3
+      ExplicitTop = 542
+      ExplicitWidth = 998
       object LblTotalRecord: TLabel
         Left = 20
         Top = 6
-        Width = 236
+        Width = 231
         Height = 17
         Caption = 'Total Riwayat Ditemukan: 0 Transaksi'
         Font.Charset = DEFAULT_CHARSET
@@ -277,9 +287,11 @@ object Form5: TForm5
       object LblPetunjuk: TLabel
         Left = 20
         Top = 26
-        Width = 478
+        Width = 474
         Height = 15
-        Caption = 'Petunjuk: Double-click pada baris riwayat untuk melihat rincian transaksi secara lengkap.'
+        Caption = 
+          'Petunjuk: Double-click pada baris riwayat untuk melihat rincian ' +
+          'transaksi secara lengkap.'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clGrayText
         Font.Height = -12

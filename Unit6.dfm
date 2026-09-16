@@ -25,6 +25,8 @@ object Form6: TForm6
     Color = clWhitesmoke
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 898
+    ExplicitHeight = 592
     object PnlHeader: TPanel
       Left = 0
       Top = 0
@@ -35,13 +37,14 @@ object Form6: TForm6
       Color = 3308846
       ParentBackground = False
       TabOrder = 0
+      ExplicitWidth = 898
       DesignSize = (
         900
         60)
       object LblJudul: TLabel
         Left = 20
         Top = 15
-        Width = 370
+        Width = 434
         Height = 25
         Caption = 'Kelola Master Data Barang (Tambah, Edit, Hapus)'
         Font.Charset = DEFAULT_CHARSET
@@ -66,6 +69,7 @@ object Form6: TForm6
         ParentFont = False
         TabOrder = 0
         OnClick = BtnKembaliClick
+        ExplicitLeft = 768
       end
     end
     object PnlKiri: TPanel
@@ -82,12 +86,65 @@ object Form6: TForm6
       Padding.Bottom = 20
       ParentBackground = False
       TabOrder = 1
+      ExplicitHeight = 532
       object LblKode: TLabel
         Left = 20
         Top = 15
-        Width = 113
+        Width = 121
         Height = 17
         Caption = 'Kode Rekening Bar:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object LblNama: TLabel
+        Left = 20
+        Top = 70
+        Width = 168
+        Height = 17
+        Caption = 'Nama Barang / Persediaan:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object LblKategori: TLabel
+        Left = 20
+        Top = 125
+        Width = 103
+        Height = 17
+        Caption = 'Kategori Barang:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object LblSatuan: TLabel
+        Left = 20
+        Top = 180
+        Width = 93
+        Height = 17
+        Caption = 'Satuan Barang:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object LblStok: TLabel
+        Left = 190
+        Top = 180
+        Width = 103
+        Height = 17
+        Caption = 'Stok Sisa / Awal:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -109,19 +166,6 @@ object Form6: TForm6
         TabOrder = 0
         OnKeyPress = EdtKodeKeyPress
       end
-      object LblNama: TLabel
-        Left = 20
-        Top = 70
-        Width = 152
-        Height = 17
-        Caption = 'Nama Barang / Persediaan:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
       object EdtNama: TEdit
         Left = 20
         Top = 90
@@ -134,19 +178,6 @@ object Form6: TForm6
         Font.Style = []
         ParentFont = False
         TabOrder = 1
-      end
-      object LblKategori: TLabel
-        Left = 20
-        Top = 125
-        Width = 99
-        Height = 17
-        Caption = 'Kategori Barang:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
       end
       object CboKategori: TComboBox
         Left = 20
@@ -163,19 +194,6 @@ object Form6: TForm6
         TabOrder = 2
         OnChange = CboKategoriChange
       end
-      object LblSatuan: TLabel
-        Left = 20
-        Top = 180
-        Width = 91
-        Height = 17
-        Caption = 'Satuan Barang:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
       object EdtSatuan: TEdit
         Left = 20
         Top = 200
@@ -188,19 +206,6 @@ object Form6: TForm6
         Font.Style = []
         ParentFont = False
         TabOrder = 3
-      end
-      object LblStok: TLabel
-        Left = 190
-        Top = 180
-        Width = 104
-        Height = 17
-        Caption = 'Stok Sisa / Awal:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
       end
       object EdtStok: TEdit
         Left = 190
@@ -295,6 +300,8 @@ object Form6: TForm6
       Padding.Bottom = 15
       ParentBackground = False
       TabOrder = 2
+      ExplicitWidth = 538
+      ExplicitHeight = 532
       object PnlCariMaster: TPanel
         Left = 15
         Top = 15
@@ -304,12 +311,26 @@ object Form6: TForm6
         BevelOuter = bvNone
         Color = clWhite
         TabOrder = 0
+        ExplicitWidth = 508
         object LblCariMaster: TLabel
           Left = 5
           Top = 10
-          Width = 26
+          Width = 24
           Height = 15
           Caption = 'Cari:'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object LblKatFilterMaster: TLabel
+          Left = 184
+          Top = 10
+          Width = 51
+          Height = 15
+          Caption = 'Kategori:'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -321,7 +342,7 @@ object Form6: TForm6
           Left = 36
           Top = 7
           Width = 140
-          Height = 25
+          Height = 23
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -332,24 +353,11 @@ object Form6: TForm6
           TextHint = 'Nama/Kode...'
           OnChange = EdCariMasterChange
         end
-        object LblKatFilterMaster: TLabel
-          Left = 184
-          Top = 10
-          Width = 50
-          Height = 15
-          Caption = 'Kategori:'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
         object CmbKatFilterMaster: TComboBox
           Left = 238
           Top = 7
           Width = 130
-          Height = 25
+          Height = 23
           Style = csDropDownList
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -395,6 +403,8 @@ object Form6: TForm6
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
         TabOrder = 1
         OnClick = GridMasterClick
+        ExplicitWidth = 508
+        ExplicitHeight = 462
         ColWidths = (
           40
           130

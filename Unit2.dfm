@@ -25,6 +25,8 @@ object Form2: TForm2
     Color = clWhitesmoke
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 798
+    ExplicitHeight = 592
     object PnlHeader: TPanel
       Left = 0
       Top = 0
@@ -35,6 +37,10 @@ object Form2: TForm2
       Color = 3308846
       ParentBackground = False
       TabOrder = 0
+      ExplicitWidth = 798
+      DesignSize = (
+        800
+        60)
       object LblJudul: TLabel
         Left = 20
         Top = 15
@@ -63,6 +69,7 @@ object Form2: TForm2
         ParentFont = False
         TabOrder = 0
         OnClick = BtnKembaliClick
+        ExplicitLeft = 668
       end
     end
     object PnlKiri: TPanel
@@ -79,10 +86,11 @@ object Form2: TForm2
       Padding.Bottom = 20
       ParentBackground = False
       TabOrder = 1
+      ExplicitHeight = 532
       object LblCariBarang: TLabel
         Left = 20
         Top = 15
-        Width = 111
+        Width = 120
         Height = 17
         Caption = 'Cari Barang (Ketik):'
         Font.Charset = DEFAULT_CHARSET
@@ -91,21 +99,6 @@ object Form2: TForm2
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
-      end
-      object EdCariBarang: TEdit
-        Left = 20
-        Top = 37
-        Width = 300
-        Height = 25
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-        TextHint = 'Ketik nama atau kode barang (misal: peti)...'
-        OnChange = EdCariBarangChange
       end
       object LblBarang: TLabel
         Left = 20
@@ -120,26 +113,11 @@ object Form2: TForm2
         Font.Style = [fsBold]
         ParentFont = False
       end
-      object CboBarang: TComboBox
-        Left = 20
-        Top = 100
-        Width = 300
-        Height = 28
-        Style = csDropDownList
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -15
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 1
-        OnChange = CboBarangChange
-      end
       object LblHasilCari: TLabel
         Left = 20
         Top = 132
-        Width = 300
-        Height = 15
+        Width = 279
+        Height = 13
         Caption = '[Info] Ketik nama/kode barang di atas untuk mencari.'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 3308846
@@ -161,6 +139,49 @@ object Form2: TForm2
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object LblSatuan: TLabel
+        Left = 170
+        Top = 145
+        Width = 48
+        Height = 20
+        Caption = 'Satuan:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+      end
+      object EdCariBarang: TEdit
+        Left = 20
+        Top = 37
+        Width = 300
+        Height = 25
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 0
+        TextHint = 'Ketik nama atau kode barang (misal: peti)...'
+        OnChange = EdCariBarangChange
+      end
+      object CboBarang: TComboBox
+        Left = 20
+        Top = 100
+        Width = 300
+        Height = 28
+        Style = csDropDownList
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -15
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 1
+        OnChange = CboBarangChange
+      end
       object EdtJumlah: TEdit
         Left = 20
         Top = 170
@@ -175,19 +196,6 @@ object Form2: TForm2
         ParentFont = False
         TabOrder = 2
         OnKeyPress = EdtJumlahKeyPress
-      end
-      object LblSatuan: TLabel
-        Left = 170
-        Top = 145
-        Width = 48
-        Height = 20
-        Caption = 'Satuan:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -15
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
       end
       object EdtSatuan: TEdit
         Left = 170
@@ -251,6 +259,8 @@ object Form2: TForm2
       Padding.Bottom = 20
       ParentBackground = False
       TabOrder = 2
+      ExplicitWidth = 458
+      ExplicitHeight = 532
       object LblDaftar: TLabel
         Left = 20
         Top = 15
@@ -264,12 +274,13 @@ object Form2: TForm2
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
+        ExplicitWidth = 149
       end
       object GridMasuk: TStringGrid
         Left = 20
-        Top = 45
+        Top = 35
         Width = 420
-        Height = 400
+        Height = 430
         Align = alClient
         ColCount = 4
         FixedCols = 0
@@ -277,6 +288,8 @@ object Form2: TForm2
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
         TabOrder = 0
         OnDblClick = GridMasukDblClick
+        ExplicitWidth = 418
+        ExplicitHeight = 422
         ColWidths = (
           50
           200
@@ -299,6 +312,8 @@ object Form2: TForm2
         ParentFont = False
         TabOrder = 1
         OnClick = BtnSimpanClick
+        ExplicitTop = 457
+        ExplicitWidth = 418
       end
     end
   end

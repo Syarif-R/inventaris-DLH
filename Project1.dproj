@@ -1,4 +1,4 @@
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
     <PropertyGroup>
         <ProjectGuid>{79FC4BC4-1118-4E9C-8413-C3872A0DF165}</ProjectGuid>
         <ProjectVersion>20.3</ProjectVersion>
@@ -140,6 +140,9 @@
         </DCCReference>
         <DCCReference Include="Unit5.pas">
             <Form>Form5</Form>
+        </DCCReference>
+        <DCCReference Include="Unit6.pas">
+            <Form>Form6</Form>
         </DCCReference>
         <DCCReference Include="UnitDB.pas">
             <Form>ModulDB</Form>
