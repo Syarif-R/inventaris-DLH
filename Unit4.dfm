@@ -89,9 +89,9 @@ object Form4: TForm4
       object LblPengajuan: TLabel
         Left = 20
         Top = 15
-        Width = 208
+        Width = 190
         Height = 20
-        Caption = '1. Pilih Pengajuan Menunggu:'
+        Caption = 'Pilih Pengajuan Menunggu:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -15
@@ -102,9 +102,9 @@ object Form4: TForm4
       object LblUpload: TLabel
         Left = 20
         Top = 90
-        Width = 255
+        Width = 240
         Height = 20
-        Caption = '2. Upload Bukti Tanda Terima (TTD):'
+        Caption = 'Upload Bukti Berkas (PDF / Foto):'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -15
@@ -132,7 +132,7 @@ object Form4: TForm4
         Width = 320
         Height = 40
         Cursor = crHandPoint
-        Caption = 'Cari File Foto / Scan Dokumen...'
+        Caption = 'Cari File PDF / Foto Dokumen...'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -14
@@ -148,7 +148,7 @@ object Form4: TForm4
         Width = 320
         Height = 35
         Cursor = crHandPoint
-        Caption = 'Batal / Hapus Foto'
+        Caption = 'Batal / Hapus Berkas'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clRed
         Font.Height = -13
@@ -175,8 +175,9 @@ object Form4: TForm4
           Height = 106
           Align = alClient
           Caption = 
-            'INFO: Stok di aplikasi belum terpotong sebelum dokumen fisik ber' +
-            '-stempel dan tanda terima diunggah.'
+            'INFO: Stok gudang terpotong setelah dokumen fisik ber-stempel & ' +
+            'tanda terima sah diunggah. Mendukung scan berkas PDF maupun foto' +
+            ' JPG/PNG.'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -13
@@ -227,10 +228,12 @@ object Form4: TForm4
         Top = 35
         Width = 400
         Height = 430
+        Cursor = crHandPoint
         Align = alClient
         Center = True
         Proportional = True
         Stretch = True
+        OnClick = ImgBuktiClick
         ExplicitTop = 45
         ExplicitHeight = 400
       end
@@ -256,7 +259,11 @@ object Form4: TForm4
     end
   end
   object OpenDialog1: TOpenDialog
-    Filter = 'File Gambar|*.jpg;*.jpeg;*.png;*.bmp'
+    Filter = 
+      'Semua Dokumen Bukti (*.pdf;*.jpg;*.jpeg;*.png;*.bmp)|*.pdf;*.jpg;*' +
+      '.jpeg;*.png;*.bmp|Dokumen Scan PDF (*.pdf)|*.pdf|File Foto / Gam' +
+      'bar (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|Semua Fi' +
+      'le (*.*)|*.*'
     Left = 400
     Top = 20
   end

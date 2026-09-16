@@ -41,11 +41,11 @@ object Form1: TForm1
     TabOrder = 1
     object BtnMasuk: TButton
       Left = 20
-      Top = 29
+      Top = 25
       Width = 160
       Height = 45
       Cursor = crHandPoint
-      Caption = '1. Barang Masuk'
+      Caption = 'Barang Masuk'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -57,11 +57,11 @@ object Form1: TForm1
     end
     object BtnPengajuan: TButton
       Left = 20
-      Top = 80
+      Top = 78
       Width = 160
       Height = 45
       Cursor = crHandPoint
-      Caption = '2. Pengajuan Bidang'
+      Caption = 'Pengajuan Bidang'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -77,7 +77,7 @@ object Form1: TForm1
       Width = 160
       Height = 45
       Cursor = crHandPoint
-      Caption = '3. Validasi & Arsip'
+      Caption = 'Validasi & Arsip'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -87,29 +87,29 @@ object Form1: TForm1
       TabOrder = 2
       OnClick = BtnValidasiClick
     end
-    object BtnHistory: TButton
+    object BtnStockOpname: TButton
       Left = 20
-      Top = 182
+      Top = 184
       Width = 160
       Height = 45
       Cursor = crHandPoint
-      Caption = '4. Riwayat Transaksi'
+      Caption = 'Laporan Stock Opname'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -13
+      Font.Height = -12
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 3
-      OnClick = BtnHistoryClick
+      OnClick = BtnStockOpnameClick
     end
-    object BtnMaster: TButton
+    object BtnHistory: TButton
       Left = 20
-      Top = 233
+      Top = 237
       Width = 160
       Height = 45
       Cursor = crHandPoint
-      Caption = '5. Master Data Barang'
+      Caption = 'Riwayat Transaksi'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -117,23 +117,23 @@ object Form1: TForm1
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 4
-      OnClick = BtnMasterClick
+      OnClick = BtnHistoryClick
     end
-    object BtnStockOpname: TButton
+    object BtnMaster: TButton
       Left = 20
-      Top = 284
+      Top = 290
       Width = 160
       Height = 45
       Cursor = crHandPoint
-      Caption = '6. Laporan Stock Opname'
+      Caption = 'Master Data Barang'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
-      Font.Height = -12
+      Font.Height = -13
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 5
-      OnClick = BtnStockOpnameClick
+      OnClick = BtnMasterClick
     end
   end
   object PnlUtama: TPanel
@@ -199,7 +199,7 @@ object Form1: TForm1
         Title.Font.Name = 'Segoe UI'
         Title.Font.Style = [fsBold]
         Title.Text.Strings = (
-          '1. BAHAN / BIBIT TANAMAN')
+          'BAHAN / BIBIT TANAMAN')
         View3D = False
         Align = alClient
         Color = clWhite
@@ -215,7 +215,7 @@ object Form1: TForm1
         Title.Font.Name = 'Segoe UI'
         Title.Font.Style = [fsBold]
         Title.Text.Strings = (
-          '2. ALAT TULIS KANTOR')
+          'ALAT TULIS KANTOR')
         View3D = False
         Align = alClient
         Color = clWhite
@@ -231,7 +231,7 @@ object Form1: TForm1
         Title.Font.Name = 'Segoe UI'
         Title.Font.Style = [fsBold]
         Title.Text.Strings = (
-          '3. KERTAS DAN COVER')
+          'KERTAS DAN COVER')
         View3D = False
         Align = alClient
         Color = clWhite
@@ -247,7 +247,7 @@ object Form1: TForm1
         Title.Font.Name = 'Segoe UI'
         Title.Font.Style = [fsBold]
         Title.Text.Strings = (
-          '4. BAHAN KOMPUTER')
+          'BAHAN KOMPUTER')
         View3D = False
         Align = alClient
         Color = clWhite

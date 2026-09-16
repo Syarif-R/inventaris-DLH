@@ -3,7 +3,7 @@ unit Unit5;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.UITypes, Vcl.Graphics,
+  Winapi.Windows, Winapi.Messages, Winapi.ShellAPI, System.SysUtils, System.Variants, System.Classes, System.UITypes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids, Vcl.ComCtrls,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.DApt, FireDAC.Stan.Param;
 
@@ -225,17 +225,48 @@ end;
 procedure TForm5.GridHistoryDblClick(Sender: TObject);
 var
   RowIdx: Integer;
+  NoPGJ, BuktiFile, Msg: string;
+  Q: TFDQuery;
 begin
   RowIdx := GridHistory.Row;
   if (RowIdx > 0) and (GridHistory.Cells[3, RowIdx] <> '') then
   begin
-    ShowMessage('RINCIAN DETAIL TRANSAKSI:' + sLineBreak + sLineBreak +
-                'Tanggal: ' + GridHistory.Cells[1, RowIdx] + sLineBreak +
-                'Kategori Transaksi: ' + GridHistory.Cells[2, RowIdx] + sLineBreak +
-                'Kode / No Pengajuan: ' + GridHistory.Cells[3, RowIdx] + sLineBreak +
-                'Nama Barang / Subjek: ' + GridHistory.Cells[4, RowIdx] + sLineBreak +
-                'Jumlah Transaksi: ' + GridHistory.Cells[5, RowIdx] + sLineBreak +
-                'Status Database: ' + GridHistory.Cells[6, RowIdx]);
+    Msg := 'RINCIAN DETAIL TRANSAKSI:' + sLineBreak + sLineBreak +
+           'Tanggal: ' + GridHistory.Cells[1, RowIdx] + sLineBreak +
+           'Kategori Transaksi: ' + GridHistory.Cells[2, RowIdx] + sLineBreak +
+           'Kode / No Pengajuan: ' + GridHistory.Cells[3, RowIdx] + sLineBreak +
+           'Nama Barang / Subjek: ' + GridHistory.Cells[4, RowIdx] + sLineBreak +
+           'Jumlah Transaksi: ' + GridHistory.Cells[5, RowIdx] + sLineBreak +
+           'Status Database: ' + GridHistory.Cells[6, RowIdx];
+
+    NoPGJ := GridHistory.Cells[3, RowIdx];
+    BuktiFile := '';
+
+    if Pos('PENGAJUAN', GridHistory.Cells[2, RowIdx]) > 0 then
+    begin
+      Q := TFDQuery.Create(nil);
+      try
+        Q.Connection := ModulDB.Koneksi;
+        Q.SQL.Text := 'SELECT Bukti_Foto FROM Tabel_Pengajuan WHERE No_Pengajuan = :no';
+        Q.ParamByName('no').AsString := NoPGJ;
+        Q.Open;
+        if not Q.Eof then
+          BuktiFile := Q.FieldByName('Bukti_Foto').AsString;
+      finally
+        Q.Free;
+      end;
+    end;
+
+    if (BuktiFile <> '') and FileExists(BuktiFile) then
+    begin
+      Msg := Msg + sLineBreak + sLineBreak +
+             'Berkas Bukti Fisik: ' + ExtractFileName(BuktiFile) + sLineBreak +
+             'Apakah Anda ingin membuka berkas dokumen bukti ini sekarang?';
+      if MessageDlg(Msg, mtInformation, [mbYes, mbNo], 0) = mrYes then
+        ShellExecute(0, 'open', PChar(BuktiFile), nil, nil, SW_SHOWNORMAL);
+    end
+    else
+      ShowMessage(Msg);
   end;
 end;
 
