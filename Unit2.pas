@@ -91,7 +91,7 @@ implementation
 
 uses UnitDB;
 
-{ *.dfm}
+{$R *.dfm}
 
 procedure TForm2.FormCreate(Sender: TObject);
 begin

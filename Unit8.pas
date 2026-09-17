@@ -77,7 +77,7 @@ implementation
 
 uses UnitDB;
 
-{ *.dfm}
+{$R *.dfm}
 
 procedure TForm8.FormCreate(Sender: TObject);
 begin
