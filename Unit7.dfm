@@ -12,8 +12,8 @@ object Form7: TForm7
   Font.Style = []
   WindowState = wsMaximized
   OnCreate = FormCreate
-  OnShow = FormShow
   OnResize = FormResize
+  OnShow = FormShow
   TextHeight = 15
   object PnlHeader: TPanel
     Left = 0
@@ -24,10 +24,14 @@ object Form7: TForm7
     Color = 3308846
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 1078
+    DesignSize = (
+      1080
+      60)
     object LblJudul: TLabel
       Left = 20
       Top = 15
-      Width = 490
+      Width = 342
       Height = 25
       Caption = 'Laporan && Berita Acara Stock Opname'
       Font.Charset = DEFAULT_CHARSET
@@ -52,6 +56,7 @@ object Form7: TForm7
       ParentFont = False
       TabOrder = 0
       OnClick = BtnKembaliClick
+      ExplicitLeft = 958
     end
   end
   object PnlPengaturan: TPanel
@@ -68,10 +73,11 @@ object Form7: TForm7
     Padding.Bottom = 10
     ParentBackground = False
     TabOrder = 1
+    ExplicitWidth = 1078
     object LblBulan: TLabel
       Left = 20
       Top = 12
-      Width = 79
+      Width = 90
       Height = 17
       Caption = 'Periode Bulan:'
       Font.Charset = DEFAULT_CHARSET
@@ -84,7 +90,7 @@ object Form7: TForm7
     object LblTahun: TLabel
       Left = 190
       Top = 12
-      Width = 38
+      Width = 42
       Height = 17
       Caption = 'Tahun:'
       Font.Charset = DEFAULT_CHARSET
@@ -97,7 +103,7 @@ object Form7: TForm7
     object LblNoSurat: TLabel
       Left = 290
       Top = 12
-      Width = 124
+      Width = 125
       Height = 17
       Caption = 'Nomor Berita Acara:'
       Font.Charset = DEFAULT_CHARSET
@@ -110,7 +116,7 @@ object Form7: TForm7
     object LblTanggal: TLabel
       Left = 560
       Top = 12
-      Width = 124
+      Width = 131
       Height = 17
       Caption = 'Tanggal Berita Acara:'
       Font.Charset = DEFAULT_CHARSET
@@ -123,7 +129,7 @@ object Form7: TForm7
     object LblKasubbag: TLabel
       Left = 20
       Top = 75
-      Width = 195
+      Width = 202
       Height = 17
       Caption = 'Kasubbag. Umum & Kepegawaian:'
       Font.Charset = DEFAULT_CHARSET
@@ -136,7 +142,7 @@ object Form7: TForm7
     object LblPengurus: TLabel
       Left = 370
       Top = 75
-      Width = 101
+      Width = 109
       Height = 17
       Caption = 'Pengurus Barang:'
       Font.Charset = DEFAULT_CHARSET
@@ -149,7 +155,7 @@ object Form7: TForm7
     object LblKadis: TLabel
       Left = 720
       Top = 75
-      Width = 156
+      Width = 172
       Height = 17
       Caption = 'Kepala Dinas (Mengetahui):'
       Font.Charset = DEFAULT_CHARSET
@@ -224,7 +230,7 @@ object Form7: TForm7
       Width = 160
       Height = 25
       Date = 46270.000000000000000000
-      Time = 0.360000000000000000
+      Time = 0.360000000000582100
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -13
@@ -241,21 +247,21 @@ object Form7: TForm7
       Height = 22
       Caption = 'Sembunyikan Stok 0'
       Checked = True
-      State = cbChecked
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -12
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 4
+      State = cbChecked
+      TabOrder = 10
       OnClick = ChkHideZeroClick
     end
     object EdtKasubbagNama: TEdit
       Left = 20
       Top = 95
       Width = 200
-      Height = 25
+      Height = 23
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -12
@@ -269,7 +275,7 @@ object Form7: TForm7
       Left = 20
       Top = 122
       Width = 200
-      Height = 23
+      Height = 21
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clGrayText
       Font.Height = -11
@@ -283,7 +289,7 @@ object Form7: TForm7
       Left = 370
       Top = 95
       Width = 200
-      Height = 25
+      Height = 23
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -12
@@ -297,7 +303,7 @@ object Form7: TForm7
       Left = 370
       Top = 122
       Width = 200
-      Height = 23
+      Height = 21
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clGrayText
       Font.Height = -11
@@ -311,7 +317,7 @@ object Form7: TForm7
       Left = 720
       Top = 95
       Width = 230
-      Height = 25
+      Height = 23
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -12
@@ -325,7 +331,7 @@ object Form7: TForm7
       Left = 720
       Top = 122
       Width = 230
-      Height = 23
+      Height = 21
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clGrayText
       Font.Height = -11
@@ -350,10 +356,15 @@ object Form7: TForm7
     Padding.Bottom = 10
     ParentBackground = False
     TabOrder = 2
+    ExplicitTop = 652
+    ExplicitWidth = 1078
+    DesignSize = (
+      1080
+      60)
     object LblTotalNilai: TLabel
       Left = 20
       Top = 18
-      Width = 350
+      Width = 256
       Height = 23
       Caption = 'TOTAL NILAI PERSEDIAAN: Rp 0'
       Font.Charset = DEFAULT_CHARSET
@@ -368,8 +379,8 @@ object Form7: TForm7
       Top = 10
       Width = 260
       Height = 40
-      Anchors = [akTop, akRight]
       Cursor = crHandPoint
+      Anchors = [akTop, akRight]
       Caption = 'Cetak Berita Acara (HTML / PDF)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -379,14 +390,15 @@ object Form7: TForm7
       ParentFont = False
       TabOrder = 0
       OnClick = BtnCetakPDFClick
+      ExplicitLeft = 618
     end
     object BtnExportExcel: TButton
       Left = 890
       Top = 10
       Width = 170
       Height = 40
-      Anchors = [akTop, akRight]
       Cursor = crHandPoint
+      Anchors = [akTop, akRight]
       Caption = 'Export Excel (CSV)'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -396,19 +408,22 @@ object Form7: TForm7
       ParentFont = False
       TabOrder = 1
       OnClick = BtnExportExcelClick
+      ExplicitLeft = 888
     end
   end
   object GridOpname: TStringGrid
     Left = 0
-    Top = 205
+    Top = 210
     Width = 1080
-    Height = 455
+    Height = 450
     Align = alClient
     ColCount = 7
     FixedCols = 0
     RowCount = 2
     Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
     TabOrder = 3
+    ExplicitWidth = 1078
+    ExplicitHeight = 442
     ColWidths = (
       40
       180

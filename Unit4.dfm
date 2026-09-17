@@ -89,8 +89,8 @@ object Form4: TForm4
       object LblPengajuan: TLabel
         Left = 20
         Top = 15
-        Width = 190
-        Height = 20
+        Width = 172
+        Height = 17
         Caption = 'Pilih Pengajuan Menunggu:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -102,8 +102,8 @@ object Form4: TForm4
       object LblUpload: TLabel
         Left = 20
         Top = 90
-        Width = 240
-        Height = 20
+        Width = 209
+        Height = 17
         Caption = 'Upload Bukti Berkas (PDF / Foto):'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -171,7 +171,7 @@ object Form4: TForm4
         object LblInfo: TLabel
           Left = 0
           Top = 0
-          Width = 316
+          Width = 296
           Height = 106
           Align = alClient
           Caption = 
@@ -185,17 +185,15 @@ object Form4: TForm4
           Font.Style = [fsItalic]
           ParentFont = False
           WordWrap = True
-          ExplicitLeft = 12
-          ExplicitTop = 12
-          ExplicitWidth = 267
+          ExplicitWidth = 300
           ExplicitHeight = 51
         end
       end
     end
     object PnlKanan: TPanel
-      Left = 360
+      Left = 340
       Top = 60
-      Width = 440
+      Width = 460
       Height = 540
       Align = alClient
       BevelOuter = bvNone
@@ -206,13 +204,13 @@ object Form4: TForm4
       Padding.Bottom = 20
       ParentBackground = False
       TabOrder = 2
-      ExplicitWidth = 438
+      ExplicitWidth = 458
       ExplicitHeight = 532
       object LblPreview: TLabel
         Left = 20
         Top = 15
-        Width = 400
-        Height = 20
+        Width = 420
+        Height = 17
         Align = alTop
         Caption = 'Pratinjau Dokumen'
         Font.Charset = DEFAULT_CHARSET
@@ -221,13 +219,13 @@ object Form4: TForm4
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
-        ExplicitWidth = 135
+        ExplicitWidth = 120
       end
       object ImgBukti: TImage
         Left = 20
-        Top = 35
-        Width = 400
-        Height = 430
+        Top = 32
+        Width = 420
+        Height = 438
         Cursor = crHandPoint
         Align = alClient
         Center = True
@@ -235,12 +233,13 @@ object Form4: TForm4
         Stretch = True
         OnClick = ImgBuktiClick
         ExplicitTop = 45
+        ExplicitWidth = 400
         ExplicitHeight = 400
       end
       object BtnValidasi: TButton
         Left = 20
-        Top = 465
-        Width = 400
+        Top = 470
+        Width = 420
         Height = 50
         Cursor = crHandPoint
         Align = alBottom
@@ -253,17 +252,17 @@ object Form4: TForm4
         ParentFont = False
         TabOrder = 0
         OnClick = BtnValidasiClick
-        ExplicitTop = 457
-        ExplicitWidth = 398
+        ExplicitTop = 462
+        ExplicitWidth = 418
       end
     end
   end
   object OpenDialog1: TOpenDialog
     Filter = 
-      'Semua Dokumen Bukti (*.pdf;*.jpg;*.jpeg;*.png;*.bmp)|*.pdf;*.jpg;*' +
-      '.jpeg;*.png;*.bmp|Dokumen Scan PDF (*.pdf)|*.pdf|File Foto / Gam' +
-      'bar (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|Semua Fi' +
-      'le (*.*)|*.*'
+      'Semua Dokumen Bukti (*.pdf;*.jpg;*.jpeg;*.png;*.bmp)|*.pdf;*.jpg' +
+      ';*.jpeg;*.png;*.bmp|Dokumen Scan PDF (*.pdf)|*.pdf|File Foto / G' +
+      'ambar (*.jpg;*.jpeg;*.png;*.bmp)|*.jpg;*.jpeg;*.png;*.bmp|Semua ' +
+      'File (*.*)|*.*'
     Left = 400
     Top = 20
   end

@@ -109,7 +109,7 @@ object Form2: TForm2
         Top = 18
         Width = 230
         Height = 15
-        Caption = '💡 Klik barang di tabel, lalu atur di panel kanan.'
+        Caption = '[Tips] Klik barang di tabel, lalu atur di panel kanan.'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clGrayText
         Font.Height = -11
@@ -463,25 +463,9 @@ object Form2: TForm2
             OnClick = BtnPlus100Click
           end
         end
-        object BtnKetikSendiri: TButton
-          Left = 15
-          Top = 245
-          Width = 290
-          Height = 38
-          Cursor = crHandPoint
-          Caption = 'Ketik Jumlah Sendiri'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Segoe UI'
-          Font.Style = [fsBold]
-          ParentFont = False
-          TabOrder = 3
-          OnClick = BtnKetikSendiriClick
-        end
         object BtnResetBarang: TButton
           Left = 15
-          Top = 290
+          Top = 248
           Width = 290
           Height = 32
           Cursor = crHandPoint
@@ -492,26 +476,26 @@ object Form2: TForm2
           Font.Name = 'Segoe UI'
           Font.Style = [fsBold]
           ParentFont = False
-          TabOrder = 4
+          TabOrder = 3
           OnClick = BtnResetBarangClick
         end
         object PnlInfoBantuan: TPanel
           Left = 15
-          Top = 330
+          Top = 290
           Width = 290
           Height = 75
           BevelKind = bkFlat
           BevelOuter = bvNone
           Color = clInfoBk
           ParentBackground = False
-          TabOrder = 5
+          TabOrder = 4
           object LblBantuan: TLabel
             Left = 10
             Top = 8
             Width = 265
             Height = 55
             AutoSize = False
-            Caption = 'Tips: Anda bisa mengklik tombol Ketik Jumlah Sendiri, tombol +/-, atau langsung mengetik angka di kolom Jumlah Masuk pada tabel.'
+            Caption = 'Tips: Anda bisa menggunakan tombol +/- atau langsung mengetik angka pada kotak di atas maupun langsung di kolom tabel.'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11

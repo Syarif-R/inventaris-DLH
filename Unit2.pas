@@ -41,7 +41,6 @@ type
     BtnPlus10: TButton;
     BtnPlus50: TButton;
     BtnPlus100: TButton;
-    BtnKetikSendiri: TButton;
     BtnResetBarang: TButton;
     PnlInfoBantuan: TPanel;
     LblBantuan: TLabel;
@@ -69,7 +68,6 @@ type
     procedure BtnPlus10Click(Sender: TObject);
     procedure BtnPlus50Click(Sender: TObject);
     procedure BtnPlus100Click(Sender: TObject);
-    procedure BtnKetikSendiriClick(Sender: TObject);
     procedure BtnResetBarangClick(Sender: TObject);
     procedure BtnResetSemuaClick(Sender: TObject);
     procedure BtnSimpanClick(Sender: TObject);
@@ -333,7 +331,8 @@ end;
 
 procedure TForm2.GridBarangDblClick(Sender: TObject);
 begin
-  BtnKetikSendiriClick(Self);
+  EdtJumlahMasuk.SetFocus;
+  EdtJumlahMasuk.SelectAll;
 end;
 
 procedure TForm2.GridBarangSelectCell(Sender: TObject; ACol, ARow: Longint; var CanSelect: Boolean);
@@ -513,33 +512,6 @@ begin
     KodeRek := GridBarang.Cells[1, RowIdx];
     Jml := StrToIntDef(FJumlahMasukList.Values[KodeRek], 0) + 100;
     TerapkanJumlahKeGrid(KodeRek, Jml);
-    UpdateBarangTerpilih;
-  end;
-end;
-
-procedure TForm2.BtnKetikSendiriClick(Sender: TObject);
-var
-  RowIdx, JmlBaru: Integer;
-  KodeRek, NamaBrg, InputStr: string;
-begin
-  RowIdx := GridBarang.Row;
-  if (RowIdx < 1) or (RowIdx >= GridBarang.RowCount) or (GridBarang.Cells[1, RowIdx] = '') then
-  begin
-    ShowMessage('Pilih baris barang di tabel terlebih dahulu!');
-    Exit;
-  end;
-
-  KodeRek := GridBarang.Cells[1, RowIdx];
-  NamaBrg := GridBarang.Cells[2, RowIdx];
-  InputStr := GridBarang.Cells[6, RowIdx];
-
-  if InputQuery('Ketik Jumlah Masuk Sendiri',
-                'Barang: ' + NamaBrg + sLineBreak +
-                'Masukkan jumlah unit yang diterima dari Pusat:', InputStr) then
-  begin
-    JmlBaru := StrToIntDef(Trim(InputStr), 0);
-    if JmlBaru < 0 then JmlBaru := 0;
-    TerapkanJumlahKeGrid(KodeRek, JmlBaru);
     UpdateBarangTerpilih;
   end;
 end;

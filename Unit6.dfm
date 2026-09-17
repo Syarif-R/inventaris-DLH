@@ -303,15 +303,15 @@ object Form6: TForm6
       ExplicitWidth = 538
       ExplicitHeight = 532
       object PnlCariMaster: TPanel
-        Left = 15
+        Left = 20
         Top = 15
-        Width = 510
+        Width = 500
         Height = 40
         Align = alTop
         BevelOuter = bvNone
         Color = clWhite
         TabOrder = 0
-        ExplicitWidth = 508
+        ExplicitWidth = 498
         object LblCariMaster: TLabel
           Left = 5
           Top = 10
@@ -392,9 +392,9 @@ object Form6: TForm6
         end
       end
       object GridMaster: TStringGrid
-        Left = 15
+        Left = 20
         Top = 55
-        Width = 510
+        Width = 500
         Height = 470
         Align = alClient
         ColCount = 6
@@ -403,7 +403,7 @@ object Form6: TForm6
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
         TabOrder = 1
         OnClick = GridMasterClick
-        ExplicitWidth = 508
+        ExplicitWidth = 498
         ExplicitHeight = 462
         ColWidths = (
           40
