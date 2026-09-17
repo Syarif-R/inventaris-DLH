@@ -87,9 +87,25 @@ object Form1: TForm1
       TabOrder = 2
       OnClick = BtnValidasiClick
     end
-    object BtnHistory: TButton
+    object BtnArsipValidasi: TButton
       Left = 20
       Top = 184
+      Width = 160
+      Height = 45
+      Cursor = crHandPoint
+      Caption = 'Arsip Validasi'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 3
+      OnClick = BtnArsipValidasiClick
+    end
+    object BtnHistory: TButton
+      Left = 20
+      Top = 237
       Width = 160
       Height = 45
       Cursor = crHandPoint
@@ -100,12 +116,12 @@ object Form1: TForm1
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 3
+      TabOrder = 4
       OnClick = BtnHistoryClick
     end
     object BtnStockOpname: TButton
       Left = 20
-      Top = 237
+      Top = 290
       Width = 160
       Height = 45
       Cursor = crHandPoint
@@ -116,12 +132,12 @@ object Form1: TForm1
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 4
+      TabOrder = 5
       OnClick = BtnStockOpnameClick
     end
     object BtnMaster: TButton
       Left = 20
-      Top = 290
+      Top = 343
       Width = 160
       Height = 45
       Cursor = crHandPoint
@@ -132,7 +148,7 @@ object Form1: TForm1
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
-      TabOrder = 5
+      TabOrder = 6
       OnClick = BtnMasterClick
     end
   end

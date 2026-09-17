@@ -15,6 +15,7 @@ type
     BtnMasuk: TButton;
     BtnPengajuan: TButton;
     BtnValidasi: TButton;
+    BtnArsipValidasi: TButton;
     BtnHistory: TButton;
     BtnMaster: TButton;
     BtnStockOpname: TButton;
@@ -39,6 +40,7 @@ type
     procedure BtnMasukClick(Sender: TObject);
     procedure BtnPengajuanClick(Sender: TObject);
     procedure BtnValidasiClick(Sender: TObject);
+    procedure BtnArsipValidasiClick(Sender: TObject);
     procedure BtnHistoryClick(Sender: TObject);
     procedure BtnMasterClick(Sender: TObject);
     procedure BtnStockOpnameClick(Sender: TObject);
@@ -60,7 +62,7 @@ var
 
 implementation
 
-uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, UnitDB;
+uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, UnitDB;
 
 {$R *.dfm}
 
@@ -341,6 +343,12 @@ end;
 procedure TForm1.BtnValidasiClick(Sender: TObject);
 begin
   Form4.ShowModal;
+  TampilDataAwal;
+end;
+
+procedure TForm1.BtnArsipValidasiClick(Sender: TObject);
+begin
+  Form8.ShowModal;
   TampilDataAwal;
 end;
 
