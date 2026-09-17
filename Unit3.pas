@@ -212,7 +212,7 @@ begin
     Q := TFDQuery.Create(nil);
     try
       Q.Connection := ModulDB.Koneksi;
-      Q.SQL.Text := 'SELECT DISTINCT Bidang FROM Tabel_Pengajuan WHERE Bidang IS NOT NULL AND Bidang <> '' ORDER BY Bidang ASC';
+      Q.SQL.Text := 'SELECT DISTINCT Bidang FROM Tabel_Pengajuan WHERE Bidang IS NOT NULL AND Bidang <> '''' ORDER BY Bidang ASC';
       Q.Open;
       while not Q.Eof do
       begin
@@ -274,7 +274,7 @@ begin
     Q := TFDQuery.Create(nil);
     try
       Q.Connection := ModulDB.Koneksi;
-      Q.SQL.Text := 'SELECT DISTINCT Kategori FROM Tabel_Barang WHERE Kategori IS NOT NULL AND Kategori <> '' ORDER BY Kategori ASC';
+      Q.SQL.Text := 'SELECT DISTINCT Kategori FROM Tabel_Barang WHERE Kategori IS NOT NULL AND Kategori <> '''' ORDER BY Kategori ASC';
       Q.Open;
       while not Q.Eof do
       begin
@@ -882,7 +882,7 @@ begin
   try
     Q.Connection := ModulDB.Koneksi;
 
-    Q.SQL.Text := 'INSERT INTO Tabel_Pengajuan (No_Pengajuan, Tanggal, Bidang, Status) VALUES (:no, :tgl, :bidang, 'PENDING')';
+    Q.SQL.Text := 'INSERT INTO Tabel_Pengajuan (No_Pengajuan, Tanggal, Bidang, Status) VALUES (:no, :tgl, :bidang, ''PENDING'')';
     Q.ParamByName('no').AsString := NoPengajuan;
     Q.ParamByName('tgl').AsString := TglNow;
     Q.ParamByName('bidang').AsString := CboBidang.Text;
