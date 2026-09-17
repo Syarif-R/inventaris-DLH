@@ -304,12 +304,12 @@ begin
                 mtConfirmation, [mbYes, mbNo], 0) <> mrYes then Exit;
 
   // Buat Subfolder Arsip Bukti Per Bulan (format: arsip_bukti\YYYY-MM)
-  TargetDir := ExtractFilePath(ParamStr(0)) + 'arsip_bukti'' + FormatDateTime('yyyy-mm', Now);
+  TargetDir := ExtractFilePath(ParamStr(0)) + 'arsip_bukti\' + FormatDateTime('yyyy-mm', Now);
   if not DirectoryExists(TargetDir) then
     ForceDirectories(TargetDir);
 
   Ext := ExtractFileExt(SelectedFilePath);
-  TargetFile := TargetDir + ''' + NoPengajuan + '_' + FormatDateTime('hhnnss', Now) + Ext;
+  TargetFile := TargetDir + '\' + NoPengajuan + '_' + FormatDateTime('hhnnss', Now) + Ext;
 
   TglNow := FormatDateTime('yyyy-mm-dd', Now);
 
