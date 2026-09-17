@@ -155,7 +155,7 @@ begin
     Q := TFDQuery.Create(nil);
     try
       Q.Connection := ModulDB.Koneksi;
-      Q.SQL.Text := 'SELECT DISTINCT Kategori FROM Tabel_Barang WHERE Kategori IS NOT NULL AND Kategori <> \'\' ORDER BY Kategori ASC';
+      Q.SQL.Text := 'SELECT DISTINCT Kategori FROM Tabel_Barang WHERE Kategori IS NOT NULL AND Kategori <> '''' ORDER BY Kategori ASC';
       Q.Open;
       while not Q.Eof do
       begin

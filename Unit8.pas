@@ -141,7 +141,7 @@ begin
     Q := TFDQuery.Create(nil);
     try
       Q.Connection := ModulDB.Koneksi;
-      Q.SQL.Text := 'SELECT DISTINCT Bidang FROM Tabel_Pengajuan WHERE Bidang IS NOT NULL AND Bidang <> \'\' ORDER BY Bidang ASC';
+      Q.SQL.Text := 'SELECT DISTINCT Bidang FROM Tabel_Pengajuan WHERE Bidang IS NOT NULL AND Bidang <> '''' ORDER BY Bidang ASC';
       Q.Open;
       while not Q.Eof do
       begin
@@ -179,23 +179,23 @@ begin
   BulanIndex := CboBulan.ItemIndex;
   TahunStr := Trim(EdtTahun.Text);
 
-  WhereClause := 'WHERE Status = \'DIVALIDASI\' AND Bukti_Foto IS NOT NULL AND Bukti_Foto <> \'\' ';
+  WhereClause := 'WHERE Status = ''DIVALIDASI'' AND Bukti_Foto IS NOT NULL AND Bukti_Foto <> '''' ';
 
   if (BulanIndex > 0) and (TahunStr <> '') then
   begin
     BulanStr := Format('%.2d', [BulanIndex]);
-    WhereClause := WhereClause + 'AND strftime(\'%Y-%m\', Tanggal) = \'' + TahunStr + '-' + BulanStr + '\' ';
+    WhereClause := WhereClause + 'AND strftime(''%Y-%m'', Tanggal) = ''' + TahunStr + '-' + BulanStr + ''' ';
   end
   else if TahunStr <> '' then
   begin
-    WhereClause := WhereClause + 'AND strftime(\'%Y\', Tanggal) = \'' + TahunStr + '\' ';
+    WhereClause := WhereClause + 'AND strftime(''%Y'', Tanggal) = ''' + TahunStr + ''' ';
   end;
 
   if ChkFilterTanggal.Checked then
   begin
     TglAwal := FormatDateTime('yyyy-mm-dd', DTPDari.Date);
     TglAkhir := FormatDateTime('yyyy-mm-dd', DTPSampai.Date);
-    WhereClause := WhereClause + 'AND Tanggal >= \'' + TglAwal + '\' AND Tanggal <= \'' + TglAkhir + '\' ';
+    WhereClause := WhereClause + 'AND Tanggal >= ''' + TglAwal + ''' AND Tanggal <= ''' + TglAkhir + ''' ';
   end;
 
   if (SelBidang <> '') and (SelBidang <> 'Semua Bidang') then
