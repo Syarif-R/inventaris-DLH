@@ -151,6 +151,82 @@ object Form1: TForm1
       TabOrder = 6
       OnClick = BtnMasterClick
     end
+    object PnlAlertBox: TPanel
+      Left = 12
+      Top = 405
+      Width = 176
+      Height = 185
+      BevelKind = bkFlat
+      BevelOuter = bvNone
+      Color = clWhite
+      ParentBackground = False
+      TabOrder = 7
+      object LblAlertJudul: TLabel
+        Left = 10
+        Top = 8
+        Width = 156
+        Height = 15
+        Alignment = taCenter
+        AutoSize = False
+        Caption = 'STATUS & PERINGATAN'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 3308846
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object BtnAlertStok: TButton
+        Left = 8
+        Top = 30
+        Width = 156
+        Height = 44
+        Cursor = crHandPoint
+        Caption = 'Barang Kritis: -'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 0
+        WordWrap = True
+        OnClick = BtnAlertStokClick
+      end
+      object BtnAlertPending: TButton
+        Left = 8
+        Top = 80
+        Width = 156
+        Height = 44
+        Cursor = crHandPoint
+        Caption = 'Validasi Pending: -'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 1
+        WordWrap = True
+        OnClick = BtnAlertPendingClick
+      end
+      object BtnRefreshDashboard: TButton
+        Left = 8
+        Top = 132
+        Width = 156
+        Height = 36
+        Cursor = crHandPoint
+        Caption = '🔄 Segarkan Status'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 2
+        OnClick = BtnRefreshDashboardClick
+      end
+    end
   end
   object PnlUtama: TPanel
     Left = 200

@@ -74,7 +74,7 @@ object Form4: TForm4
     object PnlKiri: TPanel
       Left = 0
       Top = 60
-      Width = 340
+      Width = 460
       Height = 540
       Align = alLeft
       BevelOuter = bvNone
@@ -85,26 +85,12 @@ object Form4: TForm4
       Padding.Bottom = 20
       ParentBackground = False
       TabOrder = 1
-      ExplicitHeight = 532
       object LblPengajuan: TLabel
         Left = 20
-        Top = 15
-        Width = 172
+        Top = 12
+        Width = 420
         Height = 17
-        Caption = 'Pilih Pengajuan Menunggu:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object LblUpload: TLabel
-        Left = 20
-        Top = 90
-        Width = 209
-        Height = 17
-        Caption = 'Upload Bukti Berkas (PDF / Foto):'
+        Caption = 'Pilih Pengajuan Menunggu Validasi:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -114,8 +100,8 @@ object Form4: TForm4
       end
       object CboPengajuan: TComboBox
         Left = 20
-        Top = 40
-        Width = 300
+        Top = 32
+        Width = 420
         Height = 25
         Style = csDropDownList
         Font.Charset = DEFAULT_CHARSET
@@ -125,75 +111,161 @@ object Form4: TForm4
         Font.Style = []
         ParentFont = False
         TabOrder = 0
+        OnChange = CboPengajuanChange
       end
-      object BtnUpload: TButton
+      object LblDetailJudul: TLabel
         Left = 20
-        Top = 120
-        Width = 300
-        Height = 40
-        Cursor = crHandPoint
-        Caption = 'Cari File PDF / Foto Dokumen...'
+        Top = 64
+        Width = 420
+        Height = 17
+        Caption = 'Daftar Barang yang Diajukan (Mohon Diperiksa):'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -14
+        Font.Color = 3308846
+        Font.Height = -12
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 1
-        OnClick = BtnUploadClick
       end
-      object BtnResetFoto: TButton
+      object GridDetailPengajuan: TStringGrid
         Left = 20
-        Top = 168
-        Width = 300
-        Height = 35
-        Cursor = crHandPoint
-        Caption = 'Batal / Hapus Berkas'
+        Top = 84
+        Width = 420
+        Height = 145
+        ColCount = 5
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
+        TabOrder = 1
+        ColWidths = (
+          30
+          180
+          60
+          60
+          70)
+      end
+      object LblRingkasanDetail: TLabel
+        Left = 20
+        Top = 233
+        Width = 420
+        Height = 17
+        Caption = 'Total: 0 Jenis Barang (0 Unit Fisik)'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -13
+        Font.Color = clGrayText
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object BtnCetakUlangSurat: TButton
+        Left = 20
+        Top = 255
+        Width = 205
+        Height = 36
+        Cursor = crHandPoint
+        Caption = 'Cetak / Lihat Surat'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 2
+        OnClick = BtnCetakUlangSuratClick
+      end
+      object BtnTolakPengajuan: TButton
+        Left = 235
+        Top = 255
+        Width = 205
+        Height = 36
+        Cursor = crHandPoint
+        Caption = 'Tolak / Batalkan'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 3
+        OnClick = BtnTolakPengajuanClick
+      end
+      object LblUpload: TLabel
+        Left = 20
+        Top = 300
+        Width = 420
+        Height = 17
+        Caption = 'Upload Bukti Berkas Bertanda Tangan (PDF / Foto):'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object BtnUpload: TButton
+        Left = 20
+        Top = 322
+        Width = 420
+        Height = 38
+        Cursor = crHandPoint
+        Caption = 'Cari File PDF / Foto Dokumen...'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 4
+        OnClick = BtnUploadClick
+      end
+      object BtnResetFoto: TButton
+        Left = 20
+        Top = 364
+        Width = 420
+        Height = 30
+        Cursor = crHandPoint
+        Caption = 'Batal / Hapus Berkas'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clRed
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 5
         OnClick = BtnResetFotoClick
       end
       object PnlStatus: TPanel
         Left = 20
-        Top = 215
-        Width = 300
-        Height = 110
+        Top = 400
+        Width = 420
+        Height = 70
         BevelKind = bkFlat
         BevelOuter = bvNone
         Color = clInfoBk
         ParentBackground = False
-        TabOrder = 3
+        TabOrder = 6
         object LblInfo: TLabel
           Left = 0
           Top = 0
-          Width = 296
-          Height = 106
+          Width = 416
+          Height = 66
           Align = alClient
           Caption = 
-            'INFO: Stok gudang terpotong setelah dokumen fisik ber-stempel & ' +
-            'tanda terima sah diunggah. Mendukung scan berkas PDF maupun foto' +
-            ' JPG/PNG.'
+            'INFO: Pastikan rincian barang pada tabel cocok dengan fisik ' +
+            'dokumen tanda terima sebelum melakukan pemotongan stok.'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
-          Font.Height = -13
+          Font.Height = -11
           Font.Name = 'Segoe UI'
           Font.Style = [fsItalic]
           ParentFont = False
           WordWrap = True
-          ExplicitWidth = 300
-          ExplicitHeight = 51
         end
       end
     end
     object PnlKanan: TPanel
-      Left = 340
+      Left = 460
       Top = 60
-      Width = 460
+      Width = 340
       Height = 540
       Align = alClient
       BevelOuter = bvNone

@@ -176,14 +176,6 @@ begin
     GridBarang.ColWidths[5] := 80;
     GridBarang.ColWidths[6] := 110;
   end;
-
-  // Pastikan posisi Bidang Pemohon selalu tepat berada di atas panel Jumlah Pengajuan (PnlKontelKanan)
-  if (PnlKontelKanan <> nil) and (LblBidang <> nil) and (CboBidang <> nil) then
-  begin
-    LblBidang.Left := PnlKontelKanan.Left + 5;
-    CboBidang.Left := PnlKontelKanan.Left + 115;
-    CboBidang.Width := PnlKontelKanan.Width - 125;
-  end;
 end;
 
 procedure TForm3.BtnKembaliClick(Sender: TObject);

@@ -72,7 +72,7 @@ object Form2: TForm2
       Left = 0
       Top = 60
       Width = 1000
-      Height = 55
+      Height = 85
       Align = alTop
       BevelOuter = bvNone
       Color = clWhite
@@ -80,7 +80,7 @@ object Form2: TForm2
       TabOrder = 1
       object LblCari: TLabel
         Left = 20
-        Top = 18
+        Top = 14
         Width = 98
         Height = 15
         Caption = 'Cari Cepat Barang:'
@@ -92,8 +92,8 @@ object Form2: TForm2
         ParentFont = False
       end
       object LblKategori: TLabel
-        Left = 370
-        Top = 18
+        Left = 360
+        Top = 14
         Width = 51
         Height = 15
         Caption = 'Kategori:'
@@ -105,10 +105,11 @@ object Form2: TForm2
         ParentFont = False
       end
       object LblPetunjukCepat: TLabel
-        Left = 750
-        Top = 18
-        Width = 230
+        Left = 720
+        Top = 14
+        Width = 260
         Height = 15
+        Anchors = [akTop, akRight]
         Caption = '[Tips] Klik barang di tabel, lalu atur di panel kanan.'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clGrayText
@@ -119,8 +120,8 @@ object Form2: TForm2
       end
       object EdCari: TEdit
         Left = 125
-        Top = 14
-        Width = 230
+        Top = 10
+        Width = 220
         Height = 25
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -133,9 +134,9 @@ object Form2: TForm2
         OnChange = EdCariChange
       end
       object CboKategori: TComboBox
-        Left = 430
-        Top = 14
-        Width = 150
+        Left = 418
+        Top = 10
+        Width = 145
         Height = 25
         Style = csDropDownList
         Font.Charset = DEFAULT_CHARSET
@@ -148,9 +149,9 @@ object Form2: TForm2
         OnChange = CboKategoriChange
       end
       object BtnResetCari: TButton
-        Left = 590
-        Top = 13
-        Width = 145
+        Left = 572
+        Top = 9
+        Width = 135
         Height = 27
         Caption = 'Tampilkan Semua'
         Font.Charset = DEFAULT_CHARSET
@@ -161,6 +162,60 @@ object Form2: TForm2
         ParentFont = False
         TabOrder = 2
         OnClick = BtnResetCariClick
+      end
+      object LblNoDokumen: TLabel
+        Left = 20
+        Top = 50
+        Width = 128
+        Height = 15
+        Caption = 'No. Surat Jalan / BAST:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 3308846
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object EdtNoDokumen: TEdit
+        Left = 155
+        Top = 46
+        Width = 210
+        Height = 25
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 3
+        TextHint = 'No. SJ / Faktur / BAST...'
+      end
+      object LblAsalBarang: TLabel
+        Left = 380
+        Top = 50
+        Width = 150
+        Height = 15
+        Caption = 'Asal Rekanan / Pengadaan:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 3308846
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object EdtAsalBarang: TEdit
+        Left = 538
+        Top = 46
+        Width = 260
+        Height = 25
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 4
+        TextHint = 'Contoh: CV. Rekanan / APBD 2026...'
       end
     end
     object PnlBawah: TPanel
@@ -562,5 +617,9 @@ object Form2: TForm2
         end
       end
     end
+  end
+  object SaveDialog1: TSaveDialog
+    Left = 480
+    Top = 350
   end
 end

@@ -24,6 +24,8 @@ type
     EdtSatuan: TEdit;
     LblStok: TLabel;
     EdtStok: TEdit;
+    LblHarga: TLabel;
+    EdtHarga: TEdit;
     BtnTambah: TButton;
     BtnEdit: TButton;
     BtnHapus: TButton;
@@ -146,13 +148,14 @@ begin
   Self.Caption := 'Kelola Master Data Barang - DLH Banjarmasin';
   Self.WindowState := wsMaximized;
 
-  GridMaster.ColCount := 6;
+  GridMaster.ColCount := 7;
   GridMaster.Cells[0, 0] := 'No';
   GridMaster.Cells[1, 0] := 'Kode Rekening';
   GridMaster.Cells[2, 0] := 'Nama Persediaan';
   GridMaster.Cells[3, 0] := 'Kategori';
   GridMaster.Cells[4, 0] := 'Satuan';
   GridMaster.Cells[5, 0] := 'Stok Sisa';
+  GridMaster.Cells[6, 0] := 'Harga Satuan (Rp)';
 
   LoadKategoriCombo;
 end;
@@ -168,15 +171,16 @@ procedure TForm6.FormResize(Sender: TObject);
 var
   SisaLebar: Integer;
 begin
-  SisaLebar := GridMaster.ClientWidth - 40 - 150 - 120 - 80 - 80 - 30;
+  SisaLebar := GridMaster.ClientWidth - 40 - 130 - 100 - 60 - 60 - 110 - 30;
   if SisaLebar > 150 then
   begin
     GridMaster.ColWidths[0] := 40;
-    GridMaster.ColWidths[1] := 150;
+    GridMaster.ColWidths[1] := 130;
     GridMaster.ColWidths[2] := SisaLebar;
-    GridMaster.ColWidths[3] := 120;
-    GridMaster.ColWidths[4] := 80;
-    GridMaster.ColWidths[5] := 80;
+    GridMaster.ColWidths[3] := 100;
+    GridMaster.ColWidths[4] := 60;
+    GridMaster.ColWidths[5] := 60;
+    GridMaster.ColWidths[6] := 110;
   end;
 end;
 
@@ -186,6 +190,7 @@ var
   Baris: Integer;
   SearchKey, SelectedKat, Kat: string;
   StokSisa: Integer;
+  Harga: Double;
   MatchSearch, MatchKat, MatchStok: Boolean;
 begin
   GridMaster.RowCount := 2;
@@ -198,13 +203,15 @@ begin
   Q := TFDQuery.Create(nil);
   try
     Q.Connection := ModulDB.Koneksi;
-    Q.SQL.Text := 'SELECT Kode_Rekening, Nama_Barang, Kategori, Satuan, Stok_Sisa FROM Tabel_Barang ORDER BY Nama_Barang ASC';
+    Q.SQL.Text := 'SELECT Kode_Rekening, Nama_Barang, Kategori, Satuan, Stok_Sisa, COALESCE(Harga_Satuan, 0) AS Harga_Satuan ' +
+                  'FROM Tabel_Barang ORDER BY Nama_Barang ASC';
     Q.Open;
 
     while not Q.Eof do
     begin
       Kat := Q.FieldByName('Kategori').AsString;
       StokSisa := Q.FieldByName('Stok_Sisa').AsInteger;
+      Harga := Q.FieldByName('Harga_Satuan').AsFloat;
 
       MatchSearch := (SearchKey = '') or
                      (Pos(SearchKey, LowerCase(Q.FieldByName('Kode_Rekening').AsString)) > 0) or
@@ -225,6 +232,7 @@ begin
         GridMaster.Cells[3, Baris] := Kat;
         GridMaster.Cells[4, Baris] := Q.FieldByName('Satuan').AsString;
         GridMaster.Cells[5, Baris] := IntToStr(StokSisa);
+        GridMaster.Cells[6, Baris] := FormatFloat('#,##0', Harga);
 
         Inc(Baris);
       end;
@@ -243,21 +251,39 @@ begin
   CboKategori.ItemIndex := 0;
   EdtSatuan.Clear;
   EdtStok.Text := '0';
+  EdtHarga.Text := '0';
 end;
 
 procedure TForm6.GridMasterClick(Sender: TObject);
 var
   RowIdx: Integer;
+  Kode: string;
+  Q: TFDQuery;
 begin
   RowIdx := GridMaster.Row;
   if (RowIdx > 0) and (GridMaster.Cells[1, RowIdx] <> '') then
   begin
-    EdtKode.Text := GridMaster.Cells[1, RowIdx];
+    Kode := GridMaster.Cells[1, RowIdx];
+    EdtKode.Text := Kode;
     EdtKode.Enabled := False; // Kunci Primary Key saat mode Edit
     EdtNama.Text := GridMaster.Cells[2, RowIdx];
     CboKategori.Text := GridMaster.Cells[3, RowIdx];
     EdtSatuan.Text := GridMaster.Cells[4, RowIdx];
     EdtStok.Text := GridMaster.Cells[5, RowIdx];
+
+    Q := TFDQuery.Create(nil);
+    try
+      Q.Connection := ModulDB.Koneksi;
+      Q.SQL.Text := 'SELECT COALESCE(Harga_Satuan, 0) AS Harga_Satuan FROM Tabel_Barang WHERE Kode_Rekening = :kode';
+      Q.ParamByName('kode').AsString := Kode;
+      Q.Open;
+      if not Q.Eof then
+        EdtHarga.Text := FormatFloat('0.##', Q.FieldByName('Harga_Satuan').AsFloat)
+      else
+        EdtHarga.Text := '0';
+    finally
+      Q.Free;
+    end;
   end;
 end;
 
@@ -286,14 +312,18 @@ end;
 procedure TForm6.BtnTambahClick(Sender: TObject);
 var
   Q: TFDQuery;
-  Kode, Nama, Kat, Satuan: string;
+  Kode, Nama, Kat, Satuan, HargaStr: string;
   Stok: Integer;
+  Harga: Double;
 begin
   Kode := Trim(EdtKode.Text);
   Nama := Trim(EdtNama.Text);
   Kat := CboKategori.Text;
   Satuan := Trim(EdtSatuan.Text);
   Stok := StrToIntDef(EdtStok.Text, -1);
+  HargaStr := StringReplace(StringReplace(Trim(EdtHarga.Text), '.', '', [rfReplaceAll]), ',', '.', [rfReplaceAll]);
+  Harga := StrToFloatDef(HargaStr, 0);
+  if Harga < 0 then Harga := 0;
 
   // 1. Validasi Input Kosong
   if (Kode = '') or (Nama = '') or (Kat = '') or (Satuan = '') or (Stok < 0) then
@@ -308,7 +338,8 @@ begin
                 'Nama: ' + Nama + sLineBreak +
                 'Kategori: ' + Kat + sLineBreak +
                 'Satuan: ' + Satuan + sLineBreak +
-                'Stok Awal: ' + IntToStr(Stok),
+                'Stok Awal: ' + IntToStr(Stok) + sLineBreak +
+                'Harga Satuan: Rp ' + FormatFloat('#,##0', Harga),
                 mtConfirmation, [mbYes, mbNo], 0) <> mrYes then Exit;
 
   Q := TFDQuery.Create(nil);
@@ -328,13 +359,14 @@ begin
     Q.Close;
 
     // 4. Insert Barang Baru
-    Q.SQL.Text := 'INSERT INTO Tabel_Barang (Kode_Rekening, Nama_Barang, Kategori, Satuan, Stok_Sisa) ' +
-                  'VALUES (:kode, :nama, :kat, :satuan, :stok)';
+    Q.SQL.Text := 'INSERT INTO Tabel_Barang (Kode_Rekening, Nama_Barang, Kategori, Satuan, Stok_Sisa, Harga_Satuan) ' +
+                  'VALUES (:kode, :nama, :kat, :satuan, :stok, :harga)';
     Q.ParamByName('kode').AsString := Kode;
     Q.ParamByName('nama').AsString := Nama;
     Q.ParamByName('kat').AsString := Kat;
     Q.ParamByName('satuan').AsString := Satuan;
     Q.ParamByName('stok').AsInteger := Stok;
+    Q.ParamByName('harga').AsFloat := Harga;
     Q.ExecSQL;
 
     ShowMessage('BERHASIL! Barang baru "' + Nama + '" telah ditambahkan ke Master Data.');
@@ -350,14 +382,18 @@ end;
 procedure TForm6.BtnEditClick(Sender: TObject);
 var
   Q: TFDQuery;
-  Kode, Nama, Kat, Satuan: string;
+  Kode, Nama, Kat, Satuan, HargaStr: string;
   Stok: Integer;
+  Harga: Double;
 begin
   Kode := Trim(EdtKode.Text);
   Nama := Trim(EdtNama.Text);
   Kat := CboKategori.Text;
   Satuan := Trim(EdtSatuan.Text);
   Stok := StrToIntDef(EdtStok.Text, -1);
+  HargaStr := StringReplace(StringReplace(Trim(EdtHarga.Text), '.', '', [rfReplaceAll]), ',', '.', [rfReplaceAll]);
+  Harga := StrToFloatDef(HargaStr, 0);
+  if Harga < 0 then Harga := 0;
 
   if (Kode = '') or (Nama = '') or (Kat = '') or (Satuan = '') or (Stok < 0) then
   begin
@@ -371,12 +407,13 @@ begin
   Q := TFDQuery.Create(nil);
   try
     Q.Connection := ModulDB.Koneksi;
-    Q.SQL.Text := 'UPDATE Tabel_Barang SET Nama_Barang = :nama, Kategori = :kat, Satuan = :satuan, Stok_Sisa = :stok ' +
+    Q.SQL.Text := 'UPDATE Tabel_Barang SET Nama_Barang = :nama, Kategori = :kat, Satuan = :satuan, Stok_Sisa = :stok, Harga_Satuan = :harga ' +
                   'WHERE Kode_Rekening = :kode';
     Q.ParamByName('nama').AsString := Nama;
     Q.ParamByName('kat').AsString := Kat;
     Q.ParamByName('satuan').AsString := Satuan;
     Q.ParamByName('stok').AsInteger := Stok;
+    Q.ParamByName('harga').AsFloat := Harga;
     Q.ParamByName('kode').AsString := Kode;
     Q.ExecSQL;
 

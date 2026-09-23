@@ -399,9 +399,9 @@ object Form8: TForm8
         end
         object PnlAksi: TPanel
           Left = 15
-          Top = 415
+          Top = 380
           Width = 390
-          Height = 90
+          Height = 125
           Align = alBottom
           BevelOuter = bvNone
           Color = clWhite
@@ -409,27 +409,27 @@ object Form8: TForm8
           TabOrder = 1
           object BtnBukaFile: TButton
             Left = 0
-            Top = 6
+            Top = 4
             Width = 390
-            Height = 38
+            Height = 36
             Cursor = crHandPoint
-            Caption = 'Buka Berkas Asli (PDF / Foto)'
+            Caption = 'Buka Berkas Bukti Scan / Foto (Asli)'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
-            Font.Height = -13
+            Font.Height = -12
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
             TabOrder = 0
             OnClick = BtnBukaFileClick
           end
-          object BtnBukaFolder: TButton
+          object BtnCetakTandaTerima: TButton
             Left = 0
-            Top = 48
+            Top = 44
             Width = 390
-            Height = 36
+            Height = 38
             Cursor = crHandPoint
-            Caption = 'Buka Folder Arsip di Windows Explorer'
+            Caption = 'Cetak Ulang Surat Tanda Terima Fisik (HTML)'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -12
@@ -437,6 +437,22 @@ object Form8: TForm8
             Font.Style = [fsBold]
             ParentFont = False
             TabOrder = 1
+            OnClick = BtnCetakTandaTerimaClick
+          end
+          object BtnBukaFolder: TButton
+            Left = 0
+            Top = 86
+            Width = 390
+            Height = 34
+            Cursor = crHandPoint
+            Caption = 'Buka Folder Arsip di Windows Explorer'
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -12
+            Font.Name = 'Segoe UI'
+            Font.Style = []
+            ParentFont = False
+            TabOrder = 2
             OnClick = BtnBukaFolderClick
           end
         end

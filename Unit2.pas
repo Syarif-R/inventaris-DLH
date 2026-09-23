@@ -3,8 +3,8 @@ unit Unit2;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.UITypes,
-  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids,
+  Winapi.Windows, Winapi.Messages, Winapi.ShellAPI, System.SysUtils, System.Variants, System.Classes, System.UITypes,
+  System.NetEncoding, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.DApt, FireDAC.Stan.Param;
 
 type
@@ -20,6 +20,11 @@ type
     CboKategori: TComboBox;
     BtnResetCari: TButton;
     LblPetunjukCepat: TLabel;
+    LblNoDokumen: TLabel;
+    EdtNoDokumen: TEdit;
+    LblAsalBarang: TLabel;
+    EdtAsalBarang: TEdit;
+    SaveDialog1: TSaveDialog;
     PnlBawah: TPanel;
     LblRingkasanMasuk: TLabel;
     BtnResetSemua: TButton;
@@ -114,6 +119,8 @@ begin
   FJumlahMasukList.Clear;
   LoadKategoriCombo;
   EdCari.Clear;
+  EdtNoDokumen.Clear;
+  EdtAsalBarang.Clear;
   MuatSemuaBarang;
 end;
 
@@ -547,17 +554,62 @@ begin
   end;
 end;
 
+function GetLogoBase64: string;
+var
+  ExeDir, LogoPath: string;
+  FS: TFileStream;
+  SS: TStringStream;
+begin
+  Result := '';
+  ExeDir := ExtractFilePath(ParamStr(0));
+
+  if FileExists(ExeDir + 'logo_banjarmasin.jpg') then
+    LogoPath := ExeDir + 'logo_banjarmasin.jpg'
+  else if FileExists(ExpandFileName(ExeDir + '..\..\logo_banjarmasin.jpg')) then
+    LogoPath := ExpandFileName(ExeDir + '..\..\logo_banjarmasin.jpg')
+  else if FileExists(ExpandFileName('logo_banjarmasin.jpg')) then
+    LogoPath := ExpandFileName('logo_banjarmasin.jpg')
+  else
+    Exit;
+
+  try
+    FS := TFileStream.Create(LogoPath, fmOpenRead or fmShareDenyNone);
+    try
+      SS := TStringStream.Create('');
+      try
+        TNetEncoding.Base64.Encode(FS, SS);
+        Result := SS.DataString;
+      finally
+        SS.Free;
+      end;
+    finally
+      FS.Free;
+    end;
+  except
+    Result := '';
+  end;
+end;
+
 procedure TForm2.BtnSimpanClick(Sender: TObject);
 var
-  I, Jml, TotalJenis, TotalUnit, StokLama, StokBaru: Integer;
-  KodeRek, NamaBrg, Satuan, TglNow, PesanKonfirmasi: string;
+  I, Jml, TotalJenis, TotalUnit, StokLama, StokBaru, ItemNo: Integer;
+  KodeRek, NamaBrg, Satuan, PesanKonfirmasi, TglNow: string;
+  NoPenerimaan, NoDokumen, AsalBarang, OutDir, OutPath, LogoB64, TglFormat: string;
   Q, QItem: TFDQuery;
+  BastText: TStringList;
 begin
   // 1. Validasi: Hitung apakah ada barang yang diisi > 0
   TotalJenis := 0;
   TotalUnit := 0;
+  NoDokumen := Trim(EdtNoDokumen.Text);
+  if NoDokumen = '' then NoDokumen := '-';
+  AsalBarang := Trim(EdtAsalBarang.Text);
+  if AsalBarang = '' then AsalBarang := 'Pusat / Pengadaan';
+
   PesanKonfirmasi := '===================================================' + sLineBreak +
                      'VALIDASI RINCIAN BARANG MASUK (MOHON DIPERIKSA):' + sLineBreak +
+                     'No. Dokumen/BAST : ' + NoDokumen + sLineBreak +
+                     'Asal Rekanan    : ' + AsalBarang + sLineBreak +
                      '===================================================' + sLineBreak + sLineBreak;
 
   QItem := TFDQuery.Create(nil);
@@ -615,6 +667,8 @@ begin
 
   // 3. Simpan ke Database
   TglNow := FormatDateTime('yyyy-mm-dd', Now);
+  NoPenerimaan := 'MSK-' + FormatDateTime('yyyymmdd-hhnnss', Now);
+
   ModulDB.Koneksi.StartTransaction;
   Q := TFDQuery.Create(nil);
   try
@@ -627,11 +681,15 @@ begin
       begin
         KodeRek := FJumlahMasukList.Names[I];
 
-        // Insert ke Tabel_Masuk
-        Q.SQL.Text := 'INSERT INTO Tabel_Masuk (Tanggal, Kode_Rekening, Jumlah) VALUES (:tgl, :kode, :jml)';
+        // Insert ke Tabel_Masuk dengan No_Penerimaan, No_Dokumen, dan Asal_Barang
+        Q.SQL.Text := 'INSERT INTO Tabel_Masuk (Tanggal, Kode_Rekening, Jumlah, No_Penerimaan, No_Dokumen, Asal_Barang) ' +
+                      'VALUES (:tgl, :kode, :jml, :no_msk, :no_dok, :asal)';
         Q.ParamByName('tgl').AsString := TglNow;
         Q.ParamByName('kode').AsString := KodeRek;
         Q.ParamByName('jml').AsInteger := Jml;
+        Q.ParamByName('no_msk').AsString := NoPenerimaan;
+        Q.ParamByName('no_dok').AsString := NoDokumen;
+        Q.ParamByName('asal').AsString := AsalBarang;
         Q.ExecSQL;
 
         // Update Tambah Stok di Tabel_Barang (Kolom Stok_Sisa)
@@ -643,9 +701,141 @@ begin
     end;
 
     ModulDB.Koneksi.Commit;
-    ShowMessage('PENYIMPANAN BERHASIL!' + sLineBreak + sLineBreak +
-                IntToStr(TotalJenis) + ' jenis barang masuk (' + FormatFloat('#,##0', TotalUnit) +
-                ' unit) telah resmi ditambahkan ke Stok Gudang DLH.');
+
+    // 4. Tanya Cetak BAST Inbound
+    if MessageDlg('PENYIMPANAN BERHASIL!' + sLineBreak + sLineBreak +
+                  'No. Penerimaan : ' + NoPenerimaan + sLineBreak +
+                  'No. Dokumen/BAST: ' + NoDokumen + sLineBreak +
+                  'Asal Rekanan   : ' + AsalBarang + sLineBreak +
+                  IntToStr(TotalJenis) + ' jenis barang masuk (' + FormatFloat('#,##0', TotalUnit) +
+                  ' unit) telah resmi ditambahkan ke Stok Gudang DLH.' + sLineBreak + sLineBreak +
+                  'Apakah Anda ingin mencetak Berita Acara Penerimaan Barang Masuk (BAST Inbound)?',
+                  mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    begin
+      OutDir := ExtractFilePath(ParamStr(0)) + 'arsip_surat';
+      if not DirectoryExists(OutDir) then
+        ForceDirectories(OutDir);
+
+      OutPath := OutDir + '\BAST_Penerimaan_' + NoPenerimaan + '.html';
+      LogoB64 := GetLogoBase64;
+      TglFormat := FormatDateTime('dd mmmm yyyy', Now);
+
+      BastText := TStringList.Create;
+      try
+        BastText.Add('<!DOCTYPE html>');
+        BastText.Add('<html><head><meta charset="utf-8">');
+        BastText.Add('<title>BERITA ACARA PENERIMAAN BARANG MASUK GUDANG</title>');
+        BastText.Add('<style>');
+        BastText.Add('  @page { size: A4 portrait; margin: 1.5cm; }');
+        BastText.Add('  body { font-family: Arial, sans-serif; color: #000; background: #fff; margin: 0; padding: 25px; }');
+        BastText.Add('  .kop-table { width: 100%; border-collapse: collapse; border-bottom: 3.5px solid #000; padding-bottom: 8px; margin-bottom: 12px; }');
+        BastText.Add('  .kop-logo { width: 2.31cm; height: 3.3cm; object-fit: contain; }');
+        BastText.Add('  .kop-text-container { text-align: center; vertical-align: middle; }');
+        BastText.Add('  .kop-h1 { font-family: Arial, sans-serif; font-size: 18pt; font-weight: bold; margin: 0; line-height: 1.2; text-transform: uppercase; }');
+        BastText.Add('  .kop-sub { font-family: Arial, sans-serif; font-size: 12pt; font-weight: normal; margin: 3px 0 0 0; line-height: 1.3; }');
+        BastText.Add('  .kop-city { font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold; margin: 3px 0 0 0; }');
+        BastText.Add('  .date-right { text-align: right; font-family: Arial, sans-serif; font-size: 11pt; margin-top: 10px; margin-bottom: 20px; }');
+        BastText.Add('  .doc-title { text-align: center; font-family: Arial, sans-serif; font-size: 14pt; font-weight: bold; text-decoration: underline; margin-bottom: 25px; text-transform: uppercase; }');
+        BastText.Add('  .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11pt; }');
+        BastText.Add('  .meta-table td { padding: 5px 0; vertical-align: top; }');
+        BastText.Add('  .meta-label { width: 190px; font-weight: bold; }');
+        BastText.Add('  .item-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 11pt; }');
+        BastText.Add('  .item-table th, .item-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; }');
+        BastText.Add('  .item-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; }');
+        BastText.Add('  .item-table td.center { text-align: center; }');
+        BastText.Add('  .notes { font-size: 10.5pt; margin-bottom: 35px; line-height: 1.5; }');
+        BastText.Add('  .sig-table { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 11pt; }');
+        BastText.Add('  .sig-table td { width: 50%; text-align: center; vertical-align: top; }');
+        BastText.Add('  .sig-space { height: 85px; }');
+        BastText.Add('  .sig-name { font-weight: bold; text-decoration: underline; }');
+        BastText.Add('</style>');
+        BastText.Add('</head><body>');
+
+        BastText.Add('<table class="kop-table"><tr>');
+        if LogoB64 <> '' then
+          BastText.Add('  <td style="width: 2.5cm; vertical-align: middle;"><img class="kop-logo" src="data:image/jpeg;base64,' + LogoB64 + '" alt="Logo Banjarmasin"></td>')
+        else
+          BastText.Add('  <td style="width: 2.5cm; vertical-align: middle;"><img class="kop-logo" src="logo_banjarmasin.jpg" alt="Logo Banjarmasin"></td>');
+
+        BastText.Add('  <td class="kop-text-container">');
+        BastText.Add('    <div class="kop-h1">PEMERINTAH KOTA BANJARMASIN</div>');
+        BastText.Add('    <div class="kop-h1">DINAS LINGKUNGAN HIDUP</div>');
+        BastText.Add('    <div class="kop-sub">Jalan R.E. Martadinata No.1 Gedung Blok D Banjarmasin 70111</div>');
+        BastText.Add('    <div class="kop-sub">Telp. (0511) 3363811, Fax. 3363811</div>');
+        BastText.Add('    <div class="kop-city">BANJARMASIN</div>');
+        BastText.Add('  </td></tr></table>');
+
+        BastText.Add('<div class="date-right">Banjarmasin, ' + TglFormat + '</div>');
+        BastText.Add('<div class="doc-title">BERITA ACARA PENERIMAAN BARANG MASUK GUDANG (BAST)</div>');
+
+        BastText.Add('<table class="meta-table">');
+        BastText.Add('  <tr><td class="meta-label">No. Penerimaan</td><td>: ' + NoPenerimaan + '</td></tr>');
+        BastText.Add('  <tr><td class="meta-label">No. Surat Jalan / BAST</td><td>: ' + NoDokumen + '</td></tr>');
+        BastText.Add('  <tr><td class="meta-label">Asal Rekanan / Pengadaan</td><td>: ' + AsalBarang + '</td></tr>');
+        BastText.Add('  <tr><td class="meta-label">Tanggal Penerimaan</td><td>: ' + TglNow + '</td></tr>');
+        BastText.Add('</table>');
+
+        BastText.Add('<table class="item-table"><thead><tr>');
+        BastText.Add('  <th style="width: 40px;">No</th><th style="width: 180px;">Kode Rekening</th><th>Nama Barang / Persediaan</th><th style="width: 130px;">Jumlah Masuk</th>');
+        BastText.Add('</tr></thead><tbody>');
+
+        ItemNo := 0;
+        QItem := TFDQuery.Create(nil);
+        try
+          QItem.Connection := ModulDB.Koneksi;
+          for I := 0 to FJumlahMasukList.Count - 1 do
+          begin
+            Jml := StrToIntDef(FJumlahMasukList.ValueFromIndex[I], 0);
+            if Jml > 0 then
+            begin
+              Inc(ItemNo);
+              KodeRek := FJumlahMasukList.Names[I];
+              QItem.SQL.Text := 'SELECT Nama_Barang, Satuan FROM Tabel_Barang WHERE Kode_Rekening = :k';
+              QItem.ParamByName('k').AsString := KodeRek;
+              QItem.Open;
+              if not QItem.Eof then
+              begin
+                NamaBrg := QItem.FieldByName('Nama_Barang').AsString;
+                Satuan := QItem.FieldByName('Satuan').AsString;
+              end
+              else
+              begin
+                NamaBrg := KodeRek;
+                Satuan := 'Unit';
+              end;
+              QItem.Close;
+
+              BastText.Add('  <tr>');
+              BastText.Add('    <td class="center">' + IntToStr(ItemNo) + '</td>');
+              BastText.Add('    <td>' + KodeRek + '</td>');
+              BastText.Add('    <td>' + NamaBrg + '</td>');
+              BastText.Add('    <td class="center">' + IntToStr(Jml) + ' ' + Satuan + '</td>');
+              BastText.Add('  </tr>');
+            end;
+          end;
+        finally
+          QItem.Free;
+        end;
+
+        BastText.Add('</tbody></table>');
+
+        BastText.Add('<div class="notes">');
+        BastText.Add('  <b>Catatan:</b> Barang-barang di atas telah diperiksa kondisi fisik, spesifikasi, dan kuantitasnya, serta telah dicatat secara resmi ke dalam Buku Persediaan Gudang DLH Kota Banjarmasin.');
+        BastText.Add('</div>');
+
+        BastText.Add('<table class="sig-table"><tr>');
+        BastText.Add('  <td>Pihak yang Menyerahkan (Rekanan/Pengirim)<br><b>' + AsalBarang + '</b><div class="sig-space"></div><div class="sig-name">( .................................................... )</div></td>');
+        BastText.Add('  <td>Pihak yang Menerima (Petugas Gudang)<br><b>Dinas Lingkungan Hidup</b><div class="sig-space"></div><div class="sig-name">( .................................................... )</div></td>');
+        BastText.Add('</tr></table>');
+
+        BastText.Add('</body></html>');
+
+        BastText.SaveToFile(OutPath, TEncoding.UTF8);
+        ShellExecute(0, 'open', PChar(OutPath), nil, nil, SW_SHOWNORMAL);
+      finally
+        BastText.Free;
+      end;
+    end;
 
     FJumlahMasukList.Clear;
     Self.Close;

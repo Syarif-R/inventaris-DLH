@@ -74,6 +74,21 @@ begin
     except
     end;
 
+    try
+      Koneksi.ExecSQL('ALTER TABLE Tabel_Masuk ADD COLUMN No_Penerimaan VARCHAR(50)');
+    except
+    end;
+
+    try
+      Koneksi.ExecSQL('ALTER TABLE Tabel_Masuk ADD COLUMN No_Dokumen VARCHAR(100)');
+    except
+    end;
+
+    try
+      Koneksi.ExecSQL('ALTER TABLE Tabel_Masuk ADD COLUMN Asal_Barang VARCHAR(150)');
+    except
+    end;
+
     if not QBarang.Active then
       QBarang.Open;
   except

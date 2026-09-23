@@ -19,6 +19,11 @@ type
     BtnHistory: TButton;
     BtnMaster: TButton;
     BtnStockOpname: TButton;
+    PnlAlertBox: TPanel;
+    LblAlertJudul: TLabel;
+    BtnAlertStok: TButton;
+    BtnAlertPending: TButton;
+    BtnRefreshDashboard: TButton;
     PnlUtama: TPanel;
     PnlCharts: TGridPanel;
     ChartKategori: TChart;
@@ -44,6 +49,9 @@ type
     procedure BtnHistoryClick(Sender: TObject);
     procedure BtnMasterClick(Sender: TObject);
     procedure BtnStockOpnameClick(Sender: TObject);
+    procedure BtnAlertStokClick(Sender: TObject);
+    procedure BtnAlertPendingClick(Sender: TObject);
+    procedure BtnRefreshDashboardClick(Sender: TObject);
     procedure EdCariChange(Sender: TObject);
     procedure CmbKategoriChange(Sender: TObject);
     procedure ChkHideZeroClick(Sender: TObject);
@@ -51,6 +59,7 @@ type
   private
     SeriesKategori: TBarSeries;
     SeriesTopStok: TBarSeries;
+    FFilterKritisOnly: Boolean;
     procedure InitCharts;
     procedure TampilDataAwal;
     procedure LoadKategoriCombo;
@@ -136,6 +145,7 @@ begin
   GridStok.Cells[5, 0] := 'Sisa Stok';
 
   ChkHideZero.Checked := True;
+  FFilterKritisOnly := False;
   InitCharts;
   LoadKategoriCombo;
   TampilDataAwal;
@@ -168,10 +178,37 @@ procedure TForm1.TampilDataAwal;
 var
   BarisTabel: Integer;
   SearchKey, SelectedKat, Kat, SisaStokStr: string;
-  StokSisa: Integer;
-  Q, QKat, QTop: TFDQuery;
+  StokSisa, CountKritis, CountPending: Integer;
+  Q, QKat, QTop, QAlert: TFDQuery;
   MatchSearch, MatchKat, MatchStok: Boolean;
 begin
+  // 0. Update Alert Box Status & Peringatan
+  QAlert := TFDQuery.Create(nil);
+  try
+    QAlert.Connection := ModulDB.Koneksi;
+    QAlert.SQL.Text := 'SELECT COUNT(*) FROM Tabel_Barang WHERE Stok_Sisa <= 5 AND Stok_Sisa > 0';
+    QAlert.Open;
+    CountKritis := QAlert.Fields[0].AsInteger;
+
+    QAlert.SQL.Text := 'SELECT COUNT(*) FROM Tabel_Pengajuan WHERE Status = ''PENDING''';
+    QAlert.Open;
+    CountPending := QAlert.Fields[0].AsInteger;
+
+    if FFilterKritisOnly then
+      BtnAlertStok.Caption := '🔴 Filter Kritis (' + IntToStr(CountKritis) + ' Item)'
+    else if CountKritis > 0 then
+      BtnAlertStok.Caption := '⚠️ ' + IntToStr(CountKritis) + ' Barang Kritis (<= 5)'
+    else
+      BtnAlertStok.Caption := '✅ Semua Stok Aman';
+
+    if CountPending > 0 then
+      BtnAlertPending.Caption := '⏳ ' + IntToStr(CountPending) + ' Pengajuan Pending'
+    else
+      BtnAlertPending.Caption := '✅ 0 Pengajuan Pending';
+  finally
+    QAlert.Free;
+  end;
+
   // 1. Tampilkan Data Grid Stok (Prioritaskan stok > 0 terlebih dahulu)
   GridStok.RowCount := 2;
   GridStok.Rows[1].Clear;
@@ -199,7 +236,10 @@ begin
 
       MatchKat := (SelectedKat = '') or (SelectedKat = 'Semua Kategori') or (Kat = SelectedKat);
 
-      MatchStok := not (ChkHideZero.Checked and (StokSisa <= 0));
+      if FFilterKritisOnly then
+        MatchStok := (StokSisa <= 5) and (StokSisa > 0)
+      else
+        MatchStok := not (ChkHideZero.Checked and (StokSisa <= 0));
 
       if MatchSearch and MatchKat and MatchStok then
       begin
@@ -368,6 +408,30 @@ procedure TForm1.BtnStockOpnameClick(Sender: TObject);
 begin
   Form7.ShowModal;
   TampilDataAwal;
+end;
+
+procedure TForm1.BtnAlertStokClick(Sender: TObject);
+begin
+  FFilterKritisOnly := not FFilterKritisOnly;
+  if FFilterKritisOnly then
+    ShowMessage('Memfilter tabel untuk hanya menampilkan barang dengan stok kritis (<= 5).' + sLineBreak +
+                'Klik tombol ini lagi atau tombol "Segarkan Status" untuk mematikan filter.')
+  else
+    ShowMessage('Filter stok kritis dimatikan. Menampilkan seluruh data persediaan.');
+  TampilDataAwal;
+end;
+
+procedure TForm1.BtnAlertPendingClick(Sender: TObject);
+begin
+  BtnValidasiClick(Sender);
+end;
+
+procedure TForm1.BtnRefreshDashboardClick(Sender: TObject);
+begin
+  FFilterKritisOnly := False;
+  LoadKategoriCombo;
+  TampilDataAwal;
+  ShowMessage('Status dan data dashboard berhasil disegarkan!');
 end;
 
 end.

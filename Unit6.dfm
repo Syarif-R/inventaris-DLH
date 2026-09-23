@@ -221,9 +221,36 @@ object Form6: TForm6
         ParentFont = False
         TabOrder = 4
       end
+      object LblHarga: TLabel
+        Left = 20
+        Top = 235
+        Width = 104
+        Height = 17
+        Caption = 'Harga Satuan (Rp):'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object EdtHarga: TEdit
+        Left = 20
+        Top = 255
+        Width = 320
+        Height = 25
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 5
+        Text = '0'
+      end
       object BtnTambah: TButton
         Left = 20
-        Top = 245
+        Top = 295
         Width = 320
         Height = 38
         Cursor = crHandPoint
@@ -234,12 +261,12 @@ object Form6: TForm6
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 5
+        TabOrder = 6
         OnClick = BtnTambahClick
       end
       object BtnEdit: TButton
         Left = 20
-        Top = 290
+        Top = 340
         Width = 155
         Height = 36
         Cursor = crHandPoint
@@ -250,12 +277,12 @@ object Form6: TForm6
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 6
+        TabOrder = 7
         OnClick = BtnEditClick
       end
       object BtnHapus: TButton
         Left = 185
-        Top = 290
+        Top = 340
         Width = 155
         Height = 36
         Cursor = crHandPoint
@@ -266,14 +293,14 @@ object Form6: TForm6
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 7
+        TabOrder = 8
         OnClick = BtnHapusClick
       end
       object BtnBatal: TButton
         Left = 20
-        Top = 335
+        Top = 385
         Width = 320
-        Height = 32
+        Height = 34
         Cursor = crHandPoint
         Caption = 'Batal / Reset Form'
         Font.Charset = DEFAULT_CHARSET
@@ -282,7 +309,7 @@ object Form6: TForm6
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
-        TabOrder = 8
+        TabOrder = 9
         OnClick = BtnBatalClick
       end
     end
@@ -397,7 +424,7 @@ object Form6: TForm6
         Width = 500
         Height = 470
         Align = alClient
-        ColCount = 6
+        ColCount = 7
         FixedCols = 0
         RowCount = 2
         Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
@@ -411,7 +438,8 @@ object Form6: TForm6
           180
           110
           70
-          70)
+          70
+          100)
       end
     end
   end
