@@ -152,6 +152,19 @@ object Form6: TForm6
         Font.Style = [fsBold]
         ParentFont = False
       end
+      object LblHarga: TLabel
+        Left = 20
+        Top = 235
+        Width = 117
+        Height = 17
+        Caption = 'Harga Satuan (Rp):'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
       object EdtKode: TEdit
         Left = 20
         Top = 35
@@ -220,19 +233,6 @@ object Form6: TForm6
         NumbersOnly = True
         ParentFont = False
         TabOrder = 4
-      end
-      object LblHarga: TLabel
-        Left = 20
-        Top = 235
-        Width = 104
-        Height = 17
-        Caption = 'Harga Satuan (Rp):'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
       end
       object EdtHarga: TEdit
         Left = 20

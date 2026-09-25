@@ -27,6 +27,8 @@ object Form3: TForm3
     Color = clWhitesmoke
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 998
+    ExplicitHeight = 642
     object PnlHeader: TPanel
       Left = 0
       Top = 0
@@ -37,6 +39,7 @@ object Form3: TForm3
       Color = 3308846
       ParentBackground = False
       TabOrder = 0
+      ExplicitWidth = 998
       DesignSize = (
         1000
         60)
@@ -68,6 +71,7 @@ object Form3: TForm3
         ParentFont = False
         TabOrder = 0
         OnClick = BtnKembaliClick
+        ExplicitLeft = 868
       end
     end
     object PnlFilter: TPanel
@@ -80,6 +84,7 @@ object Form3: TForm3
       Color = clWhite
       ParentBackground = False
       TabOrder = 1
+      ExplicitWidth = 998
       DesignSize = (
         1000
         55)
@@ -179,6 +184,8 @@ object Form3: TForm3
       Color = clWhite
       ParentBackground = False
       TabOrder = 2
+      ExplicitTop = 577
+      ExplicitWidth = 998
       DesignSize = (
         1000
         65)
@@ -211,6 +218,7 @@ object Form3: TForm3
         ParentFont = False
         TabOrder = 0
         OnClick = BtnResetSemuaClick
+        ExplicitLeft = 538
       end
       object BtnSimpanCetak: TButton
         Left = 690
@@ -228,6 +236,7 @@ object Form3: TForm3
         ParentFont = False
         TabOrder = 1
         OnClick = BtnSimpanCetakClick
+        ExplicitLeft = 688
       end
     end
     object PnlTengah: TPanel
@@ -240,6 +249,8 @@ object Form3: TForm3
       Color = clWhitesmoke
       ParentBackground = False
       TabOrder = 3
+      ExplicitWidth = 998
+      ExplicitHeight = 462
       object PnlKontelKanan: TPanel
         Left = 680
         Top = 0
@@ -254,6 +265,8 @@ object Form3: TForm3
         Padding.Bottom = 15
         ParentBackground = False
         TabOrder = 0
+        ExplicitLeft = 678
+        ExplicitHeight = 462
         object LblBidang: TLabel
           Left = 15
           Top = 10
@@ -389,7 +402,7 @@ object Form3: TForm3
             Left = 60
             Top = 0
             Width = 170
-            Height = 38
+            Height = 31
             Alignment = taCenter
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -553,10 +566,12 @@ object Form3: TForm3
         Padding.Bottom = 10
         ParentBackground = False
         TabOrder = 1
+        ExplicitWidth = 678
+        ExplicitHeight = 462
         object LblJudulTabel: TLabel
           Left = 15
           Top = 10
-          Width = 410
+          Width = 655
           Height = 17
           Align = alTop
           Caption = 'Daftar Seluruh Barang Persediaan Gudang (Isi Jumlah Pengajuan):'
@@ -566,12 +581,13 @@ object Form3: TForm3
           Font.Name = 'Segoe UI'
           Font.Style = [fsBold]
           ParentFont = False
+          ExplicitWidth = 410
         end
         object GridBarang: TStringGrid
           Left = 15
-          Top = 30
+          Top = 27
           Width = 655
-          Height = 430
+          Height = 433
           Align = alClient
           ColCount = 7
           FixedCols = 0
@@ -583,6 +599,8 @@ object Form3: TForm3
           OnDrawCell = GridBarangDrawCell
           OnSelectCell = GridBarangSelectCell
           OnSetEditText = GridBarangSetEditText
+          ExplicitWidth = 653
+          ExplicitHeight = 425
           ColWidths = (
             40
             140

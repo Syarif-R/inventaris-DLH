@@ -17,7 +17,6 @@ type
     BtnValidasi: TButton;
     BtnArsipValidasi: TButton;
     BtnHistory: TButton;
-    BtnMaster: TButton;
     BtnStockOpname: TButton;
     PnlAlertBox: TPanel;
     LblAlertJudul: TLabel;
@@ -35,6 +34,10 @@ type
     CmbKategori: TComboBox;
     ChkHideZero: TCheckBox;
     BtnDownload: TButton;
+    BtnTambahBarang: TButton;
+    BtnEditBarang: TButton;
+    BtnHapusBarang: TButton;
+    LblPetunjukGrid: TLabel;
     GridStok: TStringGrid;
     SaveDialog1: TSaveDialog;
 
@@ -46,7 +49,6 @@ type
     procedure BtnValidasiClick(Sender: TObject);
     procedure BtnArsipValidasiClick(Sender: TObject);
     procedure BtnHistoryClick(Sender: TObject);
-    procedure BtnMasterClick(Sender: TObject);
     procedure BtnStockOpnameClick(Sender: TObject);
     procedure BtnAlertStokClick(Sender: TObject);
     procedure BtnRefreshDashboardClick(Sender: TObject);
@@ -54,6 +56,10 @@ type
     procedure CmbKategoriChange(Sender: TObject);
     procedure ChkHideZeroClick(Sender: TObject);
     procedure BtnDownloadClick(Sender: TObject);
+    procedure BtnTambahBarangClick(Sender: TObject);
+    procedure BtnEditBarangClick(Sender: TObject);
+    procedure BtnHapusBarangClick(Sender: TObject);
+    procedure GridStokDblClick(Sender: TObject);
   private
     SeriesKategori: TBarSeries;
     SeriesTopStok: TBarSeries;
@@ -192,11 +198,13 @@ begin
     QAlert.Open;
     CountPending := QAlert.Fields[0].AsInteger;
 
-    // Tampilkan tanda / badge jumlah pending langsung di tombol menu Validasi & Arsip
+    // Tampilkan tanda / badge jumlah pending langsung di tombol menu Validasi Pengajuan
     if CountPending > 0 then
-      BtnValidasi.Caption := 'Validasi && Arsip (' + IntToStr(CountPending) + ')'
+      BtnValidasi.Caption := 'Validasi Pengajuan (' + IntToStr(CountPending) + ')'
     else
-      BtnValidasi.Caption := 'Validasi && Arsip';
+      BtnValidasi.Caption := 'Validasi Pengajuan';
+
+    BtnArsipValidasi.Caption := 'Arsip Dokumen Fisik';
 
     if FFilterKritisOnly then
       BtnAlertStok.Caption := 'Filter Kritis (' + IntToStr(CountKritis) + ' Item)'
@@ -399,10 +407,89 @@ begin
   TampilDataAwal;
 end;
 
-procedure TForm1.BtnMasterClick(Sender: TObject);
+procedure TForm1.BtnTambahBarangClick(Sender: TObject);
 begin
-  Form6.ShowModal;
+  Form6.BukaTambahBarang;
+  LoadKategoriCombo;
   TampilDataAwal;
+end;
+
+procedure TForm1.BtnEditBarangClick(Sender: TObject);
+var
+  RowIdx: Integer;
+  Kode: string;
+begin
+  RowIdx := GridStok.Row;
+  if (RowIdx <= 0) or (GridStok.Cells[1, RowIdx] = '') then
+  begin
+    MessageDlg('Pilih salah satu baris barang pada tabel terlebih dahulu untuk diedit.', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Kode := GridStok.Cells[1, RowIdx];
+  Form6.BukaEditBarang(Kode);
+  LoadKategoriCombo;
+  TampilDataAwal;
+end;
+
+procedure TForm1.GridStokDblClick(Sender: TObject);
+begin
+  BtnEditBarangClick(Sender);
+end;
+
+procedure TForm1.BtnHapusBarangClick(Sender: TObject);
+var
+  RowIdx: Integer;
+  Kode, NamaBarang: string;
+  QCheck: TFDQuery;
+  CountTrx: Integer;
+begin
+  RowIdx := GridStok.Row;
+  if (RowIdx <= 0) or (GridStok.Cells[1, RowIdx] = '') then
+  begin
+    MessageDlg('Pilih salah satu baris barang pada tabel terlebih dahulu untuk dihapus.', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Kode := GridStok.Cells[1, RowIdx];
+  NamaBarang := GridStok.Cells[2, RowIdx];
+
+  // Periksa apakah barang sudah pernah memiliki transaksi (Tabel_Masuk atau Tabel_Detail_Pengajuan)
+  QCheck := TFDQuery.Create(nil);
+  try
+    QCheck.Connection := ModulDB.Koneksi;
+    QCheck.SQL.Text := 'SELECT ' +
+                       '(SELECT COUNT(*) FROM Tabel_Masuk WHERE Kode_Rekening = :k1) + ' +
+                       '(SELECT COUNT(*) FROM Tabel_Detail_Pengajuan WHERE Kode_Rekening = :k2)';
+    QCheck.ParamByName('k1').AsString := Kode;
+    QCheck.ParamByName('k2').AsString := Kode;
+    QCheck.Open;
+    CountTrx := QCheck.Fields[0].AsInteger;
+
+    if CountTrx > 0 then
+    begin
+      MessageDlg('Barang "' + NamaBarang + '" (' + Kode + ') TIDAK DAPAT DIHAPUS' + sLineBreak +
+                 'karena sudah memiliki riwayat transaksi penerimaan / pengajuan di database.' + sLineBreak +
+                 'Hanya barang yang belum memiliki riwayat transaksi yang aman dihapus.', mtWarning, [mbOK], 0);
+      Exit;
+    end;
+
+    if MessageDlg('Apakah Anda yakin ingin menghapus barang master ini dari katalog inventaris?' + sLineBreak + sLineBreak +
+                  'Kode Rekening: ' + Kode + sLineBreak +
+                  'Nama Persediaan: ' + NamaBarang, mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    begin
+      QCheck.Close;
+      QCheck.SQL.Text := 'DELETE FROM Tabel_Barang WHERE Kode_Rekening = :k';
+      QCheck.ParamByName('k').AsString := Kode;
+      QCheck.ExecSQL;
+
+      ShowMessage('Barang "' + NamaBarang + '" berhasil dihapus dari sistem.');
+      LoadKategoriCombo;
+      TampilDataAwal;
+    end;
+  finally
+    QCheck.Free;
+  end;
 end;
 
 procedure TForm1.BtnStockOpnameClick(Sender: TObject);

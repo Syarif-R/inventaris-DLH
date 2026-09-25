@@ -13,6 +13,8 @@ type
     PnlHeader: TPanel;
     LblJudul: TLabel;
     BtnKembali: TButton;
+    PnlAlurKerja: TPanel;
+    LblAlurKerja: TLabel;
     PnlKiri: TPanel;
     LblPengajuan: TLabel;
     CboPengajuan: TComboBox;
@@ -96,7 +98,9 @@ end;
 
 procedure TForm4.FormCreate(Sender: TObject);
 begin
-  Self.Caption := 'Validasi Arsip & Pemotongan Stok Fisik - DLH Banjarmasin';
+  Self.Caption := 'Validasi Pengajuan & Pemotongan Stok Fisik - DLH Banjarmasin';
+  LblJudul.Caption := 'Validasi Pengajuan & Pemotongan Stok Fisik';
+  LblAlurKerja.Caption := 'ALUR KERJA: [1] Pilih Berkas Pending   ' + #$2794 + '   [2] Cetak Surat Pengajuan   ' + #$2794 + '   [3] Tanda Tangan Basah   ' + #$2794 + '   [4] Upload Foto Bukti   ' + #$2794 + '   [5] Validasi & Potong Stok';
   Self.WindowState := wsMaximized;
   SelectedFilePath := '';
 

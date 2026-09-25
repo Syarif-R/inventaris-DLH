@@ -1,7 +1,7 @@
 object Form4: TForm4
   Left = 0
   Top = 0
-  Caption = 'Validasi Arsip & Pemotongan Stok Fisik - DLH Banjarmasin'
+  Caption = 'Validasi Pengajuan & Pemotongan Stok Fisik - DLH Banjarmasin'
   ClientHeight = 600
   ClientWidth = 800
   Color = clBtnFace
@@ -43,9 +43,9 @@ object Form4: TForm4
       object LblJudul: TLabel
         Left = 20
         Top = 15
-        Width = 333
+        Width = 360
         Height = 25
-        Caption = 'Validasi Arsip & Pemotongan Stok Fisik'
+        Caption = 'Validasi Pengajuan & Pemotongan Stok Fisik'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -19
@@ -69,6 +69,33 @@ object Form4: TForm4
         TabOrder = 0
         OnClick = BtnKembaliClick
         ExplicitLeft = 668
+      end
+    end
+    object PnlAlurKerja: TPanel
+      Left = 0
+      Top = 60
+      Width = 800
+      Height = 36
+      Align = alTop
+      BevelOuter = bvNone
+      Color = 15792368
+      ParentBackground = False
+      TabOrder = 3
+      object LblAlurKerja: TLabel
+        Left = 20
+        Top = 9
+        Width = 740
+        Height = 17
+        Caption = 
+          'ALUR KERJA: [1] Pilih Berkas Pending  ->  [2] Cetak Surat Pengaj' +
+          'uan  ->  [3] Tanda Tangan Basah  ->  [4] Upload Foto Bukti  ->  ' +
+          '[5] Validasi & Potong Stok'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 2253338
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
       end
     end
     object PnlKiri: TPanel

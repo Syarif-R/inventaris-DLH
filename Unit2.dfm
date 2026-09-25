@@ -41,7 +41,7 @@ object Form2: TForm2
       object LblJudul: TLabel
         Left = 20
         Top = 15
-        Width = 435
+        Width = 429
         Height = 25
         Caption = 'Penerimaan Barang Masuk (Inbound dari Pusat)'
         Font.Charset = DEFAULT_CHARSET
@@ -78,10 +78,13 @@ object Form2: TForm2
       Color = clWhite
       ParentBackground = False
       TabOrder = 1
+      DesignSize = (
+        1000
+        85)
       object LblCari: TLabel
         Left = 20
         Top = 14
-        Width = 98
+        Width = 101
         Height = 15
         Caption = 'Cari Cepat Barang:'
         Font.Charset = DEFAULT_CHARSET
@@ -107,8 +110,8 @@ object Form2: TForm2
       object LblPetunjukCepat: TLabel
         Left = 720
         Top = 14
-        Width = 260
-        Height = 15
+        Width = 243
+        Height = 13
         Anchors = [akTop, akRight]
         Caption = '[Tips] Klik barang di tabel, lalu atur di panel kanan.'
         Font.Charset = DEFAULT_CHARSET
@@ -116,6 +119,32 @@ object Form2: TForm2
         Font.Height = -11
         Font.Name = 'Segoe UI'
         Font.Style = [fsItalic]
+        ParentFont = False
+      end
+      object LblNoDokumen: TLabel
+        Left = 20
+        Top = 50
+        Width = 126
+        Height = 15
+        Caption = 'No. Surat Jalan / BAST:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 3308846
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object LblAsalBarang: TLabel
+        Left = 380
+        Top = 50
+        Width = 147
+        Height = 15
+        Caption = 'Asal Rekanan / Pengadaan:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 3308846
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
         ParentFont = False
       end
       object EdCari: TEdit
@@ -163,19 +192,6 @@ object Form2: TForm2
         TabOrder = 2
         OnClick = BtnResetCariClick
       end
-      object LblNoDokumen: TLabel
-        Left = 20
-        Top = 50
-        Width = 128
-        Height = 15
-        Caption = 'No. Surat Jalan / BAST:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = 3308846
-        Font.Height = -12
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
       object EdtNoDokumen: TEdit
         Left = 155
         Top = 46
@@ -189,19 +205,6 @@ object Form2: TForm2
         ParentFont = False
         TabOrder = 3
         TextHint = 'No. SJ / Faktur / BAST...'
-      end
-      object LblAsalBarang: TLabel
-        Left = 380
-        Top = 50
-        Width = 150
-        Height = 15
-        Caption = 'Asal Rekanan / Pengadaan:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = 3308846
-        Font.Height = -12
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
       end
       object EdtAsalBarang: TEdit
         Left = 538
@@ -234,7 +237,7 @@ object Form2: TForm2
       object LblRingkasanMasuk: TLabel
         Left = 20
         Top = 22
-        Width = 358
+        Width = 361
         Height = 20
         Caption = 'Total Barang Masuk yang Diisi: 0 Jenis (0 Unit Fisik)'
         Font.Charset = DEFAULT_CHARSET
@@ -249,8 +252,8 @@ object Form2: TForm2
         Top = 15
         Width = 135
         Height = 36
-        Anchors = [akTop, akRight]
         Cursor = crHandPoint
+        Anchors = [akTop, akRight]
         Caption = 'Reset Semua Nilai'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -266,8 +269,8 @@ object Form2: TForm2
         Top = 10
         Width = 270
         Height = 45
-        Anchors = [akTop, akRight]
         Cursor = crHandPoint
+        Anchors = [akTop, akRight]
         Caption = 'Simpan Semua Barang Masuk'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
@@ -281,9 +284,9 @@ object Form2: TForm2
     end
     object PnlTengah: TPanel
       Left = 0
-      Top = 115
+      Top = 145
       Width = 1000
-      Height = 470
+      Height = 440
       Align = alClient
       BevelOuter = bvNone
       Color = clWhitesmoke
@@ -293,7 +296,7 @@ object Form2: TForm2
         Left = 680
         Top = 0
         Width = 320
-        Height = 470
+        Height = 440
         Align = alRight
         BevelOuter = bvNone
         Color = clWhitesmoke
@@ -316,12 +319,12 @@ object Form2: TForm2
           Font.Name = 'Segoe UI'
           Font.Style = [fsBold]
           ParentFont = False
-          ExplicitWidth = 129
+          ExplicitWidth = 137
         end
         object LblInputManual: TLabel
           Left = 15
           Top = 135
-          Width = 131
+          Width = 141
           Height = 17
           Caption = 'Jumlah Barang Masuk:'
           Font.Charset = DEFAULT_CHARSET
@@ -360,8 +363,8 @@ object Form2: TForm2
           object LblKodeRekPilih: TLabel
             Left = 10
             Top = 46
-            Width = 39
-            Height = 15
+            Width = 36
+            Height = 13
             Caption = 'Kode: -'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clGrayText
@@ -373,7 +376,7 @@ object Form2: TForm2
           object LblStokSaatIni: TLabel
             Left = 10
             Top = 66
-            Width = 79
+            Width = 68
             Height = 17
             Caption = 'Stok Sisa: -'
             Font.Charset = DEFAULT_CHARSET
@@ -413,7 +416,7 @@ object Form2: TForm2
             Left = 60
             Top = 0
             Width = 170
-            Height = 38
+            Height = 31
             Alignment = taCenter
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -550,7 +553,9 @@ object Form2: TForm2
             Width = 265
             Height = 55
             AutoSize = False
-            Caption = 'Tips: Anda bisa menggunakan tombol +/- atau langsung mengetik angka pada kotak di atas maupun langsung di kolom tabel.'
+            Caption = 
+              'Tips: Anda bisa menggunakan tombol +/- atau langsung mengetik an' +
+              'gka pada kotak di atas maupun langsung di kolom tabel.'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -565,7 +570,7 @@ object Form2: TForm2
         Left = 0
         Top = 0
         Width = 680
-        Height = 470
+        Height = 440
         Align = alClient
         BevelOuter = bvNone
         Color = clWhite
@@ -579,7 +584,7 @@ object Form2: TForm2
           Left = 15
           Top = 10
           Width = 655
-          Height = 20
+          Height = 17
           Align = alTop
           Caption = 'Daftar Seluruh Barang Persediaan Gudang DLH (Isi Jumlah Masuk):'
           Font.Charset = DEFAULT_CHARSET
@@ -588,18 +593,18 @@ object Form2: TForm2
           Font.Name = 'Segoe UI'
           Font.Style = [fsBold]
           ParentFont = False
-          ExplicitWidth = 407
+          ExplicitWidth = 416
         end
         object GridBarang: TStringGrid
           Left = 15
-          Top = 30
+          Top = 27
           Width = 655
-          Height = 430
+          Height = 403
           Align = alClient
           ColCount = 7
           FixedCols = 0
           RowCount = 2
-          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect, goEditing]
+          Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goEditing, goRowSelect]
           TabOrder = 0
           OnClick = GridBarangClick
           OnDblClick = GridBarangDblClick

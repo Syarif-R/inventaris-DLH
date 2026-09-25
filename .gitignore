@@ -17,6 +17,13 @@ Win32/Debug/*.exe
 Win32/Release/*.exe
 *.exe
 
+# Database temporary files
+*.db-wal
+*.db-shm
+
+# Office temporary lock files
+~$*
+
 # OS metadata
 [Dd]esktop.ini
 Thumbs.db

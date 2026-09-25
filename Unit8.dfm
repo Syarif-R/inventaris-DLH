@@ -1,7 +1,7 @@
 object Form8: TForm8
   Left = 0
   Top = 0
-  Caption = 'Arsip Dokumen Bukti Validasi - DLH Banjarmasin'
+  Caption = 'Arsip Dokumen Fisik - DLH Banjarmasin'
   ClientHeight = 650
   ClientWidth = 1050
   Color = clBtnFace
@@ -41,9 +41,9 @@ object Form8: TForm8
       object LblJudul: TLabel
         Left = 20
         Top = 15
-        Width = 278
+        Width = 470
         Height = 25
-        Caption = 'Arsip Dokumen Bukti Validasi'
+        Caption = 'Arsip Dokumen Fisik (Tanda Terima && Bukti Validasi)'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWhite
         Font.Height = -19
@@ -94,7 +94,7 @@ object Form8: TForm8
       object LblTahun: TLabel
         Left = 145
         Top = 10
-        Width = 37
+        Width = 36
         Height = 15
         Caption = 'Tahun:'
         Font.Charset = DEFAULT_CHARSET
@@ -120,7 +120,7 @@ object Form8: TForm8
       object LblSampai: TLabel
         Left = 350
         Top = 10
-        Width = 23
+        Width = 20
         Height = 15
         Caption = 's/d:'
         Font.Charset = DEFAULT_CHARSET
@@ -133,7 +133,7 @@ object Form8: TForm8
       object LblBidang: TLabel
         Left = 575
         Top = 10
-        Width = 95
+        Width = 97
         Height = 15
         Caption = 'Bidang Pemohon:'
         Font.Charset = DEFAULT_CHARSET
@@ -146,7 +146,7 @@ object Form8: TForm8
       object LblCari: TLabel
         Left = 770
         Top = 10
-        Width = 60
+        Width = 65
         Height = 15
         Caption = 'Cari Berkas:'
         Font.Charset = DEFAULT_CHARSET
@@ -307,7 +307,7 @@ object Form8: TForm8
         object LblJudulPreview: TLabel
           Left = 15
           Top = 15
-          Width = 390
+          Width = 211
           Height = 20
           Align = alTop
           Caption = 'Pratinjau Dokumen Bukti Fisik'
@@ -317,7 +317,20 @@ object Form8: TForm8
           Font.Name = 'Segoe UI'
           Font.Style = [fsBold]
           ParentFont = False
-          ExplicitWidth = 197
+        end
+        object ImgPreview: TImage
+          Left = 15
+          Top = 110
+          Width = 390
+          Height = 305
+          Cursor = crHandPoint
+          Align = alClient
+          Center = True
+          Proportional = True
+          Stretch = True
+          OnClick = ImgPreviewClick
+          ExplicitTop = 115
+          ExplicitHeight = 300
         end
         object PnlInfoDoc: TPanel
           Left = 15
@@ -333,7 +346,7 @@ object Form8: TForm8
           object LblNoDoc: TLabel
             Left = 10
             Top = 6
-            Width = 104
+            Width = 90
             Height = 15
             Caption = 'No. Pengajuan: -'
             Font.Charset = DEFAULT_CHARSET
@@ -346,7 +359,7 @@ object Form8: TForm8
           object LblBidangDoc: TLabel
             Left = 10
             Top = 23
-            Width = 53
+            Width = 48
             Height = 15
             Caption = 'Bidang: -'
             Font.Charset = DEFAULT_CHARSET
@@ -359,7 +372,7 @@ object Form8: TForm8
           object LblTglDoc: TLabel
             Left = 220
             Top = 23
-            Width = 56
+            Width = 53
             Height = 15
             Caption = 'Tanggal: -'
             Font.Charset = DEFAULT_CHARSET
@@ -372,7 +385,7 @@ object Form8: TForm8
           object LblFileDoc: TLabel
             Left = 10
             Top = 42
-            Width = 165
+            Width = 167
             Height = 15
             Caption = 'Berkas: (Pilih dokumen di tabel)'
             Font.Charset = DEFAULT_CHARSET
@@ -382,20 +395,6 @@ object Form8: TForm8
             Font.Style = [fsItalic]
             ParentFont = False
           end
-        end
-        object ImgPreview: TImage
-          Left = 15
-          Top = 110
-          Width = 390
-          Height = 305
-          Cursor = crHandPoint
-          Align = alClient
-          Center = True
-          Proportional = True
-          Stretch = True
-          OnClick = ImgPreviewClick
-          ExplicitTop = 115
-          ExplicitHeight = 300
         end
         object PnlAksi: TPanel
           Left = 15
@@ -474,8 +473,8 @@ object Form8: TForm8
         object LblDaftar: TLabel
           Left = 15
           Top = 10
-          Width = 605
-          Height = 20
+          Width = 293
+          Height = 17
           Align = alTop
           Caption = 'Daftar Dokumen Tanda Terima Fisik Tervalidasi'
           Font.Charset = DEFAULT_CHARSET
@@ -484,7 +483,6 @@ object Form8: TForm8
           Font.Name = 'Segoe UI'
           Font.Style = [fsBold]
           ParentFont = False
-          ExplicitWidth = 265
         end
         object GridArsip: TStringGrid
           Left = 15
@@ -521,7 +519,7 @@ object Form8: TForm8
           object LblTotalRecord: TLabel
             Left = 5
             Top = 8
-            Width = 217
+            Width = 262
             Height = 17
             Caption = 'Total Berkas Arsip Ditemukan: 0 Dokumen'
             Font.Charset = DEFAULT_CHARSET

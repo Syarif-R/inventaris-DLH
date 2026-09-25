@@ -116,7 +116,7 @@ end;
 
 procedure TForm8.FormCreate(Sender: TObject);
 begin
-  Self.Caption := 'Arsip Dokumen Bukti Validasi - DLH Banjarmasin';
+  Self.Caption := 'Arsip Dokumen Fisik - DLH Banjarmasin';
   Self.WindowState := wsMaximized;
 
   GridArsip.ColCount := 7;

@@ -54,10 +54,14 @@ type
     procedure BtnBatalClick(Sender: TObject);
     procedure BtnKembaliClick(Sender: TObject);
   private
+    FInitialKode: string;
     procedure LoadKategoriCombo;
     procedure LoadMasterData;
     procedure ResetInputForm;
+    procedure PilihBarangByKode(const AKode: string);
   public
+    procedure BukaTambahBarang;
+    procedure BukaEditBarang(const AKode: string);
   end;
 
 var
@@ -164,7 +168,40 @@ procedure TForm6.FormShow(Sender: TObject);
 begin
   LoadKategoriCombo;
   LoadMasterData;
-  ResetInputForm;
+  if FInitialKode <> '' then
+  begin
+    PilihBarangByKode(FInitialKode);
+    FInitialKode := '';
+  end
+  else
+    ResetInputForm;
+end;
+
+procedure TForm6.BukaTambahBarang;
+begin
+  FInitialKode := '';
+  ShowModal;
+end;
+
+procedure TForm6.BukaEditBarang(const AKode: string);
+begin
+  FInitialKode := AKode;
+  ShowModal;
+end;
+
+procedure TForm6.PilihBarangByKode(const AKode: string);
+var
+  i: Integer;
+begin
+  for i := 1 to GridMaster.RowCount - 1 do
+  begin
+    if GridMaster.Cells[1, i] = AKode then
+    begin
+      GridMaster.Row := i;
+      GridMasterClick(nil);
+      Exit;
+    end;
+  end;
 end;
 
 procedure TForm6.FormResize(Sender: TObject);

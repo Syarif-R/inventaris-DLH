@@ -126,7 +126,8 @@ begin
     // 1. Tampilkan Barang Masuk (Inbound)
     if (FilterKind = 'Semua Riwayat') or (FilterKind = 'Barang Masuk (Inbound)') then
     begin
-      SqlMasuk := 'SELECT M.Tanggal, M.Kode_Rekening, B.Nama_Barang, M.Jumlah, B.Satuan ' +
+      SqlMasuk := 'SELECT M.Tanggal, M.Kode_Rekening, B.Nama_Barang, M.Jumlah, B.Satuan, ' +
+                  'M.No_Penerimaan, M.No_Dokumen, M.Asal_Barang ' +
                   'FROM Tabel_Masuk M LEFT JOIN Tabel_Barang B ON M.Kode_Rekening = B.Kode_Rekening ';
 
       if UseDateFilter then
@@ -145,9 +146,16 @@ begin
 
       while not Q.Eof do
       begin
+        var NoDok := Q.FieldByName('No_Dokumen').AsString;
+        var AsalB := Q.FieldByName('Asal_Barang').AsString;
+        var NoRcv := Q.FieldByName('No_Penerimaan').AsString;
+
         if (SearchKey = '') or
            (Pos(SearchKey, LowerCase(Q.FieldByName('Kode_Rekening').AsString)) > 0) or
-           (Pos(SearchKey, LowerCase(Q.FieldByName('Nama_Barang').AsString)) > 0) then
+           (Pos(SearchKey, LowerCase(Q.FieldByName('Nama_Barang').AsString)) > 0) or
+           (Pos(SearchKey, LowerCase(NoDok)) > 0) or
+           (Pos(SearchKey, LowerCase(AsalB)) > 0) or
+           (Pos(SearchKey, LowerCase(NoRcv)) > 0) then
         begin
           if Baris >= GridHistory.RowCount then
             GridHistory.RowCount := Baris + 1;
@@ -155,10 +163,25 @@ begin
           GridHistory.Cells[0, Baris] := IntToStr(Baris);
           GridHistory.Cells[1, Baris] := Q.FieldByName('Tanggal').AsString;
           GridHistory.Cells[2, Baris] := 'BARANG MASUK';
-          GridHistory.Cells[3, Baris] := Q.FieldByName('Kode_Rekening').AsString;
+
+          if NoDok <> '' then
+            GridHistory.Cells[3, Baris] := NoDok
+          else if NoRcv <> '' then
+            GridHistory.Cells[3, Baris] := NoRcv
+          else
+            GridHistory.Cells[3, Baris] := Q.FieldByName('Kode_Rekening').AsString;
+
           GridHistory.Cells[4, Baris] := Q.FieldByName('Nama_Barang').AsString;
           GridHistory.Cells[5, Baris] := Q.FieldByName('Jumlah').AsString + ' ' + Q.FieldByName('Satuan').AsString;
-          GridHistory.Cells[6, Baris] := 'Telah Ditambah ke Gudang';
+
+          if (AsalB <> '') and (NoDok <> '') then
+            GridHistory.Cells[6, Baris] := 'Rekanan: ' + AsalB + ' (Faktur: ' + NoDok + ')'
+          else if AsalB <> '' then
+            GridHistory.Cells[6, Baris] := 'Rekanan: ' + AsalB
+          else if NoDok <> '' then
+            GridHistory.Cells[6, Baris] := 'Faktur: ' + NoDok
+          else
+            GridHistory.Cells[6, Baris] := 'Telah Ditambah ke Gudang';
 
           Inc(Baris);
           Inc(TotalInbound);
@@ -225,25 +248,86 @@ end;
 procedure TForm5.GridHistoryDblClick(Sender: TObject);
 var
   RowIdx: Integer;
-  NoPGJ, BuktiFile, Msg: string;
+  Jenis, NoPGJ, BuktiFile, BastFile, Msg, NoRcv, NoDok, AsalB: string;
   Q: TFDQuery;
 begin
   RowIdx := GridHistory.Row;
-  if (RowIdx > 0) and (GridHistory.Cells[3, RowIdx] <> '') then
+  if (RowIdx > 0) and (GridHistory.Cells[1, RowIdx] <> '') then
   begin
-    Msg := 'RINCIAN DETAIL TRANSAKSI:' + sLineBreak + sLineBreak +
-           'Tanggal: ' + GridHistory.Cells[1, RowIdx] + sLineBreak +
-           'Kategori Transaksi: ' + GridHistory.Cells[2, RowIdx] + sLineBreak +
-           'Kode / No Pengajuan: ' + GridHistory.Cells[3, RowIdx] + sLineBreak +
-           'Nama Barang / Subjek: ' + GridHistory.Cells[4, RowIdx] + sLineBreak +
-           'Jumlah Transaksi: ' + GridHistory.Cells[5, RowIdx] + sLineBreak +
-           'Status Database: ' + GridHistory.Cells[6, RowIdx];
+    Jenis := GridHistory.Cells[2, RowIdx];
 
-    NoPGJ := GridHistory.Cells[3, RowIdx];
-    BuktiFile := '';
-
-    if Pos('PENGAJUAN', GridHistory.Cells[2, RowIdx]) > 0 then
+    // Kasus 1: Transaksi Barang Masuk
+    if Pos('BARANG MASUK', Jenis) > 0 then
     begin
+      Q := TFDQuery.Create(nil);
+      try
+        Q.Connection := ModulDB.Koneksi;
+        Q.SQL.Text := 'SELECT M.No_Penerimaan, M.No_Dokumen, M.Asal_Barang, M.Kode_Rekening ' +
+                      'FROM Tabel_Masuk M LEFT JOIN Tabel_Barang B ON M.Kode_Rekening = B.Kode_Rekening ' +
+                      'WHERE M.Tanggal = :tgl AND B.Nama_Barang = :nama LIMIT 1';
+        Q.ParamByName('tgl').AsString := GridHistory.Cells[1, RowIdx];
+        Q.ParamByName('nama').AsString := GridHistory.Cells[4, RowIdx];
+        Q.Open;
+
+        NoRcv := '';
+        NoDok := '';
+        AsalB := '';
+        if not Q.Eof then
+        begin
+          NoRcv := Q.FieldByName('No_Penerimaan').AsString;
+          NoDok := Q.FieldByName('No_Dokumen').AsString;
+          AsalB := Q.FieldByName('Asal_Barang').AsString;
+        end;
+
+        Msg := 'RINCIAN PENERIMAAN BARANG MASUK:' + sLineBreak + sLineBreak +
+               'Tanggal Masuk: ' + GridHistory.Cells[1, RowIdx] + sLineBreak +
+               'Nama Barang: ' + GridHistory.Cells[4, RowIdx] + sLineBreak +
+               'Jumlah Masuk: ' + GridHistory.Cells[5, RowIdx] + sLineBreak;
+
+        if NoRcv <> '' then
+          Msg := Msg + 'No. Penerimaan (Gudang): ' + NoRcv + sLineBreak;
+        if NoDok <> '' then
+          Msg := Msg + 'No. Surat Jalan / Faktur: ' + NoDok + sLineBreak
+        else
+          Msg := Msg + 'No. Surat Jalan / Faktur: (Tidak ada)' + sLineBreak;
+        if AsalB <> '' then
+          Msg := Msg + 'Asal Toko / Rekanan: ' + AsalB + sLineBreak
+        else
+          Msg := Msg + 'Asal Toko / Rekanan: (Tidak ada)' + sLineBreak;
+
+        Msg := Msg + 'Keterangan: ' + GridHistory.Cells[6, RowIdx];
+
+        BastFile := '';
+        if NoRcv <> '' then
+          BastFile := ExtractFilePath(ParamStr(0)) + 'arsip_surat\BAST_Masuk_' + NoRcv + '.html';
+
+        if (BastFile <> '') and FileExists(BastFile) then
+        begin
+          Msg := Msg + sLineBreak + sLineBreak +
+                 'Dokumen Berita Acara Penerimaan (BAST Inbound) tersedia.' + sLineBreak +
+                 'Apakah Anda ingin membuka berkas BAST ini sekarang?';
+          if MessageDlg(Msg, mtInformation, [mbYes, mbNo], 0) = mrYes then
+            ShellExecute(0, 'open', PChar(BastFile), nil, nil, SW_SHOWNORMAL);
+        end
+        else
+          ShowMessage(Msg);
+      finally
+        Q.Free;
+      end;
+    end
+    // Kasus 2: Transaksi Pengajuan Barang
+    else if Pos('PENGAJUAN', Jenis) > 0 then
+    begin
+      NoPGJ := GridHistory.Cells[3, RowIdx];
+      Msg := 'RINCIAN DETAIL PENGAJUAN:' + sLineBreak + sLineBreak +
+             'Tanggal: ' + GridHistory.Cells[1, RowIdx] + sLineBreak +
+             'Kategori: ' + GridHistory.Cells[2, RowIdx] + sLineBreak +
+             'No. Pengajuan: ' + NoPGJ + sLineBreak +
+             'Nama Barang: ' + GridHistory.Cells[4, RowIdx] + sLineBreak +
+             'Jumlah: ' + GridHistory.Cells[5, RowIdx] + sLineBreak +
+             'Status: ' + GridHistory.Cells[6, RowIdx];
+
+      BuktiFile := '';
       Q := TFDQuery.Create(nil);
       try
         Q.Connection := ModulDB.Koneksi;
@@ -255,18 +339,18 @@ begin
       finally
         Q.Free;
       end;
-    end;
 
-    if (BuktiFile <> '') and FileExists(BuktiFile) then
-    begin
-      Msg := Msg + sLineBreak + sLineBreak +
-             'Berkas Bukti Fisik: ' + ExtractFileName(BuktiFile) + sLineBreak +
-             'Apakah Anda ingin membuka berkas dokumen bukti ini sekarang?';
-      if MessageDlg(Msg, mtInformation, [mbYes, mbNo], 0) = mrYes then
-        ShellExecute(0, 'open', PChar(BuktiFile), nil, nil, SW_SHOWNORMAL);
-    end
-    else
-      ShowMessage(Msg);
+      if (BuktiFile <> '') and FileExists(BuktiFile) then
+      begin
+        Msg := Msg + sLineBreak + sLineBreak +
+               'Berkas Bukti Fisik: ' + ExtractFileName(BuktiFile) + sLineBreak +
+               'Apakah Anda ingin membuka berkas dokumen bukti ini sekarang?';
+        if MessageDlg(Msg, mtInformation, [mbYes, mbNo], 0) = mrYes then
+          ShellExecute(0, 'open', PChar(BuktiFile), nil, nil, SW_SHOWNORMAL);
+      end
+      else
+        ShowMessage(Msg);
+    end;
   end;
 end;
 
