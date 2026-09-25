@@ -18,6 +18,7 @@ type
     BtnArsipValidasi: TButton;
     BtnHistory: TButton;
     BtnStockOpname: TButton;
+    BtnBackup: TButton;
     PnlAlertBox: TPanel;
     LblAlertJudul: TLabel;
     BtnAlertStok: TButton;
@@ -50,6 +51,7 @@ type
     procedure BtnArsipValidasiClick(Sender: TObject);
     procedure BtnHistoryClick(Sender: TObject);
     procedure BtnStockOpnameClick(Sender: TObject);
+    procedure BtnBackupClick(Sender: TObject);
     procedure BtnAlertStokClick(Sender: TObject);
     procedure BtnRefreshDashboardClick(Sender: TObject);
     procedure EdCariChange(Sender: TObject);
@@ -75,7 +77,7 @@ var
 
 implementation
 
-uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, UnitDB;
+uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, UnitDB;
 
 {$R *.dfm}
 
@@ -159,6 +161,7 @@ procedure TForm1.FormShow(Sender: TObject);
 begin
   LoadKategoriCombo;
   TampilDataAwal;
+  Form9.AutoBackupIfNeeded;
 end;
 
 procedure TForm1.FormResize(Sender: TObject);
@@ -496,6 +499,11 @@ procedure TForm1.BtnStockOpnameClick(Sender: TObject);
 begin
   Form7.ShowModal;
   TampilDataAwal;
+end;
+
+procedure TForm1.BtnBackupClick(Sender: TObject);
+begin
+  Form9.ShowModal;
 end;
 
 procedure TForm1.BtnAlertStokClick(Sender: TObject);

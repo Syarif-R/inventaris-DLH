@@ -137,16 +137,32 @@ object Form1: TForm1
       TabOrder = 5
       OnClick = BtnStockOpnameClick
     end
+    object BtnBackup: TButton
+      Left = 20
+      Top = 343
+      Width = 160
+      Height = 45
+      Cursor = crHandPoint
+      Caption = 'Backup Cloud Drive'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 6
+      OnClick = BtnBackupClick
+    end
     object PnlAlertBox: TPanel
       Left = 12
-      Top = 350
+      Top = 398
       Width = 176
       Height = 135
       BevelKind = bkFlat
       BevelOuter = bvNone
       Color = clWhite
       ParentBackground = False
-      TabOrder = 6
+      TabOrder = 7
       object LblAlertJudul: TLabel
         Left = 10
         Top = 8
