@@ -5,6 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, Winapi.ShellAPI, System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids,
+  Vcl.Imaging.jpeg, Vcl.Imaging.pngimage,
   Vcl.ComCtrls, FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.DApt, FireDAC.Stan.Param;
 
 type
@@ -426,25 +427,40 @@ end;
 
 procedure TForm8.MuatPratinjau(const AFilePath: string);
 var
-  Ext: string;
+  Ext, ResolvedPath, ExeDir, SubDir: string;
 begin
-  SelectedFilePath := AFilePath;
+  ResolvedPath := AFilePath;
 
-  if (AFilePath = '') or not FileExists(AFilePath) then
+  // Fallback path resolution jika path absolut berbeda (misal direktori dipindah)
+  if not FileExists(ResolvedPath) and (AFilePath <> '') then
+  begin
+    ExeDir := ExtractFilePath(ParamStr(0));
+    SubDir := ExtractFileName(ExtractFileDir(AFilePath));
+    if FileExists(ExeDir + 'arsip_bukti\' + SubDir + '\' + ExtractFileName(AFilePath)) then
+      ResolvedPath := ExeDir + 'arsip_bukti\' + SubDir + '\' + ExtractFileName(AFilePath)
+    else if FileExists(ExeDir + 'arsip_bukti\' + ExtractFileName(AFilePath)) then
+      ResolvedPath := ExeDir + 'arsip_bukti\' + ExtractFileName(AFilePath)
+    else if FileExists(ExtractFileName(AFilePath)) then
+      ResolvedPath := ExtractFileName(AFilePath);
+  end;
+
+  SelectedFilePath := ResolvedPath;
+
+  if (ResolvedPath = '') or not FileExists(ResolvedPath) then
   begin
     ImgPreview.Picture := nil;
     Exit;
   end;
 
-  Ext := LowerCase(ExtractFileExt(AFilePath));
+  Ext := LowerCase(ExtractFileExt(ResolvedPath));
   if Ext = '.pdf' then
   begin
-    RenderPDFPreview(AFilePath);
+    RenderPDFPreview(ResolvedPath);
   end
   else
   begin
     try
-      ImgPreview.Picture.LoadFromFile(AFilePath);
+      ImgPreview.Picture.LoadFromFile(ResolvedPath);
     except
       ImgPreview.Picture := nil;
     end;

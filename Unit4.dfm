@@ -205,7 +205,7 @@ object Form4: TForm4
         Width = 205
         Height = 36
         Cursor = crHandPoint
-        Caption = 'Tolak / Batalkan'
+        Caption = 'Tolak Pengajuan'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clRed
         Font.Height = -12
@@ -250,12 +250,12 @@ object Form4: TForm4
         Width = 420
         Height = 30
         Cursor = crHandPoint
-        Caption = 'Batal / Hapus Berkas'
+        Caption = 'Hapus Pilihan File Foto / PDF'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -12
+        Font.Color = clWindowText
+        Font.Height = -11
         Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
+        Font.Style = []
         ParentFont = False
         TabOrder = 5
         OnClick = BtnResetFotoClick

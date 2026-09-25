@@ -5,6 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, Winapi.ShellAPI, System.SysUtils, System.Variants, System.Classes, System.UITypes,
   System.NetEncoding, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids,
+  Vcl.Imaging.jpeg, Vcl.Imaging.pngimage,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.DApt, FireDAC.Stan.Param;
 
 type
@@ -223,11 +224,11 @@ begin
   else
     NoPengajuan := Trim(CboPengajuan.Text);
 
-  if MessageDlg('KONFIRMASI PEMBATALAN PENGAJUAN:' + sLineBreak + sLineBreak +
+  if MessageDlg('KONFIRMASI PENOLAKAN SURAT PENGAJUAN:' + sLineBreak + sLineBreak +
                 'No. Pengajuan: ' + NoPengajuan + sLineBreak +
-                'Keterangan: ' + CboPengajuan.Text + sLineBreak + sLineBreak +
-                'Apakah Anda yakin ingin MENOLAK / MEMBATALKAN pengajuan ini?' + sLineBreak +
-                '(Status pengajuan akan diubah menjadi DITOLAK dan tidak memotong stok)',
+                'Bidang: ' + CboPengajuan.Text + sLineBreak + sLineBreak +
+                'Apakah Anda yakin ingin MENOLAK surat pengajuan ini?' + sLineBreak +
+                '(Status pengajuan akan diubah menjadi DITOLAK permanen dan stok gudang TIDAK dipotong)',
                 mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
     Exit;
 
@@ -238,7 +239,7 @@ begin
     Q.ParamByName('no').AsString := NoPengajuan;
     Q.ExecSQL;
 
-    ShowMessage('Pengajuan ' + NoPengajuan + ' berhasil DIBATALKAN / DITOLAK.');
+    ShowMessage('Surat Pengajuan ' + NoPengajuan + ' telah resmi DITOLAK.');
     LoadPendingPengajuan;
     ImgBukti.Picture := nil;
     SelectedFilePath := '';
@@ -576,9 +577,15 @@ end;
 
 procedure TForm4.BtnResetFotoClick(Sender: TObject);
 begin
+  if SelectedFilePath = '' then
+  begin
+    ShowMessage('Belum ada file foto/PDF bukti yang dipilih.');
+    Exit;
+  end;
+
   ImgBukti.Picture := nil;
   SelectedFilePath := '';
-  ShowMessage('Berkas bukti fisik (PDF/Foto) telah dibatalkan / dihapus.');
+  ShowMessage('Pilihan file foto/PDF bukti berhasil dihapus / dikosongkan.');
 end;
 
 procedure TForm4.BtnValidasiClick(Sender: TObject);
