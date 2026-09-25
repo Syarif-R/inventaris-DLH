@@ -22,7 +22,6 @@ type
     PnlAlertBox: TPanel;
     LblAlertJudul: TLabel;
     BtnAlertStok: TButton;
-    BtnAlertPending: TButton;
     BtnRefreshDashboard: TButton;
     PnlUtama: TPanel;
     PnlCharts: TGridPanel;
@@ -50,7 +49,6 @@ type
     procedure BtnMasterClick(Sender: TObject);
     procedure BtnStockOpnameClick(Sender: TObject);
     procedure BtnAlertStokClick(Sender: TObject);
-    procedure BtnAlertPendingClick(Sender: TObject);
     procedure BtnRefreshDashboardClick(Sender: TObject);
     procedure EdCariChange(Sender: TObject);
     procedure CmbKategoriChange(Sender: TObject);
@@ -194,17 +192,20 @@ begin
     QAlert.Open;
     CountPending := QAlert.Fields[0].AsInteger;
 
+    // Tampilkan tanda / badge jumlah pending langsung di tombol menu Validasi & Arsip
+    if CountPending > 0 then
+      BtnValidasi.Caption := 'Validasi && Arsip (' + IntToStr(CountPending) + ')'
+    else
+      BtnValidasi.Caption := 'Validasi && Arsip';
+
     if FFilterKritisOnly then
-      BtnAlertStok.Caption := '🔴 Filter Kritis (' + IntToStr(CountKritis) + ' Item)'
+      BtnAlertStok.Caption := 'Filter Kritis (' + IntToStr(CountKritis) + ' Item)'
     else if CountKritis > 0 then
       BtnAlertStok.Caption := '⚠️ ' + IntToStr(CountKritis) + ' Barang Kritis (<= 5)'
     else
       BtnAlertStok.Caption := '✅ Semua Stok Aman';
 
-    if CountPending > 0 then
-      BtnAlertPending.Caption := '⏳ ' + IntToStr(CountPending) + ' Pengajuan Pending'
-    else
-      BtnAlertPending.Caption := '✅ 0 Pengajuan Pending';
+    BtnRefreshDashboard.Caption := #$21BB + '  Segarkan Status';
   finally
     QAlert.Free;
   end;
@@ -413,17 +414,7 @@ end;
 procedure TForm1.BtnAlertStokClick(Sender: TObject);
 begin
   FFilterKritisOnly := not FFilterKritisOnly;
-  if FFilterKritisOnly then
-    ShowMessage('Memfilter tabel untuk hanya menampilkan barang dengan stok kritis (<= 5).' + sLineBreak +
-                'Klik tombol ini lagi atau tombol "Segarkan Status" untuk mematikan filter.')
-  else
-    ShowMessage('Filter stok kritis dimatikan. Menampilkan seluruh data persediaan.');
   TampilDataAwal;
-end;
-
-procedure TForm1.BtnAlertPendingClick(Sender: TObject);
-begin
-  BtnValidasiClick(Sender);
 end;
 
 procedure TForm1.BtnRefreshDashboardClick(Sender: TObject);
@@ -431,7 +422,6 @@ begin
   FFilterKritisOnly := False;
   LoadKategoriCombo;
   TampilDataAwal;
-  ShowMessage('Status dan data dashboard berhasil disegarkan!');
 end;
 
 end.

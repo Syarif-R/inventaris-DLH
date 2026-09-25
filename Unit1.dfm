@@ -85,6 +85,7 @@ object Form1: TForm1
       Font.Style = [fsBold]
       ParentFont = False
       TabOrder = 2
+      WordWrap = True
       OnClick = BtnValidasiClick
     end
     object BtnArsipValidasi: TButton
@@ -155,7 +156,7 @@ object Form1: TForm1
       Left = 12
       Top = 405
       Width = 176
-      Height = 185
+      Height = 135
       BevelKind = bkFlat
       BevelOuter = bvNone
       Color = clWhite
@@ -168,17 +169,18 @@ object Form1: TForm1
         Height = 15
         Alignment = taCenter
         AutoSize = False
-        Caption = 'STATUS & PERINGATAN'
+        Caption = 'STATUS && PERINGATAN'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 3308846
         Font.Height = -11
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
+        ShowAccelChar = False
       end
       object BtnAlertStok: TButton
         Left = 8
-        Top = 30
+        Top = 28
         Width = 156
         Height = 44
         Cursor = crHandPoint
@@ -193,37 +195,20 @@ object Form1: TForm1
         WordWrap = True
         OnClick = BtnAlertStokClick
       end
-      object BtnAlertPending: TButton
+      object BtnRefreshDashboard: TButton
         Left = 8
-        Top = 80
+        Top = 78
         Width = 156
         Height = 44
         Cursor = crHandPoint
-        Caption = 'Validasi Pending: -'
+        Caption = 'Segarkan Status'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
-        Font.Height = -11
+        Font.Height = -12
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
         TabOrder = 1
-        WordWrap = True
-        OnClick = BtnAlertPendingClick
-      end
-      object BtnRefreshDashboard: TButton
-        Left = 8
-        Top = 132
-        Width = 156
-        Height = 36
-        Cursor = crHandPoint
-        Caption = '🔄 Segarkan Status'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -11
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 2
         OnClick = BtnRefreshDashboardClick
       end
     end
