@@ -4,7 +4,8 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, Winapi.ShellAPI, System.SysUtils, System.Variants, System.Classes,
-  System.IniFiles, System.Net.HttpClient, System.Net.URLClient, System.NetEncoding, System.Zip,
+  System.IniFiles, System.Net.HttpClient, System.Net.HttpClientComponent, System.Net.URLClient,
+  System.NetEncoding, System.Zip,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   FireDAC.Comp.Client;
 
@@ -182,6 +183,7 @@ function TForm9.KirimJson(const AUrl, AJson: string): string;
 var
   Client: TNetHTTPClient;
   SourceStream, ResponseStream: TStringStream;
+  Resp: IHTTPResponse;
 begin
   Client := TNetHTTPClient.Create(nil);
   SourceStream := TStringStream.Create(AJson, TEncoding.UTF8);
@@ -191,8 +193,11 @@ begin
     Client.ResponseTimeout := 60000;
     Client.ContentType := 'application/json';
     Client.Accept := 'application/json';
-    Client.Post(AUrl, SourceStream, ResponseStream);
-    Result := ResponseStream.DataString;
+    Resp := Client.Post(AUrl, SourceStream, ResponseStream);
+    if Assigned(Resp) then
+      Result := ResponseStream.DataString
+    else
+      Result := '';
   finally
     ResponseStream.Free;
     SourceStream.Free;
