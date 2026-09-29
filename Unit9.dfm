@@ -4,7 +4,7 @@ object Form9: TForm9
   BorderIcons = [biSystemMenu]
   BorderStyle = bsDialog
   Caption = 'Backup Cloud Google Drive Dinas & Lokal - DLH Banjarmasin'
-  ClientHeight = 560
+  ClientHeight = 610
   ClientWidth = 620
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -20,7 +20,7 @@ object Form9: TForm9
     Left = 0
     Top = 0
     Width = 620
-    Height = 560
+    Height = 610
     Align = alClient
     BevelOuter = bvNone
     Color = clWhitesmoke
@@ -54,7 +54,7 @@ object Form9: TForm9
       Left = 0
       Top = 55
       Width = 620
-      Height = 505
+      Height = 555
       Align = alClient
       BevelOuter = bvNone
       Padding.Left = 15
@@ -219,18 +219,18 @@ object Form9: TForm9
       end
       object PnlAksi: TPanel
         Left = 15
-        Top = 432
+        Top = 440
         Width = 590
-        Height = 55
+        Height = 100
         BevelOuter = bvNone
         TabOrder = 3
         object BtnBackupCloud: TButton
           Left = 0
           Top = 6
-          Width = 265
-          Height = 42
+          Width = 285
+          Height = 40
           Cursor = crHandPoint
-          Caption = #9729'  Backup ke Google Drive Sekarang'
+          Caption = 'Backup ke Google Drive Sekarang'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -241,12 +241,12 @@ object Form9: TForm9
           OnClick = BtnBackupCloudClick
         end
         object BtnExportZip: TButton
-          Left = 275
+          Left = 295
           Top = 6
-          Width = 205
-          Height = 42
+          Width = 295
+          Height = 40
           Cursor = crHandPoint
-          Caption = #128190'  Ekspor ZIP ke Flashdisk'
+          Caption = 'Ekspor ZIP ke Flashdisk'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -256,11 +256,27 @@ object Form9: TForm9
           TabOrder = 1
           OnClick = BtnExportZipClick
         end
+        object BtnRestoreDb: TButton
+          Left = 0
+          Top = 52
+          Width = 475
+          Height = 40
+          Cursor = crHandPoint
+          Caption = 'Pulihkan Database (Restore dari File .db)...'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+          TabOrder = 2
+          OnClick = BtnRestoreDbClick
+        end
         object BtnTutup: TButton
-          Left = 490
-          Top = 6
-          Width = 98
-          Height = 42
+          Left = 485
+          Top = 52
+          Width = 105
+          Height = 40
           Cursor = crHandPoint
           Caption = 'Tutup'
           Font.Charset = DEFAULT_CHARSET
@@ -269,7 +285,7 @@ object Form9: TForm9
           Font.Name = 'Segoe UI'
           Font.Style = []
           ParentFont = False
-          TabOrder = 2
+          TabOrder = 3
           OnClick = BtnTutupClick
         end
       end
@@ -278,6 +294,12 @@ object Form9: TForm9
   object SaveDialog1: TSaveDialog
     Filter = 'File Arsip ZIP (*.zip)|*.zip'
     Left = 530
+    Top = 15
+  end
+  object OpenDialogRestore: TOpenDialog
+    Filter = 'File Database SQLite (*.db)|*.db|Semua File (*.*)|*.*'
+    Title = 'Pilih File Database Cadangan untuk Dipulihkan'
+    Left = 470
     Top = 15
   end
 end

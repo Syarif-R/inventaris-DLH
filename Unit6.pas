@@ -454,6 +454,14 @@ begin
     Q.ParamByName('kode').AsString := Kode;
     Q.ExecSQL;
 
+    // Sinkronkan perubahan nama & satuan ke detail riwayat pengajuan jika ada salah ketik
+    Q.Close;
+    Q.SQL.Text := 'UPDATE Tabel_Pengajuan_Detail SET Nama_Barang = :nama, Satuan = :satuan WHERE Kode_Rekening = :kode';
+    Q.ParamByName('nama').AsString := Nama;
+    Q.ParamByName('satuan').AsString := Satuan;
+    Q.ParamByName('kode').AsString := Kode;
+    Q.ExecSQL;
+
     ShowMessage('BERHASIL! Perubahan data barang "' + Nama + '" telah disimpan.');
     ResetInputForm;
     LoadKategoriCombo;

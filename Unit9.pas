@@ -30,13 +30,16 @@ type
     PnlAksi: TPanel;
     BtnBackupCloud: TButton;
     BtnExportZip: TButton;
+    BtnRestoreDb: TButton;
     BtnTutup: TButton;
     SaveDialog1: TSaveDialog;
+    OpenDialogRestore: TOpenDialog;
 
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure BtnBackupCloudClick(Sender: TObject);
     procedure BtnExportZipClick(Sender: TObject);
+    procedure BtnRestoreDbClick(Sender: TObject);
     procedure BtnTutupClick(Sender: TObject);
     procedure ChkAutoBackupClick(Sender: TObject);
     procedure EdtUrlChange(Sender: TObject);
@@ -59,7 +62,7 @@ var
 
 implementation
 
-uses UnitDB;
+uses UnitDB, Unit1;
 
 {$R *.dfm}
 
@@ -480,6 +483,80 @@ begin
       ZipFile.Free;
     end;
   end;
+procedure TForm9.BtnRestoreDbClick(Sender: TObject);
+var
+  SelectedFile, TargetDb, BackupEmergency, ExeDir: string;
+begin
+  if not OpenDialogRestore.Execute then Exit;
+
+  SelectedFile := OpenDialogRestore.FileName;
+  if (SelectedFile = '') or (not FileExists(SelectedFile)) then
+  begin
+    ShowMessage('File database cadangan tidak ditemukan!');
+    Exit;
+  end;
+
+  if MessageDlg('PERINGATAN PEMULIHAN DATABASE (RESTORE):' + sLineBreak + sLineBreak +
+                'Anda akan memulihkan data dari file:' + sLineBreak +
+                SelectedFile + sLineBreak + sLineBreak +
+                'Sistem akan otomatis membuat cadangan darurat dari database saat ini terlebih dahulu.' + sLineBreak +
+                'Apakah Anda yakin ingin memulihkan database sekarang?',
+                mtWarning, [mbYes, mbNo], 0) <> mrYes then
+    Exit;
+
+  ExeDir := ExtractFilePath(ParamStr(0));
+  TargetDb := ExeDir + 'DatabaseDLH.db';
+  if not FileExists(TargetDb) then
+    TargetDb := ExpandFileName('DatabaseDLH.db');
+
+  // 1. Buat Backup Darurat Sebelum Ditimpa
+  BackupEmergency := ExeDir + 'DatabaseDLH_BeforeRestore_' + FormatDateTime('yyyymmdd_hhnnss', Now) + '.db';
+  try
+    if FileExists(TargetDb) then
+      CopyFile(PChar(TargetDb), PChar(BackupEmergency), False);
+  except
+  end;
+
+  // 2. Putuskan Koneksi Database Aktif
+  try
+    ModulDB.Koneksi.Connected := False;
+  except
+  end;
+
+  // 3. Salin file restore ke DatabaseDLH.db
+  if not CopyFile(PChar(SelectedFile), PChar(TargetDb), False) then
+  begin
+    try
+      ModulDB.Koneksi.Connected := True;
+    except
+    end;
+    MessageDlg('GAGAL: Tidak dapat menimpa file DatabaseDLH.db!' + sLineBreak +
+               'Pastikan tidak ada aplikasi lain yang sedang mengunci file database.', mtError, [mbOK], 0);
+    Exit;
+  end;
+
+  // 4. Sambungkan kembali ke database
+  try
+    ModulDB.Koneksi.Connected := True;
+  except
+    on E: Exception do
+      MessageDlg('Peringatan saat menghubungkan kembali database: ' + E.Message, mtWarning, [mbOK], 0);
+  end;
+
+  // 5. Segarkan data pada Dashboard Form1
+  try
+    Form1.TampilDataAwal;
+  except
+  end;
+
+  TambahLog('=== PEMULIHAN DATABASE (RESTORE) BERHASIL ===');
+  TambahLog('Sumber file: ' + ExtractFileName(SelectedFile));
+  TambahLog('Cadangan darurat data lama: ' + ExtractFileName(BackupEmergency));
+
+  MessageDlg('SUKSES! Database berhasil dipulihkan dari file:' + sLineBreak +
+             ExtractFileName(SelectedFile) + sLineBreak + sLineBreak +
+             'Cadangan darurat data sebelum restore tersimpan di:' + sLineBreak +
+             ExtractFileName(BackupEmergency), mtInformation, [mbOK], 0);
 end;
 
 procedure TForm9.AutoBackupIfNeeded;

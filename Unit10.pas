@@ -77,6 +77,12 @@ end;
 procedure TForm10.FormShow(Sender: TObject);
 begin
   LoadConfig;
+  EdtDriveUrl.ReadOnly := True;
+  EdtDriveUrl.Color := clBtnFace;
+  EdtEmail.ReadOnly := True;
+  EdtEmail.Color := clBtnFace;
+  EdtPassword.ReadOnly := True;
+  EdtPassword.Color := clBtnFace;
   EdtPassword.PasswordChar := '*';
   BtnTogglePassword.Caption := 'Lihat Password';
 end;
@@ -102,9 +108,6 @@ var
 begin
   Ini := TIniFile.Create(FConfigFile);
   try
-    Ini.WriteString('GoogleDrive', 'FolderUrl', Trim(EdtDriveUrl.Text));
-    Ini.WriteString('GoogleDrive', 'Email', Trim(EdtEmail.Text));
-    Ini.WriteString('GoogleDrive', 'Password', Trim(EdtPassword.Text));
     Ini.WriteString('GoogleDrive', 'WebhookUrl', Trim(EdtWebhookUrl.Text));
   finally
     Ini.Free;

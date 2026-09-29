@@ -4,7 +4,7 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.UITypes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids, Vcl.ExtCtrls,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids, Vcl.ExtCtrls, IniFiles,
   VCLTee.Chart, VCLTee.TeEngine, VCLTee.Series, VCLTee.TeeProcs,
   FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.DApt, FireDAC.Stan.Param;
 
@@ -24,6 +24,7 @@ type
     LblAlertJudul: TLabel;
     BtnAlertStok: TButton;
     BtnRefreshDashboard: TButton;
+    BtnToggleChart: TButton;
     PnlUtama: TPanel;
     PnlCharts: TGridPanel;
     ChartKategori: TChart;
@@ -39,6 +40,7 @@ type
     BtnTambahBarang: TButton;
     BtnEditBarang: TButton;
     BtnHapusBarang: TButton;
+    BtnPenyesuaianStok: TButton;
     LblPetunjukGrid: TLabel;
     GridStok: TStringGrid;
     SaveDialog1: TSaveDialog;
@@ -56,6 +58,7 @@ type
     procedure BtnSettingClick(Sender: TObject);
     procedure BtnAlertStokClick(Sender: TObject);
     procedure BtnRefreshDashboardClick(Sender: TObject);
+    procedure BtnToggleChartClick(Sender: TObject);
     procedure EdCariChange(Sender: TObject);
     procedure CmbKategoriChange(Sender: TObject);
     procedure ChkHideZeroClick(Sender: TObject);
@@ -63,11 +66,13 @@ type
     procedure BtnTambahBarangClick(Sender: TObject);
     procedure BtnEditBarangClick(Sender: TObject);
     procedure BtnHapusBarangClick(Sender: TObject);
+    procedure BtnPenyesuaianStokClick(Sender: TObject);
     procedure GridStokDblClick(Sender: TObject);
   private
     SeriesKategori: TBarSeries;
     SeriesTopStok: TBarSeries;
     FFilterKritisOnly: Boolean;
+    FChartModeBidang: Boolean;
     procedure InitCharts;
     procedure TampilDataAwal;
     procedure LoadKategoriCombo;
@@ -79,7 +84,7 @@ var
 
 implementation
 
-uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, Unit10, UnitDB;
+uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, Unit10, Unit11, UnitDB;
 
 {$R *.dfm}
 
@@ -154,6 +159,7 @@ begin
 
   ChkHideZero.Checked := True;
   FFilterKritisOnly := False;
+  FChartModeBidang := False;
   BtnSetting.Caption := '⚙ Setting';
   InitCharts;
   LoadKategoriCombo;
@@ -300,29 +306,59 @@ begin
     QKat.Free;
   end;
 
-  // 3. Tampilkan Chart 2: Top Barang Stok Terbanyak (Hanya Stok > 0, Max 7 Item Agar Tidak Penuh)
+  // 3. Tampilkan Chart 2: Top Barang Stok Terbanyak ATAU Penggunaan per Bidang
   SeriesTopStok.Clear;
   QTop := TFDQuery.Create(nil);
   try
     QTop.Connection := ModulDB.Koneksi;
-    if (SelectedKat = '') or (SelectedKat = 'Semua Kategori') then
+    if FChartModeBidang then
     begin
-      ChartTopStok.Title.Text.Text := 'TOP 7 BARANG STOK TERBANYAK (STOK > 0)';
-      QTop.SQL.Text := 'SELECT Nama_Barang, Stok_Sisa FROM Tabel_Barang ' +
-                       'WHERE Stok_Sisa > 0 ORDER BY Stok_Sisa DESC LIMIT 7';
+      ChartTopStok.Title.Text.Text := 'PENGGUNAAN BARANG PER BIDANG (BULAN INI)';
+      QTop.SQL.Text := 'SELECT P.Bidang, SUM(D.Jumlah) AS TotalKeluar ' +
+                       'FROM Tabel_Pengajuan P ' +
+                       'JOIN Tabel_Pengajuan_Detail D ON P.No_Pengajuan = D.No_Pengajuan ' +
+                       'WHERE P.Status = ''DIVALIDASI'' ' +
+                       '  AND strftime(''%Y-%m'', P.Tanggal) = strftime(''%Y-%m'', ''now'') ' +
+                       'GROUP BY P.Bidang ORDER BY TotalKeluar DESC LIMIT 7';
+      QTop.Open;
+      if QTop.IsEmpty then
+      begin
+        QTop.Close;
+        ChartTopStok.Title.Text.Text := 'PENGGUNAAN BARANG PER BIDANG (TOTAL KESELURUHAN)';
+        QTop.SQL.Text := 'SELECT P.Bidang, SUM(D.Jumlah) AS TotalKeluar ' +
+                         'FROM Tabel_Pengajuan P ' +
+                         'JOIN Tabel_Pengajuan_Detail D ON P.No_Pengajuan = D.No_Pengajuan ' +
+                         'WHERE P.Status = ''DIVALIDASI'' ' +
+                         'GROUP BY P.Bidang ORDER BY TotalKeluar DESC LIMIT 7';
+        QTop.Open;
+      end;
+      while not QTop.Eof do
+      begin
+        SeriesTopStok.Add(QTop.FieldByName('TotalKeluar').AsInteger, QTop.FieldByName('Bidang').AsString);
+        QTop.Next;
+      end;
     end
     else
     begin
-      ChartTopStok.Title.Text.Text := 'TOP STOK: ' + UpperCase(SelectedKat) + ' (STOK > 0)';
-      QTop.SQL.Text := 'SELECT Nama_Barang, Stok_Sisa FROM Tabel_Barang ' +
-                       'WHERE Stok_Sisa > 0 AND Kategori = :kat ORDER BY Stok_Sisa DESC LIMIT 7';
-      QTop.ParamByName('kat').AsString := SelectedKat;
-    end;
-    QTop.Open;
-    while not QTop.Eof do
-    begin
-      SeriesTopStok.Add(QTop.FieldByName('Stok_Sisa').AsInteger, QTop.FieldByName('Nama_Barang').AsString);
-      QTop.Next;
+      if (SelectedKat = '') or (SelectedKat = 'Semua Kategori') then
+      begin
+        ChartTopStok.Title.Text.Text := 'TOP 7 BARANG STOK TERBANYAK (STOK > 0)';
+        QTop.SQL.Text := 'SELECT Nama_Barang, Stok_Sisa FROM Tabel_Barang ' +
+                         'WHERE Stok_Sisa > 0 ORDER BY Stok_Sisa DESC LIMIT 7';
+      end
+      else
+      begin
+        ChartTopStok.Title.Text.Text := 'TOP STOK: ' + UpperCase(SelectedKat) + ' (STOK > 0)';
+        QTop.SQL.Text := 'SELECT Nama_Barang, Stok_Sisa FROM Tabel_Barang ' +
+                         'WHERE Stok_Sisa > 0 AND Kategori = :kat ORDER BY Stok_Sisa DESC LIMIT 7';
+        QTop.ParamByName('kat').AsString := SelectedKat;
+      end;
+      QTop.Open;
+      while not QTop.Eof do
+      begin
+        SeriesTopStok.Add(QTop.FieldByName('Stok_Sisa').AsInteger, QTop.FieldByName('Nama_Barang').AsString);
+        QTop.Next;
+      end;
     end;
   finally
     QTop.Free;
@@ -469,9 +505,11 @@ begin
     QCheck.Connection := ModulDB.Koneksi;
     QCheck.SQL.Text := 'SELECT ' +
                        '(SELECT COUNT(*) FROM Tabel_Masuk WHERE Kode_Rekening = :k1) + ' +
-                       '(SELECT COUNT(*) FROM Tabel_Detail_Pengajuan WHERE Kode_Rekening = :k2)';
+                       '(SELECT COUNT(*) FROM Tabel_Keluar WHERE Kode_Rekening = :k2) + ' +
+                       '(SELECT COUNT(*) FROM Tabel_Pengajuan_Detail WHERE Kode_Rekening = :k3)';
     QCheck.ParamByName('k1').AsString := Kode;
     QCheck.ParamByName('k2').AsString := Kode;
+    QCheck.ParamByName('k3').AsString := Kode;
     QCheck.Open;
     CountTrx := QCheck.Fields[0].AsInteger;
 
@@ -513,8 +551,61 @@ begin
 end;
 
 procedure TForm1.BtnSettingClick(Sender: TObject);
+var
+  InputPass, ValidPass, ConfigFile: string;
+  Ini: TIniFile;
 begin
+  ConfigFile := ExtractFilePath(ParamStr(0)) + 'Config.ini';
+  Ini := TIniFile.Create(ConfigFile);
+  try
+    ValidPass := Ini.ReadString('GoogleDrive', 'Password', '1november2026');
+  finally
+    Ini.Free;
+  end;
+
+  InputPass := '';
+  if not InputQuery('Akses Operator Dinas', 'Masukkan Password Operator untuk membuka menu Setting:', InputPass) then
+    Exit;
+
+  if Trim(InputPass) <> Trim(ValidPass) then
+  begin
+    MessageDlg('AKSES DITOLAK: Password operator yang Anda masukkan salah!' + sLineBreak +
+               'Hanya operator dinas yang berwenang yang dapat mengakses menu ini.', mtError, [mbOK], 0);
+    Exit;
+  end;
+
   Form10.ShowModal;
+end;
+
+procedure TForm1.BtnToggleChartClick(Sender: TObject);
+begin
+  FChartModeBidang := not FChartModeBidang;
+  if FChartModeBidang then
+    BtnToggleChart.Caption := 'Grafik: Top Stok Barang'
+  else
+    BtnToggleChart.Caption := 'Grafik: Penggunaan Bidang';
+  TampilDataAwal;
+end;
+
+procedure TForm1.BtnPenyesuaianStokClick(Sender: TObject);
+var
+  RowIdx, Stok: Integer;
+  Kode, Nama, Satuan: string;
+begin
+  RowIdx := GridStok.Row;
+  if (RowIdx <= 0) or (GridStok.Cells[1, RowIdx] = '') then
+  begin
+    MessageDlg('Pilih salah satu baris barang pada tabel terlebih dahulu yang ingin disesuaikan stoknya.', mtInformation, [mbOK], 0);
+    Exit;
+  end;
+
+  Kode := GridStok.Cells[1, RowIdx];
+  Nama := GridStok.Cells[2, RowIdx];
+  Satuan := GridStok.Cells[4, RowIdx];
+  Stok := StrToIntDef(GridStok.Cells[5, RowIdx], 0);
+
+  Form11.BukaPenyesuaian(Kode, Nama, Satuan, Stok);
+  TampilDataAwal;
 end;
 
 procedure TForm1.BtnAlertStokClick(Sender: TObject);

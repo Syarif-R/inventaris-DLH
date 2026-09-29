@@ -174,7 +174,7 @@ object Form1: TForm1
       Left = 12
       Top = 398
       Width = 176
-      Height = 135
+      Height = 185
       BevelKind = bkFlat
       BevelOuter = bvNone
       Color = clWhite
@@ -228,6 +228,23 @@ object Form1: TForm1
         ParentFont = False
         TabOrder = 1
         OnClick = BtnRefreshDashboardClick
+      end
+      object BtnToggleChart: TButton
+        Left = 8
+        Top = 128
+        Width = 156
+        Height = 44
+        Cursor = crHandPoint
+        Caption = 'Grafik: Penggunaan Bidang'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 2
+        WordWrap = True
+        OnClick = BtnToggleChartClick
       end
     end
   end
@@ -455,12 +472,28 @@ object Form1: TForm1
         TabOrder = 6
         OnClick = BtnHapusBarangClick
       end
+      object BtnPenyesuaianStok: TButton
+        Left = 380
+        Top = 42
+        Width = 230
+        Height = 32
+        Cursor = crHandPoint
+        Caption = 'Penyesuaian Stok (Rusak/Hilang)'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+        TabOrder = 7
+        OnClick = BtnPenyesuaianStokClick
+      end
       object LblPetunjukGrid: TLabel
-        Left = 385
+        Left = 620
         Top = 50
-        Width = 270
+        Width = 240
         Height = 15
-        Caption = '* Klik baris tabel untuk Edit / Hapus barang master'
+        Caption = '* Klik baris untuk Edit/Hapus/Penyesuaian'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clGray
         Font.Height = -11
