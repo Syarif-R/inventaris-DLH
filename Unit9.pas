@@ -64,7 +64,7 @@ uses UnitDB;
 {$R *.dfm}
 
 const
-  DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbwPWaY_f2nxGMmB9yqTKGJ2P3JZu7OFF_WdU5i7HjCGp534MPP0FxVgp0Jftyzn0AJ_/exec';
+  DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxWhgDlgKnelkNMNclTC7CmQT5hWknAPejDZH2W2WcLViRMx3MvszNM_ZUMqSCFc1rWog/exec';
   DEFAULT_SECRET_TOKEN = 'DLH_INVENTARIS_2026_SECRET';
 
 procedure TForm9.FormCreate(Sender: TObject);
