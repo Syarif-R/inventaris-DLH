@@ -483,6 +483,8 @@ begin
       ZipFile.Free;
     end;
   end;
+end;
+
 procedure TForm9.BtnRestoreDbClick(Sender: TObject);
 var
   SelectedFile, TargetDb, BackupEmergency, ExeDir: string;

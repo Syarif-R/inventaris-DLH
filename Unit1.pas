@@ -74,9 +74,9 @@ type
     FFilterKritisOnly: Boolean;
     FChartModeBidang: Boolean;
     procedure InitCharts;
+  public
     procedure TampilDataAwal;
     procedure LoadKategoriCombo;
-  public
   end;
 
 var
