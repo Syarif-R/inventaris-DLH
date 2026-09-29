@@ -551,29 +551,7 @@ begin
 end;
 
 procedure TForm1.BtnSettingClick(Sender: TObject);
-var
-  InputPass, ValidPass, ConfigFile: string;
-  Ini: TIniFile;
 begin
-  ConfigFile := ExtractFilePath(ParamStr(0)) + 'Config.ini';
-  Ini := TIniFile.Create(ConfigFile);
-  try
-    ValidPass := Ini.ReadString('GoogleDrive', 'Password', '1november2026');
-  finally
-    Ini.Free;
-  end;
-
-  InputPass := '';
-  if not InputQuery('Akses Operator Dinas', 'Masukkan Password Operator untuk membuka menu Setting:', InputPass) then
-    Exit;
-
-  if Trim(InputPass) <> Trim(ValidPass) then
-  begin
-    MessageDlg('AKSES DITOLAK: Password operator yang Anda masukkan salah!' + sLineBreak +
-               'Hanya operator dinas yang berwenang yang dapat mengakses menu ini.', mtError, [mbOK], 0);
-    Exit;
-  end;
-
   Form10.ShowModal;
 end;
 
