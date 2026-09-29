@@ -153,6 +153,9 @@
         <DCCReference Include="Unit9.pas">
             <Form>Form9</Form>
         </DCCReference>
+        <DCCReference Include="Unit10.pas">
+            <Form>Form10</Form>
+        </DCCReference>
         <DCCReference Include="UnitDB.pas">
             <Form>ModulDB</Form>
             <DesignClass>TDataModule</DesignClass>

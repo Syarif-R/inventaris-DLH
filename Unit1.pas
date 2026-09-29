@@ -19,6 +19,7 @@ type
     BtnHistory: TButton;
     BtnStockOpname: TButton;
     BtnBackup: TButton;
+    BtnSetting: TButton;
     PnlAlertBox: TPanel;
     LblAlertJudul: TLabel;
     BtnAlertStok: TButton;
@@ -52,6 +53,7 @@ type
     procedure BtnHistoryClick(Sender: TObject);
     procedure BtnStockOpnameClick(Sender: TObject);
     procedure BtnBackupClick(Sender: TObject);
+    procedure BtnSettingClick(Sender: TObject);
     procedure BtnAlertStokClick(Sender: TObject);
     procedure BtnRefreshDashboardClick(Sender: TObject);
     procedure EdCariChange(Sender: TObject);
@@ -77,7 +79,7 @@ var
 
 implementation
 
-uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, UnitDB;
+uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, Unit10, UnitDB;
 
 {$R *.dfm}
 
@@ -152,6 +154,7 @@ begin
 
   ChkHideZero.Checked := True;
   FFilterKritisOnly := False;
+  BtnSetting.Caption := '⚙ Setting';
   InitCharts;
   LoadKategoriCombo;
   TampilDataAwal;
@@ -168,6 +171,9 @@ procedure TForm1.FormResize(Sender: TObject);
 var
   LebarTersisa: Integer;
 begin
+  if Assigned(BtnSetting) then
+    BtnSetting.Left := PnlAtas.ClientWidth - BtnSetting.Width - 16;
+
   LebarTersisa := GridStok.ClientWidth - 40 - 80 - 100;
 
   if LebarTersisa > 0 then
@@ -504,6 +510,11 @@ end;
 procedure TForm1.BtnBackupClick(Sender: TObject);
 begin
   Form9.ShowModal;
+end;
+
+procedure TForm1.BtnSettingClick(Sender: TObject);
+begin
+  Form10.ShowModal;
 end;
 
 procedure TForm1.BtnAlertStokClick(Sender: TObject);

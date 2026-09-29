@@ -29,6 +29,23 @@ object Form1: TForm1
     ParentBackground = False
     ParentFont = False
     TabOrder = 0
+    object BtnSetting: TButton
+      Left = 970
+      Top = 12
+      Width = 110
+      Height = 36
+      Anchors = [akTop, akRight]
+      Cursor = crHandPoint
+      Caption = 'Setting'
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = [fsBold]
+      ParentFont = False
+      TabOrder = 0
+      OnClick = BtnSettingClick
+    end
   end
   object PnlKiri: TPanel
     Left = 0

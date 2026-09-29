@@ -11,6 +11,7 @@ uses
   Unit7 in 'Unit7.pas' {Form7},
   Unit8 in 'Unit8.pas' {Form8},
   Unit9 in 'Unit9.pas' {Form9},
+  Unit10 in 'Unit10.pas' {Form10},
   UnitDB in 'UnitDB.pas' {ModulDB: TDataModule};
 
 {$R *.res}
@@ -28,5 +29,6 @@ begin
   Application.CreateForm(TForm7, Form7);
   Application.CreateForm(TForm8, Form8);
   Application.CreateForm(TForm9, Form9);
+  Application.CreateForm(TForm10, Form10);
   Application.Run;
 end.
