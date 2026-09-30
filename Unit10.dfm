@@ -230,7 +230,7 @@ object Form10: TForm10
           Width = 130
           Height = 28
           Cursor = crHandPoint
-          Caption = 'Menu Backup Drive'
+          Caption = 'Buka Layar Backup && Restore'
           Font.Style = [fsBold]
           TabOrder = 1
           OnClick = BtnBukaBackupClick

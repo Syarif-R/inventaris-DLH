@@ -164,7 +164,7 @@ object Form3: TForm3
         Top = 13
         Width = 125
         Height = 27
-        Caption = 'Tampilkan Semua'
+        Caption = 'Reset Filter'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -210,7 +210,7 @@ object Form3: TForm3
         Height = 36
         Cursor = crHandPoint
         Anchors = [akTop, akRight]
-        Caption = 'Reset Semua Nilai'
+        Caption = 'Kosongkan Input Transaksi'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12

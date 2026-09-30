@@ -19,6 +19,7 @@ type
     EdCari: TEdit;
     BtnSetting: TButton;
     PnlKiri: TPanel;
+    BtnDashboard: TButton;
     BtnMasuk: TButton;
     BtnPengajuan: TButton;
     BtnValidasi: TButton;
@@ -53,7 +54,15 @@ type
     LblStatTrxValue: TLabel;
     LblStatTrxSub: TLabel;
     PnlCharts: TGridPanel;
+    PnlCardChartKategori: TPanel;
+    PnlHdrChartKategori: TPanel;
+    LblChartKategoriTitle: TLabel;
+    LblChartKategoriSub: TLabel;
     ChartKategori: TChart;
+    PnlCardChartTop: TPanel;
+    PnlHdrChartTop: TPanel;
+    LblChartTopTitle: TLabel;
+    BtnToggleChart: TButton;
     ChartTopStok: TChart;
     PnlSpacer: TPanel;
     PnlCari: TPanel;
@@ -62,18 +71,18 @@ type
     LblPetunjukGrid: TLabel;
     CmbKategori: TComboBox;
     ChkHideZero: TCheckBox;
-    BtnTambahBarang: TButton;
-    BtnDownload: TButton;
     BtnEditBarang: TButton;
     BtnHapusBarang: TButton;
+    BtnTambahBarang: TButton;
     BtnPenyesuaianStok: TButton;
-    BtnToggleChart: TButton;
+    BtnDownload: TButton;
     GridStok: TStringGrid;
     SaveDialog1: TSaveDialog;
 
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    procedure BtnDashboardClick(Sender: TObject);
     procedure BtnMasukClick(Sender: TObject);
     procedure BtnPengajuanClick(Sender: TObject);
     procedure BtnValidasiClick(Sender: TObject);
@@ -134,20 +143,17 @@ begin
   ChartKategori.BackWall.Color := clWhite;
   ChartKategori.BackWall.Visible := False;
   ChartKategori.Legend.Visible := False;
-  ChartKategori.Title.Font.Name := 'Segoe UI';
-  ChartKategori.Title.Font.Size := 10;
-  ChartKategori.Title.Font.Style := [fsBold];
-  ChartKategori.Title.Font.Color := $00333333;
+  ChartKategori.Title.Visible := False;
   ChartKategori.Axes.Bottom.Grid.Visible := False;
   ChartKategori.Axes.Bottom.LabelsFont.Name := 'Segoe UI';
   ChartKategori.Axes.Bottom.LabelsFont.Size := 8;
   ChartKategori.Axes.Left.Grid.Color := $00F2F2F2;
   ChartKategori.Axes.Left.LabelsFont.Name := 'Segoe UI';
   ChartKategori.Axes.Left.LabelsFont.Size := 8;
-  ChartKategori.MarginTop := 6;
-  ChartKategori.MarginBottom := 6;
-  ChartKategori.MarginLeft := 6;
-  ChartKategori.MarginRight := 6;
+  ChartKategori.MarginTop := 4;
+  ChartKategori.MarginBottom := 4;
+  ChartKategori.MarginLeft := 4;
+  ChartKategori.MarginRight := 4;
   ChartKategori.FreeAllSeries;
   SeriesKategori := TBarSeries.Create(ChartKategori);
   SeriesKategori.ParentChart := ChartKategori;
@@ -170,20 +176,17 @@ begin
   ChartTopStok.BackWall.Color := clWhite;
   ChartTopStok.BackWall.Visible := False;
   ChartTopStok.Legend.Visible := False;
-  ChartTopStok.Title.Font.Name := 'Segoe UI';
-  ChartTopStok.Title.Font.Size := 10;
-  ChartTopStok.Title.Font.Style := [fsBold];
-  ChartTopStok.Title.Font.Color := $00333333;
+  ChartTopStok.Title.Visible := False;
   ChartTopStok.Axes.Bottom.Grid.Visible := False;
   ChartTopStok.Axes.Bottom.LabelsFont.Name := 'Segoe UI';
   ChartTopStok.Axes.Bottom.LabelsFont.Size := 8;
   ChartTopStok.Axes.Left.Grid.Color := $00F2F2F2;
   ChartTopStok.Axes.Left.LabelsFont.Name := 'Segoe UI';
   ChartTopStok.Axes.Left.LabelsFont.Size := 8;
-  ChartTopStok.MarginTop := 6;
-  ChartTopStok.MarginBottom := 6;
-  ChartTopStok.MarginLeft := 6;
-  ChartTopStok.MarginRight := 6;
+  ChartTopStok.MarginTop := 4;
+  ChartTopStok.MarginBottom := 4;
+  ChartTopStok.MarginLeft := 4;
+  ChartTopStok.MarginRight := 4;
   ChartTopStok.FreeAllSeries;
   SeriesTopStok := TBarSeries.Create(ChartTopStok);
   SeriesTopStok.ParentChart := ChartTopStok;
@@ -227,7 +230,7 @@ begin
     Q.Open;
     LblStatKritisValue.Caption := IntToStr(Q.Fields[0].AsInteger);
     if Q.Fields[0].AsInteger > 0 then
-      LblStatKritisSub.Caption := 'perlu segera restock'
+      LblStatKritisSub.Caption := 'perlu restock'
     else
       LblStatKritisSub.Caption := 'stok aman';
 
@@ -290,6 +293,7 @@ begin
   FFilterKritisOnly := False;
   FChartModeBidang := False;
   BtnSetting.Caption := 'Setting';
+  BtnToggleChart.Caption := 'Mode: Penggunaan Bidang';
   InitCharts;
   LoadKategoriCombo;
   TampilDataAwal;
@@ -300,6 +304,17 @@ begin
   LoadKategoriCombo;
   TampilDataAwal;
   Form9.AutoBackupIfNeeded;
+end;
+
+procedure TForm1.BtnDashboardClick(Sender: TObject);
+begin
+  EdCari.Clear;
+  CmbKategori.ItemIndex := 0;
+  FFilterKritisOnly := False;
+  FChartModeBidang := False;
+  BtnToggleChart.Caption := 'Mode: Penggunaan Bidang';
+  LblChartTopTitle.Caption := 'Top 7 Barang Stok Terbanyak (Stok > 0)';
+  TampilDataAwal;
 end;
 
 procedure TForm1.FormResize(Sender: TObject);
@@ -579,7 +594,7 @@ begin
     QTop.Connection := ModulDB.Koneksi;
     if FChartModeBidang then
     begin
-      ChartTopStok.Title.Text.Text := 'Penggunaan Barang per Bidang (Bulan Ini)';
+      LblChartTopTitle.Caption := 'Penggunaan Barang per Bidang (Bulan Ini)';
       QTop.SQL.Text := 'SELECT P.Bidang, SUM(D.Jumlah) AS TotalKeluar ' +
                        'FROM Tabel_Pengajuan P ' +
                        'JOIN Tabel_Pengajuan_Detail D ON P.No_Pengajuan = D.No_Pengajuan ' +
@@ -590,7 +605,7 @@ begin
       if QTop.IsEmpty then
       begin
         QTop.Close;
-        ChartTopStok.Title.Text.Text := 'Penggunaan Barang per Bidang (Total)';
+        LblChartTopTitle.Caption := 'Penggunaan Barang per Bidang (Total)';
         QTop.SQL.Text := 'SELECT P.Bidang, SUM(D.Jumlah) AS TotalKeluar ' +
                          'FROM Tabel_Pengajuan P ' +
                          'JOIN Tabel_Pengajuan_Detail D ON P.No_Pengajuan = D.No_Pengajuan ' +
@@ -612,13 +627,13 @@ begin
     begin
       if (SelectedKat = '') or (SelectedKat = 'Semua Kategori') then
       begin
-        ChartTopStok.Title.Text.Text := 'Top 7 Barang Stok Terbanyak (Stok > 0)';
+        LblChartTopTitle.Caption := 'Top 7 Barang Stok Terbanyak (Stok > 0)';
         QTop.SQL.Text := 'SELECT Nama_Barang, Stok_Sisa FROM Tabel_Barang ' +
                          'WHERE Stok_Sisa > 0 ORDER BY Stok_Sisa DESC LIMIT 7';
       end
       else
       begin
-        ChartTopStok.Title.Text.Text := 'Top Stok: ' + UpperCase(SelectedKat);
+        LblChartTopTitle.Caption := 'Top Stok: ' + UpperCase(SelectedKat);
         QTop.SQL.Text := 'SELECT Nama_Barang, Stok_Sisa FROM Tabel_Barang ' +
                          'WHERE Stok_Sisa > 0 AND Kategori = :kat ORDER BY Stok_Sisa DESC LIMIT 7';
         QTop.ParamByName('kat').AsString := SelectedKat;
@@ -824,9 +839,15 @@ procedure TForm1.BtnToggleChartClick(Sender: TObject);
 begin
   FChartModeBidang := not FChartModeBidang;
   if FChartModeBidang then
-    BtnToggleChart.Caption := 'Grafik: Top Stok Barang'
+  begin
+    BtnToggleChart.Caption := 'Mode: Top Stok';
+    LblChartTopTitle.Caption := 'Penggunaan Barang per Bidang (Bulan Ini)';
+  end
   else
-    BtnToggleChart.Caption := 'Grafik: Penggunaan Bidang';
+  begin
+    BtnToggleChart.Caption := 'Mode: Penggunaan Bidang';
+    LblChartTopTitle.Caption := 'Top 7 Barang Stok Terbanyak (Stok > 0)';
+  end;
   TampilDataAwal;
 end;
 
