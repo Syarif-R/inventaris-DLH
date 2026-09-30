@@ -210,7 +210,7 @@ begin
     LblStatKritisValue.Caption := IntToStr(Q.Fields[0].AsInteger);
 
     Q.SQL.Text := 'SELECT ' +
-      '(SELECT COUNT(*) FROM Tabel_Masuk WHERE strftime(''%Y-%m'', Tanggal_Masuk) = strftime(''%Y-%m'', ''now'')) + ' +
+      '(SELECT COUNT(*) FROM Tabel_Masuk WHERE strftime(''%Y-%m'', Tanggal) = strftime(''%Y-%m'', ''now'')) + ' +
       '(SELECT COUNT(*) FROM Tabel_Pengajuan WHERE strftime(''%Y-%m'', Tanggal) = strftime(''%Y-%m'', ''now''))';
     Q.Open;
     LblStatTrxValue.Caption := IntToStr(Q.Fields[0].AsInteger);
