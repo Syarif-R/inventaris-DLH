@@ -1,4 +1,5 @@
 object Form6: TForm6
+  Position = poScreenCenter
   Left = 0
   Top = 0
   Caption = 'Kelola Master Data Barang - DLH Banjarmasin'

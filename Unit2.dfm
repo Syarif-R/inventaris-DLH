@@ -1,4 +1,5 @@
 object Form2: TForm2
+  Position = poScreenCenter
   Left = 0
   Top = 0
   Caption = 'Penerimaan Barang Masuk (Inbound dari Pusat) - DLH Banjarmasin'

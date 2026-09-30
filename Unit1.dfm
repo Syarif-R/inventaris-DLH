@@ -1,23 +1,25 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Caption = 'Form1'
-  ClientHeight = 752
-  ClientWidth = 1100
+  Caption = 'APLIKASI INVENTARIS DLH - KOTA BANJARMASIN'
+  ClientHeight = 950
+  ClientWidth = 1600
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  Position = poScreenCenter
   OnCreate = FormCreate
   OnResize = FormResize
+  OnShow = FormShow
   TextHeight = 15
   object PnlAtas: TPanel
     Left = 0
     Top = 0
-    Width = 1100
-    Height = 60
+    Width = 1600
+    Height = 80
     Align = alTop
     Caption = 'APLIKASI INVENTARIS DLH - KOTA BANJARMASIN'
     Color = 3308846
@@ -30,8 +32,8 @@ object Form1: TForm1
     ParentFont = False
     TabOrder = 0
     object BtnSetting: TButton
-      Left = 970
-      Top = 12
+      Left = 1460
+      Top = 22
       Width = 110
       Height = 36
       Anchors = [akTop, akRight]
@@ -49,18 +51,18 @@ object Form1: TForm1
   end
   object PnlKiri: TPanel
     Left = 0
-    Top = 60
-    Width = 200
-    Height = 692
+    Top = 80
+    Width = 235
+    Height = 870
     Align = alLeft
-    Color = clWhitesmoke
+    Color = 16514043
     ParentBackground = False
     TabOrder = 1
     object BtnMasuk: TButton
-      Left = 20
-      Top = 25
-      Width = 160
-      Height = 45
+      Left = 15
+      Top = 20
+      Width = 205
+      Height = 44
       Cursor = crHandPoint
       Caption = 'Barang Masuk'
       Font.Charset = DEFAULT_CHARSET
@@ -73,10 +75,10 @@ object Form1: TForm1
       OnClick = BtnMasukClick
     end
     object BtnPengajuan: TButton
-      Left = 20
-      Top = 78
-      Width = 160
-      Height = 45
+      Left = 15
+      Top = 72
+      Width = 205
+      Height = 44
       Cursor = crHandPoint
       Caption = 'Pengajuan Bidang'
       Font.Charset = DEFAULT_CHARSET
@@ -89,10 +91,10 @@ object Form1: TForm1
       OnClick = BtnPengajuanClick
     end
     object BtnValidasi: TButton
-      Left = 20
-      Top = 131
-      Width = 160
-      Height = 45
+      Left = 15
+      Top = 124
+      Width = 205
+      Height = 44
       Cursor = crHandPoint
       Caption = 'Validasi Pengajuan'
       Font.Charset = DEFAULT_CHARSET
@@ -106,10 +108,10 @@ object Form1: TForm1
       OnClick = BtnValidasiClick
     end
     object BtnArsipValidasi: TButton
-      Left = 20
-      Top = 184
-      Width = 160
-      Height = 45
+      Left = 15
+      Top = 176
+      Width = 205
+      Height = 44
       Cursor = crHandPoint
       Caption = 'Arsip Dokumen Fisik'
       Font.Charset = DEFAULT_CHARSET
@@ -123,10 +125,10 @@ object Form1: TForm1
       OnClick = BtnArsipValidasiClick
     end
     object BtnHistory: TButton
-      Left = 20
-      Top = 237
-      Width = 160
-      Height = 45
+      Left = 15
+      Top = 228
+      Width = 205
+      Height = 44
       Cursor = crHandPoint
       Caption = 'Riwayat Transaksi'
       Font.Charset = DEFAULT_CHARSET
@@ -139,10 +141,10 @@ object Form1: TForm1
       OnClick = BtnHistoryClick
     end
     object BtnStockOpname: TButton
-      Left = 20
-      Top = 290
-      Width = 160
-      Height = 45
+      Left = 15
+      Top = 280
+      Width = 205
+      Height = 44
       Cursor = crHandPoint
       Caption = 'Laporan Stock Opname'
       Font.Charset = DEFAULT_CHARSET
@@ -155,10 +157,10 @@ object Form1: TForm1
       OnClick = BtnStockOpnameClick
     end
     object BtnBackup: TButton
-      Left = 20
-      Top = 343
-      Width = 160
-      Height = 45
+      Left = 15
+      Top = 332
+      Width = 205
+      Height = 44
       Cursor = crHandPoint
       Caption = 'Backup Cloud Drive'
       Font.Charset = DEFAULT_CHARSET
@@ -171,35 +173,35 @@ object Form1: TForm1
       OnClick = BtnBackupClick
     end
     object PnlAlertBox: TPanel
-      Left = 12
-      Top = 398
-      Width = 176
-      Height = 185
+      Left = 15
+      Top = 390
+      Width = 205
+      Height = 195
       BevelKind = bkFlat
       BevelOuter = bvNone
-      Color = clWhite
+      Color = 15267304
       ParentBackground = False
       TabOrder = 7
       object LblAlertJudul: TLabel
         Left = 10
-        Top = 8
-        Width = 156
-        Height = 15
+        Top = 10
+        Width = 185
+        Height = 18
         Alignment = taCenter
         AutoSize = False
         Caption = 'STATUS && PERINGATAN'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = 3308846
-        Font.Height = -11
+        Font.Height = -12
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
         ShowAccelChar = False
       end
       object BtnAlertStok: TButton
-        Left = 8
-        Top = 28
-        Width = 156
+        Left = 10
+        Top = 36
+        Width = 185
         Height = 44
         Cursor = crHandPoint
         Caption = 'Barang Kritis: -'
@@ -214,9 +216,9 @@ object Form1: TForm1
         OnClick = BtnAlertStokClick
       end
       object BtnRefreshDashboard: TButton
-        Left = 8
-        Top = 78
-        Width = 156
+        Left = 10
+        Top = 88
+        Width = 185
         Height = 44
         Cursor = crHandPoint
         Caption = 'Segarkan Status'
@@ -230,9 +232,9 @@ object Form1: TForm1
         OnClick = BtnRefreshDashboardClick
       end
       object BtnToggleChart: TButton
-        Left = 8
-        Top = 128
-        Width = 156
+        Left = 10
+        Top = 140
+        Width = 185
         Height = 44
         Cursor = crHandPoint
         Caption = 'Grafik: Penggunaan Bidang'
@@ -249,22 +251,24 @@ object Form1: TForm1
     end
   end
   object PnlUtama: TPanel
-    Left = 200
-    Top = 60
-    Width = 900
-    Height = 692
+    Left = 235
+    Top = 80
+    Width = 1365
+    Height = 870
     Align = alClient
     BevelOuter = bvNone
-    Padding.Left = 15
-    Padding.Top = 15
-    Padding.Right = 15
-    Padding.Bottom = 15
+    Color = 16053998
+    ParentBackground = False
+    Padding.Left = 20
+    Padding.Top = 18
+    Padding.Right = 20
+    Padding.Bottom = 18
     TabOrder = 2
     object PnlCharts: TGridPanel
-      Left = 15
-      Top = 15
-      Width = 870
-      Height = 220
+      Left = 20
+      Top = 18
+      Width = 1325
+      Height = 250
       Align = alTop
       BevelOuter = bvNone
       ColumnCollection = <
@@ -293,8 +297,8 @@ object Form1: TForm1
       object ChartKategori: TChart
         Left = 0
         Top = 0
-        Width = 435
-        Height = 220
+        Width = 662
+        Height = 250
         Title.Font.Name = 'Segoe UI'
         Title.Font.Style = [fsBold]
         Title.Text.Strings = (
@@ -307,14 +311,14 @@ object Form1: TForm1
         ColorPaletteIndex = 13
       end
       object ChartTopStok: TChart
-        Left = 435
+        Left = 662
         Top = 0
-        Width = 435
-        Height = 220
+        Width = 663
+        Height = 250
         Title.Font.Name = 'Segoe UI'
         Title.Font.Style = [fsBold]
         Title.Text.Strings = (
-          'TOP BARANG STOK TERBANYAK (STOK > 0)')
+          'TOP 7 BARANG STOK TERBANYAK (STOK > 0)')
         View3D = False
         Align = alClient
         Color = clWhite
@@ -324,21 +328,25 @@ object Form1: TForm1
       end
     end
     object PnlSpacer: TPanel
-      Left = 15
-      Top = 465
-      Width = 870
-      Height = 10
+      Left = 20
+      Top = 268
+      Width = 1325
+      Height = 12
       Align = alTop
       BevelOuter = bvNone
+      Color = 16053998
+      ParentBackground = False
       TabOrder = 1
     end
     object PnlCari: TPanel
-      Left = 15
-      Top = 475
-      Width = 870
-      Height = 82
+      Left = 20
+      Top = 280
+      Width = 1325
+      Height = 84
       Align = alTop
       BevelOuter = bvNone
+      Color = 16053998
+      ParentBackground = False
       TabOrder = 2
       object LblCari: TLabel
         Left = 5
@@ -356,14 +364,14 @@ object Form1: TForm1
       object EdCari: TEdit
         Left = 78
         Top = 8
-        Width = 175
+        Width = 220
         Height = 25
         TabOrder = 0
-        TextHint = 'Nama / Kode...'
+        TextHint = 'Nama / Kode Rekening...'
         OnChange = EdCariChange
       end
       object LblKategori: TLabel
-        Left = 265
+        Left = 315
         Top = 11
         Width = 50
         Height = 15
@@ -376,9 +384,9 @@ object Form1: TForm1
         ParentFont = False
       end
       object CmbKategori: TComboBox
-        Left = 320
+        Left = 372
         Top = 8
-        Width = 145
+        Width = 175
         Height = 25
         Style = csDropDownList
         TabOrder = 1
@@ -392,9 +400,9 @@ object Form1: TForm1
           'Persediaan Masyarakat')
       end
       object ChkHideZero: TCheckBox
-        Left = 478
+        Left = 565
         Top = 10
-        Width = 140
+        Width = 150
         Height = 22
         Caption = 'Sembunyikan Stok 0'
         Checked = True
@@ -409,7 +417,7 @@ object Form1: TForm1
         OnClick = ChkHideZeroClick
       end
       object BtnDownload: TButton
-        Left = 670
+        Left = 1125
         Top = 6
         Width = 195
         Height = 28
@@ -426,8 +434,8 @@ object Form1: TForm1
       end
       object BtnTambahBarang: TButton
         Left = 5
-        Top = 42
-        Width = 135
+        Top = 44
+        Width = 145
         Height = 32
         Cursor = crHandPoint
         Caption = '+ Tambah Barang'
@@ -441,9 +449,9 @@ object Form1: TForm1
         OnClick = BtnTambahBarangClick
       end
       object BtnEditBarang: TButton
-        Left = 146
-        Top = 42
-        Width = 110
+        Left = 158
+        Top = 44
+        Width = 115
         Height = 32
         Cursor = crHandPoint
         Caption = 'Edit Barang'
@@ -457,9 +465,9 @@ object Form1: TForm1
         OnClick = BtnEditBarangClick
       end
       object BtnHapusBarang: TButton
-        Left = 262
-        Top = 42
-        Width = 110
+        Left = 281
+        Top = 44
+        Width = 115
         Height = 32
         Cursor = crHandPoint
         Caption = 'Hapus Barang'
@@ -473,8 +481,8 @@ object Form1: TForm1
         OnClick = BtnHapusBarangClick
       end
       object BtnPenyesuaianStok: TButton
-        Left = 380
-        Top = 42
+        Left = 404
+        Top = 44
         Width = 230
         Height = 32
         Cursor = crHandPoint
@@ -489,8 +497,8 @@ object Form1: TForm1
         OnClick = BtnPenyesuaianStokClick
       end
       object LblPetunjukGrid: TLabel
-        Left = 620
-        Top = 50
+        Left = 648
+        Top = 52
         Width = 240
         Height = 15
         Caption = '* Klik baris untuk Edit/Hapus/Penyesuaian'
@@ -503,24 +511,26 @@ object Form1: TForm1
       end
     end
     object GridStok: TStringGrid
-      Left = 15
-      Top = 557
-      Width = 870
-      Height = 120
+      Left = 20
+      Top = 364
+      Width = 1325
+      Height = 488
       Align = alClient
       ColCount = 6
+      DefaultRowHeight = 26
       FixedCols = 0
       RowCount = 2
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
       TabOrder = 3
       OnDblClick = GridStokDblClick
+      OnDrawCell = GridStokDrawCell
       ColWidths = (
-        40
-        160
-        220
-        120
-        80
-        100)
+        50
+        170
+        550
+        190
+        90
+        120)
     end
   end
   object SaveDialog1: TSaveDialog

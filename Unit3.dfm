@@ -1,4 +1,5 @@
 object Form3: TForm3
+  Position = poScreenCenter
   Left = 0
   Top = 0
   Caption = 

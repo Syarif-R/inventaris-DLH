@@ -1,4 +1,5 @@
 object Form5: TForm5
+  Position = poScreenCenter
   Left = 0
   Top = 0
   Caption = 'Riwayat Transaksi & Audit Log - DLH Banjarmasin'

@@ -1,4 +1,5 @@
 object Form7: TForm7
+  Position = poScreenCenter
   Left = 0
   Top = 0
   Caption = 'Laporan & Berita Acara Stock Opname - DLH Banjarmasin'

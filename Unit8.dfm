@@ -1,4 +1,5 @@
 object Form8: TForm8
+  Position = poScreenCenter
   Left = 0
   Top = 0
   Caption = 'Arsip Dokumen Fisik - DLH Banjarmasin'

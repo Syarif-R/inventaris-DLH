@@ -1,4 +1,5 @@
 object Form4: TForm4
+  Position = poScreenCenter
   Left = 0
   Top = 0
   Caption = 'Validasi Pengajuan & Pemotongan Stok Fisik - DLH Banjarmasin'
