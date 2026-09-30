@@ -11,6 +11,13 @@ uses
 type
   TForm1 = class(TForm)
     PnlAtas: TPanel;
+    LblLogo: TLabel;
+    LblAppTitle: TLabel;
+    LblAppSubtitle: TLabel;
+    LblDashboardTitle: TLabel;
+    LblDashboardSub: TLabel;
+    EdCari: TEdit;
+    BtnSetting: TButton;
     PnlKiri: TPanel;
     BtnMasuk: TButton;
     BtnPengajuan: TButton;
@@ -19,29 +26,36 @@ type
     BtnHistory: TButton;
     BtnStockOpname: TButton;
     BtnBackup: TButton;
-    BtnSetting: TButton;
     PnlAlertBox: TPanel;
     LblAlertJudul: TLabel;
     BtnAlertStok: TButton;
     BtnRefreshDashboard: TButton;
-    BtnToggleChart: TButton;
     PnlUtama: TPanel;
+    PnlStatCards: TPanel;
+    LblStatJenisTitle: TLabel;
+    LblStatJenisValue: TLabel;
+    LblStatStokTitle: TLabel;
+    LblStatStokValue: TLabel;
+    LblStatKritisTitle: TLabel;
+    LblStatKritisValue: TLabel;
+    LblStatTrxTitle: TLabel;
+    LblStatTrxValue: TLabel;
     PnlCharts: TGridPanel;
     ChartKategori: TChart;
     ChartTopStok: TChart;
     PnlSpacer: TPanel;
     PnlCari: TPanel;
-    LblCari: TLabel;
-    EdCari: TEdit;
+    LblDaftarPersediaan: TLabel;
     LblKategori: TLabel;
+    LblPetunjukGrid: TLabel;
     CmbKategori: TComboBox;
     ChkHideZero: TCheckBox;
-    BtnDownload: TButton;
     BtnTambahBarang: TButton;
+    BtnDownload: TButton;
     BtnEditBarang: TButton;
     BtnHapusBarang: TButton;
     BtnPenyesuaianStok: TButton;
-    LblPetunjukGrid: TLabel;
+    BtnToggleChart: TButton;
     GridStok: TStringGrid;
     SaveDialog1: TSaveDialog;
 
@@ -75,6 +89,7 @@ type
     FFilterKritisOnly: Boolean;
     FChartModeBidang: Boolean;
     procedure InitCharts;
+    procedure UpdateStatCards;
   public
     procedure TampilDataAwal;
     procedure LoadKategoriCombo;
@@ -91,18 +106,17 @@ uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, Unit10, Unit11, Uni
 
 const
   BAR_PALETTE: array[0..6] of TColor = (
-    $00B36E2E, // Soft Blue/Cyan #2E6EB3
-    $00328E2E, // Forest Green #2E8E32
-    $002E70D9, // Amber Orange #D9702E
-    $0085449C, // Purple #9C4485
-    $0040A5E0, // Warm Gold #E0A540
-    $00A3822B, // Slate Cyan #2B82A3
-    $005A5AE9  // Coral Red #E95A5A
+    $00328E2E,
+    $00469646,
+    $00609E60,
+    $0084B684,
+    $0040A5E0,
+    $00A3822B,
+    $005A5AE9
   );
 
 procedure TForm1.InitCharts;
 begin
-  // Chart 1: Total Stok per Kategori Persediaan (Flat 2D Clean Card)
   ChartKategori.View3D := False;
   ChartKategori.Color := clWhite;
   ChartKategori.BackWall.Color := clWhite;
@@ -111,7 +125,7 @@ begin
   ChartKategori.Title.Font.Name := 'Segoe UI';
   ChartKategori.Title.Font.Size := 10;
   ChartKategori.Title.Font.Style := [fsBold];
-  ChartKategori.Title.Font.Color := $002E7D32;
+  ChartKategori.Title.Font.Color := $00333333;
   ChartKategori.Axes.Bottom.Grid.Visible := False;
   ChartKategori.Axes.Bottom.LabelsFont.Name := 'Segoe UI';
   ChartKategori.Axes.Bottom.LabelsFont.Size := 8;
@@ -122,14 +136,13 @@ begin
   ChartKategori.MarginBottom := 6;
   ChartKategori.MarginLeft := 6;
   ChartKategori.MarginRight := 6;
-
   ChartKategori.FreeAllSeries;
   SeriesKategori := TBarSeries.Create(ChartKategori);
   SeriesKategori.ParentChart := ChartKategori;
   SeriesKategori.ColorEachPoint := True;
   SeriesKategori.Marks.Visible := True;
   SeriesKategori.Marks.Style := smsValue;
-  SeriesKategori.Marks.BackColor := $00E8F8FF; // Light Cream badge
+  SeriesKategori.Marks.BackColor := $00E8F8FF;
   SeriesKategori.Marks.Frame.Color := $00C0D4DC;
   SeriesKategori.Marks.Font.Name := 'Segoe UI';
   SeriesKategori.Marks.Font.Size := 8;
@@ -140,7 +153,6 @@ begin
   SeriesKategori.BarWidthPercent := 55;
   SeriesKategori.ValueFormat := '#,##0';
 
-  // Chart 2: Top Barang Stok Terbanyak (Stok > 0)
   ChartTopStok.View3D := False;
   ChartTopStok.Color := clWhite;
   ChartTopStok.BackWall.Color := clWhite;
@@ -149,7 +161,7 @@ begin
   ChartTopStok.Title.Font.Name := 'Segoe UI';
   ChartTopStok.Title.Font.Size := 10;
   ChartTopStok.Title.Font.Style := [fsBold];
-  ChartTopStok.Title.Font.Color := $002E7D32;
+  ChartTopStok.Title.Font.Color := $00333333;
   ChartTopStok.Axes.Bottom.Grid.Visible := False;
   ChartTopStok.Axes.Bottom.LabelsFont.Name := 'Segoe UI';
   ChartTopStok.Axes.Bottom.LabelsFont.Size := 8;
@@ -160,14 +172,13 @@ begin
   ChartTopStok.MarginBottom := 6;
   ChartTopStok.MarginLeft := 6;
   ChartTopStok.MarginRight := 6;
-
   ChartTopStok.FreeAllSeries;
   SeriesTopStok := TBarSeries.Create(ChartTopStok);
   SeriesTopStok.ParentChart := ChartTopStok;
   SeriesTopStok.ColorEachPoint := True;
   SeriesTopStok.Marks.Visible := True;
   SeriesTopStok.Marks.Style := smsValue;
-  SeriesTopStok.Marks.BackColor := $00E8F8FF; // Light Cream badge
+  SeriesTopStok.Marks.BackColor := $00E8F8FF;
   SeriesTopStok.Marks.Frame.Color := $00C0D4DC;
   SeriesTopStok.Marks.Font.Name := 'Segoe UI';
   SeriesTopStok.Marks.Font.Size := 8;
@@ -177,6 +188,35 @@ begin
   SeriesTopStok.Marks.Arrow.Visible := False;
   SeriesTopStok.BarWidthPercent := 55;
   SeriesTopStok.ValueFormat := '#,##0';
+end;
+
+procedure TForm1.UpdateStatCards;
+var
+  Q: TFDQuery;
+begin
+  Q := TFDQuery.Create(nil);
+  try
+    Q.Connection := ModulDB.Koneksi;
+    Q.SQL.Text := 'SELECT COUNT(*) FROM Tabel_Barang';
+    Q.Open;
+    LblStatJenisValue.Caption := FormatFloat('#,##0', Q.Fields[0].AsInteger);
+
+    Q.SQL.Text := 'SELECT COALESCE(SUM(Stok_Sisa),0) FROM Tabel_Barang';
+    Q.Open;
+    LblStatStokValue.Caption := FormatFloat('#,##0', Q.Fields[0].AsInteger);
+
+    Q.SQL.Text := 'SELECT COUNT(*) FROM Tabel_Barang WHERE Stok_Sisa <= 5 AND Stok_Sisa > 0';
+    Q.Open;
+    LblStatKritisValue.Caption := IntToStr(Q.Fields[0].AsInteger);
+
+    Q.SQL.Text := 'SELECT ' +
+      '(SELECT COUNT(*) FROM Tabel_Masuk WHERE strftime(''%Y-%m'', Tanggal_Masuk) = strftime(''%Y-%m'', ''now'')) + ' +
+      '(SELECT COUNT(*) FROM Tabel_Pengajuan WHERE strftime(''%Y-%m'', Tanggal) = strftime(''%Y-%m'', ''now''))';
+    Q.Open;
+    LblStatTrxValue.Caption := IntToStr(Q.Fields[0].AsInteger);
+  finally
+    Q.Free;
+  end;
 end;
 
 procedure TForm1.LoadKategoriCombo;
@@ -189,7 +229,6 @@ begin
   try
     CmbKategori.Items.Clear;
     CmbKategori.Items.Add('Semua Kategori');
-
     Q := TFDQuery.Create(nil);
     try
       Q.Connection := ModulDB.Koneksi;
@@ -206,7 +245,6 @@ begin
   finally
     CmbKategori.Items.EndUpdate;
   end;
-
   if (CurrKat <> '') and (CmbKategori.Items.IndexOf(CurrKat) >= 0) then
     CmbKategori.ItemIndex := CmbKategori.Items.IndexOf(CurrKat)
   else
@@ -216,14 +254,13 @@ end;
 procedure TForm1.FormCreate(Sender: TObject);
 begin
   Self.Caption := 'Aplikasi Inventaris DLH - Dashboard Utama';
-
   GridStok.Cells[0, 0] := 'No';
   GridStok.Cells[1, 0] := 'Kode Rekening';
   GridStok.Cells[2, 0] := 'Nama Persediaan';
   GridStok.Cells[3, 0] := 'Kategori';
   GridStok.Cells[4, 0] := 'Satuan';
-  GridStok.Cells[5, 0] := 'Sisa Stok';
-
+  GridStok.Cells[5, 0] := 'Status';
+  GridStok.Cells[6, 0] := 'Stok';
   ChkHideZero.Checked := True;
   FFilterKritisOnly := False;
   FChartModeBidang := False;
@@ -247,16 +284,16 @@ begin
   if Assigned(BtnSetting) then
     BtnSetting.Left := PnlAtas.ClientWidth - BtnSetting.Width - 25;
 
-  // Fixed widths: Col 0 (50), Col 1 (180), Col 3 (200), Col 4 (90), Col 5 (130) -> total 650
-  LebarTersisa := GridStok.ClientWidth - 650;
-  if LebarTersisa < 250 then LebarTersisa := 250;
-
-  GridStok.ColWidths[0] := 50;
-  GridStok.ColWidths[1] := 180;
+  // Fixed widths: Col0=40, Col1=170, Col3=140, Col4=70, Col5=80, Col6=90 -> total fixed=590
+  LebarTersisa := GridStok.ClientWidth - 590;
+  if LebarTersisa < 200 then LebarTersisa := 200;
+  GridStok.ColWidths[0] := 40;
+  GridStok.ColWidths[1] := 170;
   GridStok.ColWidths[2] := LebarTersisa;
-  GridStok.ColWidths[3] := 200;
-  GridStok.ColWidths[4] := 90;
-  GridStok.ColWidths[5] := 130;
+  GridStok.ColWidths[3] := 140;
+  GridStok.ColWidths[4] := 70;
+  GridStok.ColWidths[5] := 80;
+  GridStok.ColWidths[6] := 90;
 end;
 
 procedure TForm1.GridStokDrawCell(Sender: TObject; ACol, ARow: Longint; Rect: TRect; State: TGridDrawState);
@@ -269,7 +306,6 @@ begin
   R := Rect;
   CellText := GridStok.Cells[ACol, ARow];
 
-  // Header row (ARow = 0) -> Modern Light Gray #ECECEC
   if ARow = 0 then
   begin
     GridStok.Canvas.Brush.Color := $00ECECEC;
@@ -279,25 +315,21 @@ begin
     GridStok.Canvas.LineTo(R.Right, R.Bottom - 1);
     GridStok.Canvas.MoveTo(R.Right - 1, R.Top);
     GridStok.Canvas.LineTo(R.Right - 1, R.Bottom);
-
     GridStok.Canvas.Font.Name := 'Segoe UI';
     GridStok.Canvas.Font.Size := 9;
     GridStok.Canvas.Font.Style := [fsBold];
     GridStok.Canvas.Font.Color := $002A2A2A;
-
     TextFlags := DT_SINGLELINE or DT_VCENTER;
-    if (ACol = 0) or (ACol = 4) or (ACol = 5) then
+    if (ACol = 0) or (ACol >= 4) then
       TextFlags := TextFlags or DT_CENTER
     else
       TextFlags := TextFlags or DT_LEFT;
-
     InflateRect(R, -6, 0);
     DrawText(GridStok.Canvas.Handle, PChar(CellText), -1, R, TextFlags);
     Exit;
   end;
 
-  // Data rows (ARow > 0)
-  SisaStok := StrToIntDef(GridStok.Cells[5, ARow], -1);
+  SisaStok := StrToIntDef(GridStok.Cells[6, ARow], -1);
 
   if gdSelected in State then
   begin
@@ -307,42 +339,50 @@ begin
   end
   else
   begin
-    // Highlight Critical Stock (Stok <= 5 and >= 0) in #FFF3E0 ($00E0F3FF BGR)
     if (SisaStok >= 0) and (SisaStok <= 5) then
       GridStok.Canvas.Brush.Color := $00E0F3FF
     else if (ARow mod 2 = 0) then
       GridStok.Canvas.Brush.Color := $00FAFAFA
     else
       GridStok.Canvas.Brush.Color := clWhite;
-
     GridStok.Canvas.Font.Color := $00202020;
     GridStok.Canvas.Font.Style := [];
   end;
 
   GridStok.Canvas.FillRect(R);
-
-  // Subtle bottom border
   GridStok.Canvas.Pen.Color := $00F0F0F0;
   GridStok.Canvas.MoveTo(R.Left, R.Bottom - 1);
   GridStok.Canvas.LineTo(R.Right, R.Bottom - 1);
-
   GridStok.Canvas.Font.Name := 'Segoe UI';
   GridStok.Canvas.Font.Size := 9;
 
-  // Highlight font and add warning symbol for critical stock column
-  if (ACol = 5) and (SisaStok >= 0) and (SisaStok <= 5) then
+  // Status column (ACol=5) - colored badge text
+  if ACol = 5 then
   begin
-    GridStok.Canvas.Font.Color := $000010D0;
     GridStok.Canvas.Font.Style := [fsBold];
-    CellText := #$26A0 + ' ' + GridStok.Cells[5, ARow];
+    if CellText = 'Kritis' then
+      GridStok.Canvas.Font.Color := $000000D0
+    else if CellText = 'Menipis' then
+      GridStok.Canvas.Font.Color := $000080FF
+    else if CellText = 'Aman' then
+      GridStok.Canvas.Font.Color := $00328E2E
+    else
+      GridStok.Canvas.Font.Color := clGray;
+  end;
+
+  // Stok column (ACol=6) - red bold + warning for critical
+  if (ACol = 6) and (SisaStok >= 0) and (SisaStok <= 5) then
+  begin
+    GridStok.Canvas.Font.Color := $000000D0;
+    GridStok.Canvas.Font.Style := [fsBold];
+    CellText := #$26A0 + ' ' + GridStok.Cells[6, ARow];
   end;
 
   TextFlags := DT_SINGLELINE or DT_VCENTER;
-  if (ACol = 0) or (ACol = 4) or (ACol = 5) then
+  if (ACol = 0) or (ACol >= 4) then
     TextFlags := TextFlags or DT_CENTER
   else
     TextFlags := TextFlags or DT_LEFT;
-
   InflateRect(R, -6, 0);
   DrawText(GridStok.Canvas.Handle, PChar(CellText), -1, R, TextFlags);
 end;
@@ -350,12 +390,13 @@ end;
 procedure TForm1.TampilDataAwal;
 var
   BarisTabel, ColorIdx: Integer;
-  SearchKey, SelectedKat, Kat, SisaStokStr: string;
+  SearchKey, SelectedKat, Kat, StatusStr: string;
   StokSisa, CountKritis, CountPending: Integer;
   Q, QKat, QTop, QAlert: TFDQuery;
   MatchSearch, MatchKat, MatchStok: Boolean;
 begin
-  // 0. Update Alert Box Status & Peringatan
+  UpdateStatCards;
+
   QAlert := TFDQuery.Create(nil);
   try
     QAlert.Connection := ModulDB.Koneksi;
@@ -371,13 +412,12 @@ begin
       BtnValidasi.Caption := 'Validasi Pengajuan (' + IntToStr(CountPending) + ')'
     else
       BtnValidasi.Caption := 'Validasi Pengajuan';
-
     BtnArsipValidasi.Caption := 'Arsip Dokumen Fisik';
 
     if FFilterKritisOnly then
-      BtnAlertStok.Caption := 'Filter Kritis (' + IntToStr(CountKritis) + ' Item)'
+      BtnAlertStok.Caption := IntToStr(CountKritis) + ' Barang Kritis (Filter ON)'
     else if CountKritis > 0 then
-      BtnAlertStok.Caption := #$26A0 + ' ' + IntToStr(CountKritis) + ' Barang Kritis'
+      BtnAlertStok.Caption := IntToStr(CountKritis) + ' Barang Kritis'
     else
       BtnAlertStok.Caption := 'Semua Stok Aman';
 
@@ -386,11 +426,9 @@ begin
     QAlert.Free;
   end;
 
-  // 1. Tampilkan Data Grid Stok (Prioritaskan stok > 0 terlebih dahulu)
   GridStok.RowCount := 2;
   GridStok.Rows[1].Clear;
   BarisTabel := 1;
-
   SearchKey := LowerCase(Trim(EdCari.Text));
   SelectedKat := Trim(CmbKategori.Text);
 
@@ -400,7 +438,6 @@ begin
     Q.SQL.Text := 'SELECT Kode_Rekening, Nama_Barang, Kategori, Satuan, Stok_Sisa FROM Tabel_Barang ' +
                   'ORDER BY CASE WHEN Stok_Sisa > 0 THEN 0 ELSE 1 END, Nama_Barang ASC';
     Q.Open;
-
     while not Q.Eof do
     begin
       Kat := Q.FieldByName('Kategori').AsString;
@@ -409,9 +446,7 @@ begin
       MatchSearch := (SearchKey = '') or
                      (Pos(SearchKey, LowerCase(Q.FieldByName('Kode_Rekening').AsString)) > 0) or
                      (Pos(SearchKey, LowerCase(Q.FieldByName('Nama_Barang').AsString)) > 0);
-
       MatchKat := (SelectedKat = '') or (SelectedKat = 'Semua Kategori') or (Kat = SelectedKat);
-
       if FFilterKritisOnly then
         MatchStok := (StokSisa <= 5) and (StokSisa > 0)
       else
@@ -422,15 +457,18 @@ begin
         if BarisTabel >= GridStok.RowCount then
           GridStok.RowCount := BarisTabel + 1;
 
-        SisaStokStr := IntToStr(StokSisa);
+        if StokSisa <= 0 then StatusStr := '-'
+        else if StokSisa <= 5 then StatusStr := 'Kritis'
+        else if StokSisa <= 15 then StatusStr := 'Menipis'
+        else StatusStr := 'Aman';
 
         GridStok.Cells[0, BarisTabel] := IntToStr(BarisTabel);
         GridStok.Cells[1, BarisTabel] := Q.FieldByName('Kode_Rekening').AsString;
         GridStok.Cells[2, BarisTabel] := Q.FieldByName('Nama_Barang').AsString;
         GridStok.Cells[3, BarisTabel] := Kat;
         GridStok.Cells[4, BarisTabel] := Q.FieldByName('Satuan').AsString;
-        GridStok.Cells[5, BarisTabel] := SisaStokStr;
-
+        GridStok.Cells[5, BarisTabel] := StatusStr;
+        GridStok.Cells[6, BarisTabel] := IntToStr(StokSisa);
         Inc(BarisTabel);
       end;
       Q.Next;
@@ -439,7 +477,6 @@ begin
     Q.Free;
   end;
 
-  // 2. Tampilkan Chart 1: Ringkasan Total Stok per Kategori
   SeriesKategori.Clear;
   QKat := TFDQuery.Create(nil);
   try
@@ -464,14 +501,13 @@ begin
     QKat.Free;
   end;
 
-  // 3. Tampilkan Chart 2: Top Barang Stok Terbanyak ATAU Penggunaan per Bidang
   SeriesTopStok.Clear;
   QTop := TFDQuery.Create(nil);
   try
     QTop.Connection := ModulDB.Koneksi;
     if FChartModeBidang then
     begin
-      ChartTopStok.Title.Text.Text := 'PENGGUNAAN BARANG PER BIDANG (BULAN INI)';
+      ChartTopStok.Title.Text.Text := 'Penggunaan Barang per Bidang (Bulan Ini)';
       QTop.SQL.Text := 'SELECT P.Bidang, SUM(D.Jumlah) AS TotalKeluar ' +
                        'FROM Tabel_Pengajuan P ' +
                        'JOIN Tabel_Pengajuan_Detail D ON P.No_Pengajuan = D.No_Pengajuan ' +
@@ -482,7 +518,7 @@ begin
       if QTop.IsEmpty then
       begin
         QTop.Close;
-        ChartTopStok.Title.Text.Text := 'PENGGUNAAN BARANG PER BIDANG (TOTAL KESELURUHAN)';
+        ChartTopStok.Title.Text.Text := 'Penggunaan Barang per Bidang (Total)';
         QTop.SQL.Text := 'SELECT P.Bidang, SUM(D.Jumlah) AS TotalKeluar ' +
                          'FROM Tabel_Pengajuan P ' +
                          'JOIN Tabel_Pengajuan_Detail D ON P.No_Pengajuan = D.No_Pengajuan ' +
@@ -504,13 +540,13 @@ begin
     begin
       if (SelectedKat = '') or (SelectedKat = 'Semua Kategori') then
       begin
-        ChartTopStok.Title.Text.Text := 'TOP 7 BARANG STOK TERBANYAK (STOK > 0)';
+        ChartTopStok.Title.Text.Text := 'Top 7 Barang Stok Terbanyak (Stok > 0)';
         QTop.SQL.Text := 'SELECT Nama_Barang, Stok_Sisa FROM Tabel_Barang ' +
                          'WHERE Stok_Sisa > 0 ORDER BY Stok_Sisa DESC LIMIT 7';
       end
       else
       begin
-        ChartTopStok.Title.Text.Text := 'TOP STOK: ' + UpperCase(SelectedKat) + ' (STOK > 0)';
+        ChartTopStok.Title.Text.Text := 'Top Stok: ' + UpperCase(SelectedKat);
         QTop.SQL.Text := 'SELECT Nama_Barang, Stok_Sisa FROM Tabel_Barang ' +
                          'WHERE Stok_Sisa > 0 AND Kategori = :kat ORDER BY Stok_Sisa DESC LIMIT 7';
         QTop.ParamByName('kat').AsString := SelectedKat;
@@ -552,11 +588,10 @@ var
   Kolom, Baris: Integer;
   BarisTeks, NilaiCell: string;
 begin
-  SaveDialog1.Title := 'Simpan Laporan Stock Opname';
+  SaveDialog1.Title := 'Simpan Laporan Inventaris';
   SaveDialog1.Filter := 'File Excel (CSV)|*.csv';
   SaveDialog1.DefaultExt := 'csv';
-  SaveDialog1.FileName := 'Laporan_Opname_DLH.csv';
-
+  SaveDialog1.FileName := 'Laporan_Inventaris_DLH.csv';
   if SaveDialog1.Execute then
   begin
     DataExcel := TStringList.Create;
@@ -564,14 +599,12 @@ begin
       for Baris := 0 to GridStok.RowCount - 1 do
       begin
         if (Baris > 0) and (GridStok.Cells[1, Baris] = '') then Continue;
-
         BarisTeks := '';
         for Kolom := 0 to GridStok.ColCount - 1 do
         begin
           NilaiCell := GridStok.Cells[Kolom, Baris];
           if Pos(';', NilaiCell) > 0 then
             NilaiCell := '"' + NilaiCell + '"';
-
           if Kolom = 0 then
             BarisTeks := NilaiCell
           else
@@ -579,9 +612,8 @@ begin
         end;
         DataExcel.Add(BarisTeks);
       end;
-
       DataExcel.SaveToFile(SaveDialog1.FileName, TEncoding.UTF8);
-      ShowMessage('Sukses! Laporan berhasil diunduh ke Excel.');
+      ShowMessage('Sukses! Laporan berhasil diunduh.');
     finally
       DataExcel.Free;
     end;
@@ -636,7 +668,6 @@ begin
     MessageDlg('Pilih salah satu baris barang pada tabel terlebih dahulu untuk diedit.', mtInformation, [mbOK], 0);
     Exit;
   end;
-
   Kode := GridStok.Cells[1, RowIdx];
   Form6.BukaEditBarang(Kode);
   LoadKategoriCombo;
@@ -661,7 +692,6 @@ begin
     MessageDlg('Pilih salah satu baris barang pada tabel terlebih dahulu untuk dihapus.', mtInformation, [mbOK], 0);
     Exit;
   end;
-
   Kode := GridStok.Cells[1, RowIdx];
   NamaBarang := GridStok.Cells[2, RowIdx];
 
@@ -681,21 +711,19 @@ begin
     if CountTrx > 0 then
     begin
       MessageDlg('Barang "' + NamaBarang + '" (' + Kode + ') TIDAK DAPAT DIHAPUS' + sLineBreak +
-                 'karena sudah memiliki riwayat transaksi penerimaan / pengajuan di database.' + sLineBreak +
-                 'Hanya barang yang belum memiliki riwayat transaksi yang aman dihapus.', mtWarning, [mbOK], 0);
+                 'karena sudah memiliki riwayat transaksi.', mtWarning, [mbOK], 0);
       Exit;
     end;
 
-    if MessageDlg('Apakah Anda yakin ingin menghapus barang master ini dari katalog inventaris?' + sLineBreak + sLineBreak +
-                  'Kode Rekening: ' + Kode + sLineBreak +
-                  'Nama Persediaan: ' + NamaBarang, mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+    if MessageDlg('Hapus barang ini dari katalog inventaris?' + sLineBreak + sLineBreak +
+                  'Kode: ' + Kode + sLineBreak +
+                  'Nama: ' + NamaBarang, mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
       QCheck.Close;
       QCheck.SQL.Text := 'DELETE FROM Tabel_Barang WHERE Kode_Rekening = :k';
       QCheck.ParamByName('k').AsString := Kode;
       QCheck.ExecSQL;
-
-      ShowMessage('Barang "' + NamaBarang + '" berhasil dihapus dari sistem.');
+      ShowMessage('Barang "' + NamaBarang + '" berhasil dihapus.');
       LoadKategoriCombo;
       TampilDataAwal;
     end;
@@ -738,15 +766,13 @@ begin
   RowIdx := GridStok.Row;
   if (RowIdx <= 0) or (GridStok.Cells[1, RowIdx] = '') then
   begin
-    MessageDlg('Pilih salah satu baris barang pada tabel terlebih dahulu yang ingin disesuaikan stoknya.', mtInformation, [mbOK], 0);
+    MessageDlg('Pilih salah satu baris barang yang ingin disesuaikan stoknya.', mtInformation, [mbOK], 0);
     Exit;
   end;
-
   Kode := GridStok.Cells[1, RowIdx];
   Nama := GridStok.Cells[2, RowIdx];
   Satuan := GridStok.Cells[4, RowIdx];
-  Stok := StrToIntDef(GridStok.Cells[5, RowIdx], 0);
-
+  Stok := StrToIntDef(GridStok.Cells[6, RowIdx], 0);
   Form11.BukaPenyesuaian(Kode, Nama, Satuan, Stok);
   TampilDataAwal;
 end;
