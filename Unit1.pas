@@ -32,14 +32,26 @@ type
     BtnRefreshDashboard: TButton;
     PnlUtama: TPanel;
     PnlStatCards: TPanel;
+    CardJenis: TPanel;
+    StripeJenis: TPanel;
     LblStatJenisTitle: TLabel;
     LblStatJenisValue: TLabel;
+    LblStatJenisSub: TLabel;
+    CardStok: TPanel;
+    StripeStok: TPanel;
     LblStatStokTitle: TLabel;
     LblStatStokValue: TLabel;
+    LblStatStokSub: TLabel;
+    CardKritis: TPanel;
+    StripeKritis: TPanel;
     LblStatKritisTitle: TLabel;
     LblStatKritisValue: TLabel;
+    LblStatKritisSub: TLabel;
+    CardTrx: TPanel;
+    StripeTrx: TPanel;
     LblStatTrxTitle: TLabel;
     LblStatTrxValue: TLabel;
+    LblStatTrxSub: TLabel;
     PnlCharts: TGridPanel;
     ChartKategori: TChart;
     ChartTopStok: TChart;
@@ -106,13 +118,13 @@ uses Unit2, Unit3, Unit4, Unit5, Unit6, Unit7, Unit8, Unit9, Unit10, Unit11, Uni
 
 const
   BAR_PALETTE: array[0..6] of TColor = (
-    $00328E2E,
-    $00469646,
-    $00609E60,
-    $0084B684,
-    $0040A5E0,
-    $00A3822B,
-    $005A5AE9
+    $00328E2E, // DLH Green #2E8E32
+    $00469646, // Medium Green
+    $00609E60, // Light Olive
+    $0084B684, // Soft Sage
+    $0040A5E0, // Warm Gold
+    $00A3822B, // Slate Cyan
+    $005A5AE9  // Coral Red
   );
 
 procedure TForm1.InitCharts;
@@ -197,23 +209,35 @@ begin
   Q := TFDQuery.Create(nil);
   try
     Q.Connection := ModulDB.Koneksi;
+
+    // 1. Total Jenis Barang
     Q.SQL.Text := 'SELECT COUNT(*) FROM Tabel_Barang';
     Q.Open;
     LblStatJenisValue.Caption := FormatFloat('#,##0', Q.Fields[0].AsInteger);
+    LblStatJenisSub.Caption := 'katalog master';
 
+    // 2. Total Stok
     Q.SQL.Text := 'SELECT COALESCE(SUM(Stok_Sisa),0) FROM Tabel_Barang';
     Q.Open;
     LblStatStokValue.Caption := FormatFloat('#,##0', Q.Fields[0].AsInteger);
+    LblStatStokSub.Caption := '4 kategori persediaan';
 
+    // 3. Barang Kritis
     Q.SQL.Text := 'SELECT COUNT(*) FROM Tabel_Barang WHERE Stok_Sisa <= 5 AND Stok_Sisa > 0';
     Q.Open;
     LblStatKritisValue.Caption := IntToStr(Q.Fields[0].AsInteger);
+    if Q.Fields[0].AsInteger > 0 then
+      LblStatKritisSub.Caption := 'perlu segera restock'
+    else
+      LblStatKritisSub.Caption := 'stok aman';
 
+    // 4. Transaksi Bulan Ini (masuk + keluar)
     Q.SQL.Text := 'SELECT ' +
       '(SELECT COUNT(*) FROM Tabel_Masuk WHERE strftime(''%Y-%m'', Tanggal) = strftime(''%Y-%m'', ''now'')) + ' +
       '(SELECT COUNT(*) FROM Tabel_Pengajuan WHERE strftime(''%Y-%m'', Tanggal) = strftime(''%Y-%m'', ''now''))';
     Q.Open;
     LblStatTrxValue.Caption := IntToStr(Q.Fields[0].AsInteger);
+    LblStatTrxSub.Caption := 'masuk && keluar';
   finally
     Q.Free;
   end;
@@ -261,6 +285,7 @@ begin
   GridStok.Cells[4, 0] := 'Satuan';
   GridStok.Cells[5, 0] := 'Status';
   GridStok.Cells[6, 0] := 'Stok';
+
   ChkHideZero.Checked := True;
   FFilterKritisOnly := False;
   FChartModeBidang := False;
@@ -279,33 +304,60 @@ end;
 
 procedure TForm1.FormResize(Sender: TObject);
 var
-  LebarTersisa: Integer;
+  LebarTersisa, TotalW, CardW, Gap: Integer;
 begin
   if Assigned(BtnSetting) then
+  begin
     BtnSetting.Left := PnlAtas.ClientWidth - BtnSetting.Width - 25;
+    EdCari.Left := BtnSetting.Left - EdCari.Width - 20;
+  end;
 
-  // Fixed widths: Col0=40, Col1=170, Col3=140, Col4=70, Col5=80, Col6=90 -> total fixed=590
-  LebarTersisa := GridStok.ClientWidth - 590;
+  // Responsive Stat Cards layout
+  if Assigned(CardJenis) and Assigned(PnlStatCards) then
+  begin
+    Gap := 12;
+    TotalW := PnlStatCards.ClientWidth;
+    if TotalW > 200 then
+    begin
+      CardW := (TotalW - (Gap * 3)) div 4;
+      CardJenis.Left := 0;
+      CardJenis.Width := CardW;
+
+      CardStok.Left := CardW + Gap;
+      CardStok.Width := CardW;
+
+      CardKritis.Left := (CardW + Gap) * 2;
+      CardKritis.Width := CardW;
+
+      CardTrx.Left := (CardW + Gap) * 3;
+      CardTrx.Width := TotalW - CardTrx.Left;
+    end;
+  end;
+
+  // Column widths: Col0=40, Col1=170, Col3=140, Col4=70, Col5=90, Col6=90 -> total fixed=600
+  LebarTersisa := GridStok.ClientWidth - 620;
   if LebarTersisa < 200 then LebarTersisa := 200;
   GridStok.ColWidths[0] := 40;
   GridStok.ColWidths[1] := 170;
   GridStok.ColWidths[2] := LebarTersisa;
   GridStok.ColWidths[3] := 140;
   GridStok.ColWidths[4] := 70;
-  GridStok.ColWidths[5] := 80;
+  GridStok.ColWidths[5] := 90;
   GridStok.ColWidths[6] := 90;
 end;
 
 procedure TForm1.GridStokDrawCell(Sender: TObject; ACol, ARow: Longint; Rect: TRect; State: TGridDrawState);
 var
-  SisaStok: Integer;
+  SisaStok, BadgeW, BadgeH: Integer;
   CellText: string;
   TextFlags: Cardinal;
-  R: TRect;
+  R, BadgeRect: TRect;
+  BadgeColor: TColor;
 begin
   R := Rect;
   CellText := GridStok.Cells[ACol, ARow];
 
+  // Header row (ARow = 0) -> Modern light gray #ECECEC
   if ARow = 0 then
   begin
     GridStok.Canvas.Brush.Color := $00ECECEC;
@@ -319,7 +371,7 @@ begin
     GridStok.Canvas.Font.Size := 9;
     GridStok.Canvas.Font.Style := [fsBold];
     GridStok.Canvas.Font.Color := $002A2A2A;
-    TextFlags := DT_SINGLELINE or DT_VCENTER;
+    TextFlags := DT_SINGLELINE or DT_VCENTER or DT_NOPREFIX;
     if (ACol = 0) or (ACol >= 4) then
       TextFlags := TextFlags or DT_CENTER
     else
@@ -329,6 +381,7 @@ begin
     Exit;
   end;
 
+  // Data rows (ARow > 0)
   SisaStok := StrToIntDef(GridStok.Cells[6, ARow], -1);
 
   if gdSelected in State then
@@ -339,6 +392,7 @@ begin
   end
   else
   begin
+    // Highlight critical stock in soft amber/cream #FFF3E0
     if (SisaStok >= 0) and (SisaStok <= 5) then
       GridStok.Canvas.Brush.Color := $00E0F3FF
     else if (ARow mod 2 = 0) then
@@ -356,21 +410,38 @@ begin
   GridStok.Canvas.Font.Name := 'Segoe UI';
   GridStok.Canvas.Font.Size := 9;
 
-  // Status column (ACol=5) - colored badge text
-  if ACol = 5 then
+  // Status column (ACol=5) - draw beautiful rounded pill badge
+  if (ACol = 5) and (CellText <> '') and (CellText <> '-') then
   begin
-    GridStok.Canvas.Font.Style := [fsBold];
+    BadgeW := 64;
+    BadgeH := 20;
+    BadgeRect.Left := R.Left + (R.Right - R.Left - BadgeW) div 2;
+    BadgeRect.Right := BadgeRect.Left + BadgeW;
+    BadgeRect.Top := R.Top + (R.Bottom - R.Top - BadgeH) div 2;
+    BadgeRect.Bottom := BadgeRect.Top + BadgeH;
+
     if CellText = 'Kritis' then
-      GridStok.Canvas.Font.Color := $000000D0
+      BadgeColor := $003539E5  // Coral Red #E53935
     else if CellText = 'Menipis' then
-      GridStok.Canvas.Font.Color := $000080FF
-    else if CellText = 'Aman' then
-      GridStok.Canvas.Font.Color := $00328E2E
+      BadgeColor := $001E8CFB  // Warm Amber/Orange #FB8C1E
     else
-      GridStok.Canvas.Font.Color := clGray;
+      BadgeColor := $0047A043; // Emerald Green #43A047
+
+    GridStok.Canvas.Brush.Color := BadgeColor;
+    GridStok.Canvas.Pen.Color := BadgeColor;
+    GridStok.Canvas.RoundRect(BadgeRect.Left, BadgeRect.Top, BadgeRect.Right, BadgeRect.Bottom, 10, 10);
+
+    GridStok.Canvas.Font.Name := 'Segoe UI';
+    GridStok.Canvas.Font.Size := 8;
+    GridStok.Canvas.Font.Style := [fsBold];
+    GridStok.Canvas.Font.Color := clWhite;
+
+    DrawText(GridStok.Canvas.Handle, PChar(CellText), -1, BadgeRect,
+      DT_SINGLELINE or DT_CENTER or DT_VCENTER or DT_NOPREFIX);
+    Exit;
   end;
 
-  // Stok column (ACol=6) - red bold + warning for critical
+  // Stok column (ACol=6) - red bold + warning symbol for critical items
   if (ACol = 6) and (SisaStok >= 0) and (SisaStok <= 5) then
   begin
     GridStok.Canvas.Font.Color := $000000D0;
@@ -378,11 +449,12 @@ begin
     CellText := #$26A0 + ' ' + GridStok.Cells[6, ARow];
   end;
 
-  TextFlags := DT_SINGLELINE or DT_VCENTER;
+  TextFlags := DT_SINGLELINE or DT_VCENTER or DT_NOPREFIX;
   if (ACol = 0) or (ACol >= 4) then
     TextFlags := TextFlags or DT_CENTER
   else
     TextFlags := TextFlags or DT_LEFT;
+
   InflateRect(R, -6, 0);
   DrawText(GridStok.Canvas.Handle, PChar(CellText), -1, R, TextFlags);
 end;

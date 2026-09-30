@@ -1,7 +1,7 @@
 object Form1: TForm1
   Left = 0
   Top = 0
-  Caption = 'APLIKASI INVENTARIS DLH - KOTA BANJARMASIN'
+  Caption = 'Aplikasi Inventaris DLH - Dashboard Utama'
   ClientHeight = 950
   ClientWidth = 1600
   Color = clBtnFace
@@ -30,16 +30,16 @@ object Form1: TForm1
       80)
     object LblLogo: TLabel
       Left = 16
-      Top = 14
-      Width = 40
-      Height = 40
+      Top = 16
+      Width = 46
+      Height = 46
       Alignment = taCenter
       AutoSize = False
       Caption = 'DLH'
       Color = 2854702
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
-      Font.Height = -13
+      Font.Height = -14
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentColor = False
@@ -48,35 +48,35 @@ object Form1: TForm1
       Layout = tlCenter
     end
     object LblAppTitle: TLabel
-      Left = 64
-      Top = 10
-      Width = 200
-      Height = 22
+      Left = 72
+      Top = 15
+      Width = 140
+      Height = 25
       Caption = 'INVENTARIS'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
-      Font.Height = -18
+      Font.Height = -19
       Font.Name = 'Segoe UI'
       Font.Style = [fsBold]
       ParentFont = False
     end
     object LblAppSubtitle: TLabel
-      Left = 64
-      Top = 34
-      Width = 120
+      Left = 72
+      Top = 41
+      Width = 104
       Height = 15
       Caption = 'Kota Banjarmasin'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = 11599860
-      Font.Height = -11
+      Font.Height = -12
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
     end
     object LblDashboardTitle: TLabel
       Left = 280
-      Top = 14
-      Width = 200
+      Top = 15
+      Width = 165
       Height = 25
       Caption = 'Dashboard Utama'
       Font.Charset = DEFAULT_CHARSET
@@ -88,23 +88,29 @@ object Form1: TForm1
     end
     object LblDashboardSub: TLabel
       Left = 280
-      Top = 44
-      Width = 380
+      Top = 41
+      Width = 350
       Height = 15
       Caption = 'Ringkasan stok persediaan DLH '#8212' diperbarui hari ini'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = 11599860
-      Font.Height = -11
+      Font.Height = -12
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
     end
     object EdCari: TEdit
-      Left = 960
+      Left = 1060
       Top = 24
-      Width = 280
-      Height = 30
+      Width = 270
+      Height = 32
       Anchors = [akTop, akRight]
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -13
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
       TabOrder = 0
       TextHint = 'Cari barang... (Nama / Kode)'
       OnChange = EdCariChange
@@ -253,9 +259,9 @@ object Form1: TForm1
     end
     object PnlAlertBox: TPanel
       Left = 15
-      Top = 670
+      Top = 392
       Width = 205
-      Height = 120
+      Height = 125
       BevelKind = bkFlat
       BevelOuter = bvNone
       Color = 15267304
@@ -279,14 +285,14 @@ object Form1: TForm1
       end
       object BtnAlertStok: TButton
         Left = 10
-        Top = 30
+        Top = 28
         Width = 185
-        Height = 38
+        Height = 42
         Cursor = crHandPoint
         Caption = '5 Barang Kritis'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clRed
-        Font.Height = -13
+        Font.Height = -12
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
@@ -298,7 +304,7 @@ object Form1: TForm1
         Left = 10
         Top = 76
         Width = 185
-        Height = 34
+        Height = 36
         Cursor = crHandPoint
         Caption = 'Segarkan Status'
         Font.Charset = DEFAULT_CHARSET
@@ -336,109 +342,250 @@ object Form1: TForm1
       Color = 16053998
       ParentBackground = False
       TabOrder = 0
-      object LblStatJenisTitle: TLabel
-        Left = 15
-        Top = 10
-        Width = 100
-        Height = 15
-        Caption = 'Total Jenis Barang'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clGrayText
-        Font.Height = -11
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
+      object CardJenis: TPanel
+        Left = 0
+        Top = 0
+        Width = 320
+        Height = 78
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Color = clWhite
+        ParentBackground = False
+        TabOrder = 0
+        object StripeJenis: TPanel
+          Left = 0
+          Top = 0
+          Width = 5
+          Height = 76
+          Align = alLeft
+          BevelOuter = bvNone
+          Color = 3308846
+          ParentBackground = False
+          TabOrder = 0
+        end
+        object LblStatJenisTitle: TLabel
+          Left = 16
+          Top = 8
+          Width = 100
+          Height = 15
+          Caption = 'Total Jenis Barang'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clGrayText
+          Font.Height = -11
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object LblStatJenisValue: TLabel
+          Left = 16
+          Top = 24
+          Width = 60
+          Height = 32
+          Caption = '0'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -24
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object LblStatJenisSub: TLabel
+          Left = 16
+          Top = 56
+          Width = 100
+          Height = 14
+          Caption = '+12 bulan ini'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = 3308846
+          Font.Height = -11
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
       end
-      object LblStatJenisValue: TLabel
-        Left = 15
-        Top = 30
-        Width = 60
-        Height = 32
-        Caption = '0'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -24
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
+      object CardStok: TPanel
+        Left = 332
+        Top = 0
+        Width = 320
+        Height = 78
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Color = clWhite
+        ParentBackground = False
+        TabOrder = 1
+        object StripeStok: TPanel
+          Left = 0
+          Top = 0
+          Width = 5
+          Height = 76
+          Align = alLeft
+          BevelOuter = bvNone
+          Color = 3313200
+          ParentBackground = False
+          TabOrder = 0
+        end
+        object LblStatStokTitle: TLabel
+          Left = 16
+          Top = 8
+          Width = 60
+          Height = 15
+          Caption = 'Total Stok'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clGrayText
+          Font.Height = -11
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object LblStatStokValue: TLabel
+          Left = 16
+          Top = 24
+          Width = 60
+          Height = 32
+          Caption = '0'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -24
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object LblStatStokSub: TLabel
+          Left = 16
+          Top = 56
+          Width = 110
+          Height = 14
+          Caption = '4 kategori persediaan'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clGrayText
+          Font.Height = -11
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
       end
-      object LblStatStokTitle: TLabel
-        Left = 348
-        Top = 10
-        Width = 60
-        Height = 15
-        Caption = 'Total Stok'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clGrayText
-        Font.Height = -11
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
+      object CardKritis: TPanel
+        Left = 664
+        Top = 0
+        Width = 320
+        Height = 78
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Color = clWhite
+        ParentBackground = False
+        TabOrder = 2
+        object StripeKritis: TPanel
+          Left = 0
+          Top = 0
+          Width = 5
+          Height = 76
+          Align = alLeft
+          BevelOuter = bvNone
+          Color = 2105552
+          ParentBackground = False
+          TabOrder = 0
+        end
+        object LblStatKritisTitle: TLabel
+          Left = 16
+          Top = 8
+          Width = 80
+          Height = 15
+          Caption = 'Barang Kritis'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clGrayText
+          Font.Height = -11
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object LblStatKritisValue: TLabel
+          Left = 16
+          Top = 24
+          Width = 60
+          Height = 32
+          Caption = '0'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clRed
+          Font.Height = -24
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object LblStatKritisSub: TLabel
+          Left = 16
+          Top = 56
+          Width = 80
+          Height = 14
+          Caption = 'perlu restock'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clRed
+          Font.Height = -11
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
       end
-      object LblStatStokValue: TLabel
-        Left = 348
-        Top = 30
-        Width = 60
-        Height = 32
-        Caption = '0'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -24
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object LblStatKritisTitle: TLabel
-        Left = 681
-        Top = 10
-        Width = 80
-        Height = 15
-        Caption = 'Barang Kritis'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clGrayText
-        Font.Height = -11
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-      end
-      object LblStatKritisValue: TLabel
-        Left = 681
-        Top = 30
-        Width = 60
-        Height = 32
-        Caption = '0'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -24
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object LblStatTrxTitle: TLabel
-        Left = 1014
-        Top = 10
-        Width = 120
-        Height = 15
-        Caption = 'Transaksi Bulan Ini'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clGrayText
-        Font.Height = -11
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-      end
-      object LblStatTrxValue: TLabel
-        Left = 1014
-        Top = 30
-        Width = 60
-        Height = 32
-        Caption = '0'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clBlack
-        Font.Height = -24
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
+      object CardTrx: TPanel
+        Left = 996
+        Top = 0
+        Width = 337
+        Height = 78
+        BevelKind = bkFlat
+        BevelOuter = bvNone
+        Color = clWhite
+        ParentBackground = False
+        TabOrder = 3
+        object StripeTrx: TPanel
+          Left = 0
+          Top = 0
+          Width = 5
+          Height = 76
+          Align = alLeft
+          BevelOuter = bvNone
+          Color = 13656096
+          ParentBackground = False
+          TabOrder = 0
+        end
+        object LblStatTrxTitle: TLabel
+          Left = 16
+          Top = 8
+          Width = 120
+          Height = 15
+          Caption = 'Transaksi Bulan Ini'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clGrayText
+          Font.Height = -11
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object LblStatTrxValue: TLabel
+          Left = 16
+          Top = 24
+          Width = 60
+          Height = 32
+          Caption = '0'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clBlack
+          Font.Height = -24
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object LblStatTrxSub: TLabel
+          Left = 16
+          Top = 56
+          Width = 85
+          Height = 14
+          Caption = 'masuk && keluar'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clGrayText
+          Font.Height = -11
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+          ShowAccelChar = False
+        end
       end
     end
     object PnlCharts: TGridPanel
@@ -708,7 +855,7 @@ object Form1: TForm1
       Height = 453
       Align = alClient
       ColCount = 7
-      DefaultRowHeight = 26
+      DefaultRowHeight = 28
       FixedCols = 0
       RowCount = 2
       Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRowSelect]
@@ -721,8 +868,8 @@ object Form1: TForm1
         440
         140
         70
-        80
-        80)
+        90
+        90)
     end
   end
   object SaveDialog1: TSaveDialog
