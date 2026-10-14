@@ -519,9 +519,11 @@ begin
   except
   end;
 
-  // 2. Putuskan Koneksi Database Aktif
+  // 2. Putuskan Koneksi Database Aktif & Bersihkan Berkas WAL/SHM
   try
     ModulDB.Koneksi.Connected := False;
+    if FileExists(TargetDb + '-wal') then DeleteFile(PChar(TargetDb + '-wal'));
+    if FileExists(TargetDb + '-shm') then DeleteFile(PChar(TargetDb + '-shm'));
   except
   end;
 
@@ -536,6 +538,10 @@ begin
                'Pastikan tidak ada aplikasi lain yang sedang mengunci file database.', mtError, [mbOK], 0);
     Exit;
   end;
+
+  // Bersihkan berkas WAL/SHM setelah restore agar database terbuka bersih murni
+  if FileExists(TargetDb + '-wal') then DeleteFile(PChar(TargetDb + '-wal'));
+  if FileExists(TargetDb + '-shm') then DeleteFile(PChar(TargetDb + '-shm'));
 
   // 4. Sambungkan kembali ke database
   try

@@ -93,7 +93,9 @@ begin
   if not FileExists(LogoPath) then
     LogoPath := ExtractFilePath(ParamStr(0)) + 'Win32\Debug\logo_banjarmasin.jpg';
   if not FileExists(LogoPath) then
-    LogoPath := 'c:\Users\SYARIF\Desktop\MAGANG DLH 2026\inventaris\Win32\Debug\logo_banjarmasin.jpg';
+    LogoPath := ExpandFileName(ExtractFilePath(ParamStr(0)) + '..\..\logo_banjarmasin.jpg');
+  if not FileExists(LogoPath) then
+    LogoPath := ExpandFileName(ExtractFilePath(ParamStr(0)) + '..\logo_banjarmasin.jpg');
 
   if FileExists(LogoPath) then
   begin

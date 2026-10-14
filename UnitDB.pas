@@ -89,6 +89,18 @@ begin
     except
     end;
 
+    // Auto Indexes untuk performa jangka panjang ribuan transaksi
+    try
+      Koneksi.ExecSQL('CREATE INDEX IF NOT EXISTS idx_masuk_kode_tgl ON Tabel_Masuk(Kode_Rekening, Tanggal)');
+      Koneksi.ExecSQL('CREATE INDEX IF NOT EXISTS idx_keluar_kode_tgl ON Tabel_Keluar(Kode_Rekening, Tanggal)');
+      Koneksi.ExecSQL('CREATE INDEX IF NOT EXISTS idx_keluar_pengajuan ON Tabel_Keluar(No_Pengajuan)');
+      Koneksi.ExecSQL('CREATE INDEX IF NOT EXISTS idx_pengajuan_status ON Tabel_Pengajuan(Status)');
+      Koneksi.ExecSQL('CREATE INDEX IF NOT EXISTS idx_pengajuan_detail_no ON Tabel_Pengajuan_Detail(No_Pengajuan)');
+      Koneksi.ExecSQL('CREATE INDEX IF NOT EXISTS idx_pengajuan_detail_kode ON Tabel_Pengajuan_Detail(Kode_Rekening)');
+      Koneksi.ExecSQL('PRAGMA optimize');
+    except
+    end;
+
     if not QBarang.Active then
       QBarang.Open;
   except

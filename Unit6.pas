@@ -288,6 +288,7 @@ begin
   CboKategori.ItemIndex := 0;
   EdtSatuan.Clear;
   EdtStok.Text := '0';
+  EdtStok.Enabled := True;
   EdtHarga.Text := '0';
 end;
 
@@ -318,6 +319,19 @@ begin
         EdtHarga.Text := FormatFloat('0.##', Q.FieldByName('Harga_Satuan').AsFloat)
       else
         EdtHarga.Text := '0';
+
+      // Cek apakah barang sudah punya riwayat transaksi
+      Q.Close;
+      Q.SQL.Text := 'SELECT ' +
+                    '(SELECT COUNT(*) FROM Tabel_Masuk WHERE Kode_Rekening = :k1) + ' +
+                    '(SELECT COUNT(*) FROM Tabel_Keluar WHERE Kode_Rekening = :k2) + ' +
+                    '(SELECT COUNT(*) FROM Tabel_Pengajuan_Detail WHERE Kode_Rekening = :k3)';
+      Q.ParamByName('k1').AsString := Kode;
+      Q.ParamByName('k2').AsString := Kode;
+      Q.ParamByName('k3').AsString := Kode;
+      Q.Open;
+      // Jika sudah bertransaksi, kunci kolom stok agar integritas data audit terjaga
+      EdtStok.Enabled := (Q.Fields[0].AsInteger = 0);
     finally
       Q.Free;
     end;
@@ -444,12 +458,20 @@ begin
   Q := TFDQuery.Create(nil);
   try
     Q.Connection := ModulDB.Koneksi;
-    Q.SQL.Text := 'UPDATE Tabel_Barang SET Nama_Barang = :nama, Kategori = :kat, Satuan = :satuan, Stok_Sisa = :stok, Harga_Satuan = :harga ' +
-                  'WHERE Kode_Rekening = :kode';
+    if not EdtStok.Enabled then
+    begin
+      Q.SQL.Text := 'UPDATE Tabel_Barang SET Nama_Barang = :nama, Kategori = :kat, Satuan = :satuan, Harga_Satuan = :harga ' +
+                    'WHERE Kode_Rekening = :kode';
+    end
+    else
+    begin
+      Q.SQL.Text := 'UPDATE Tabel_Barang SET Nama_Barang = :nama, Kategori = :kat, Satuan = :satuan, Stok_Sisa = :stok, Harga_Satuan = :harga ' +
+                    'WHERE Kode_Rekening = :kode';
+      Q.ParamByName('stok').AsInteger := Stok;
+    end;
     Q.ParamByName('nama').AsString := Nama;
     Q.ParamByName('kat').AsString := Kat;
     Q.ParamByName('satuan').AsString := Satuan;
-    Q.ParamByName('stok').AsInteger := Stok;
     Q.ParamByName('harga').AsFloat := Harga;
     Q.ParamByName('kode').AsString := Kode;
     Q.ExecSQL;
