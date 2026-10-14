@@ -223,7 +223,12 @@ begin
     Q.SQL.Text := 'SELECT COALESCE(SUM(Stok_Sisa),0) FROM Tabel_Barang';
     Q.Open;
     LblStatStokValue.Caption := FormatFloat('#,##0', Q.Fields[0].AsInteger);
-    LblStatStokSub.Caption := '4 kategori persediaan';
+        Q.Close;
+    Q.SQL.Text := 'SELECT COUNT(DISTINCT Kategori) FROM Tabel_Barang WHERE Kategori IS NOT NULL AND Kategori <> ''''';
+    Q.Open;
+    LblStatStokSub.Caption := IntToStr(Q.Fields[0].AsInteger) + ' kategori persediaan';
+    if Assigned(LblChartKategoriSub) then
+      LblChartKategoriSub.Caption := IntToStr(Q.Fields[0].AsInteger) + ' Kategori Aktif';
 
     // 3. Barang Kritis
     Q.SQL.Text := 'SELECT COUNT(*) FROM Tabel_Barang WHERE Stok_Sisa <= 5 AND Stok_Sisa > 0';
@@ -831,8 +836,17 @@ begin
 end;
 
 procedure TForm1.BtnSettingClick(Sender: TObject);
+var
+  PassInput: string;
 begin
-  Form10.ShowModal;
+  PassInput := '';
+  if InputQuery('Keamanan Operator Dinas', 'Masukkan Password Operator untuk membuka Setting:', PassInput) then
+  begin
+    if PassInput = '1november2026' then
+      Form10.ShowModal
+    else
+      MessageDlg('Akses ditolak: Password Operator Dinas salah!', mtError, [mbOK], 0);
+  end;
 end;
 
 procedure TForm1.BtnToggleChartClick(Sender: TObject);

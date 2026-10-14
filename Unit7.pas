@@ -599,19 +599,29 @@ begin
           // 1. Nomor Berita Acara (Cell A9)
           WS.Range['A9'].Value2 := EdtNoSurat.Text;
 
-          // 2. Tanggal Berita Acara (Cell E76)
+          // 2. Tanggal Berita Acara & Tanda Tangan Pejabat (Penyesuaian khusus jika sheet JUNI barisnya lebih sedikit)
           TglStr := 'Banjarmasin, ' + FormatDateTime('dd mmmm yyyy', DTPTanggal.Date);
-          WS.Range['E76'].Value2 := TglStr;
 
-          // 3. Tanda Tangan Pejabat (Baris 81, 82, 90, 91)
-          WS.Range['A81'].Value2 := EdtKasubbagNama.Text;
-          WS.Range['A82'].Value2 := EdtKasubbagNIP.Text;
-
-          WS.Range['E81'].Value2 := EdtPengurusNama.Text;
-          WS.Range['E82'].Value2 := EdtPengurusNIP.Text;
-
-          WS.Range['A90'].Value2 := EdtKadisNama.Text;
-          WS.Range['A91'].Value2 := EdtKadisNIP.Text;
+          if BulanName = 'JUNI' then
+          begin
+            WS.Range['E70'].Value2 := TglStr;
+            WS.Range['A75'].Value2 := EdtKasubbagNama.Text;
+            WS.Range['A76'].Value2 := EdtKasubbagNIP.Text;
+            WS.Range['E75'].Value2 := EdtPengurusNama.Text;
+            WS.Range['E76'].Value2 := EdtPengurusNIP.Text;
+            WS.Range['A84'].Value2 := EdtKadisNama.Text;
+            WS.Range['A85'].Value2 := EdtKadisNIP.Text;
+          end
+          else
+          begin
+            WS.Range['E76'].Value2 := TglStr;
+            WS.Range['A81'].Value2 := EdtKasubbagNama.Text;
+            WS.Range['A82'].Value2 := EdtKasubbagNIP.Text;
+            WS.Range['E81'].Value2 := EdtPengurusNama.Text;
+            WS.Range['E82'].Value2 := EdtPengurusNIP.Text;
+            WS.Range['A90'].Value2 := EdtKadisNama.Text;
+            WS.Range['A91'].Value2 := EdtKadisNIP.Text;
+          end;
 
           // 4. Update Jumlah Fisik Real-Time & Nilai dari Database sesuai Kapan Masuk/Keluar
           TglCutoff := FormatDateTime('yyyy-mm-dd', DTPTanggal.Date);

@@ -590,7 +590,7 @@ end;
 
 procedure TForm4.BtnValidasiClick(Sender: TObject);
 var
-  NoPengajuan, TargetDir, TargetFile, Ext, TglNow, KodeRek: string;
+  NoPengajuan, TargetDir, TargetFile, RelTargetFile, Ext, TglNow, KodeRek: string;
   PosDash, Jml: Integer;
   Q, QDetail: TFDQuery;
 begin
@@ -625,6 +625,8 @@ begin
 
   Ext := ExtractFileExt(SelectedFilePath);
   TargetFile := TargetDir + '\' + NoPengajuan + '_' + FormatDateTime('hhnnss', Now) + Ext;
+  // Simpan path relatif di database agar portabel jika folder aplikasi dipindah
+  RelTargetFile := 'arsip_bukti\' + FormatDateTime('yyyy-mm', Now) + '\' + NoPengajuan + '_' + FormatDateTime('hhnnss', Now) + Ext;
 
   TglNow := FormatDateTime('yyyy-mm-dd', Now);
 
@@ -632,6 +634,7 @@ begin
   Q := TFDQuery.Create(nil);
   QDetail := TFDQuery.Create(nil);
   try
+    try
     // Copy Foto ke Folder Arsip
     CopyFile(PChar(SelectedFilePath), PChar(TargetFile), False);
 
@@ -640,7 +643,7 @@ begin
 
     // 1. Update Status Pengajuan ke DIVALIDASI dan Simpan Lokasi Bukti Foto
     Q.SQL.Text := 'UPDATE Tabel_Pengajuan SET Status = ''DIVALIDASI'', Bukti_Foto = :foto WHERE No_Pengajuan = :no';
-    Q.ParamByName('foto').AsString := TargetFile;
+    Q.ParamByName('foto').AsString := RelTargetFile;
     Q.ParamByName('no').AsString := NoPengajuan;
     Q.ExecSQL;
 
@@ -681,12 +684,16 @@ begin
     LoadPendingPengajuan;
     ImgBukti.Picture := nil;
     SelectedFilePath := '';
-  except
-    on E: Exception do
-    begin
-      ModulDB.Koneksi.Rollback;
-      ShowMessage('Gagal melakukan validasi & pemotongan stok: ' + E.Message);
+    except
+      on E: Exception do
+      begin
+        ModulDB.Koneksi.Rollback;
+        ShowMessage('Gagal melakukan validasi & pemotongan stok: ' + E.Message);
+      end;
     end;
+  finally
+    QDetail.Free;
+    Q.Free;
   end;
 
   QDetail.Free;

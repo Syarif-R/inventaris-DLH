@@ -672,7 +672,8 @@ begin
   ModulDB.Koneksi.StartTransaction;
   Q := TFDQuery.Create(nil);
   try
-    Q.Connection := ModulDB.Koneksi;
+    try
+      Q.Connection := ModulDB.Koneksi;
 
     for I := 0 to FJumlahMasukList.Count - 1 do
     begin
@@ -839,14 +840,16 @@ begin
 
     FJumlahMasukList.Clear;
     Self.Close;
-  except
-    on E: Exception do
-    begin
-      ModulDB.Koneksi.Rollback;
-      ShowMessage('Gagal menyimpan data barang masuk: ' + E.Message);
+    except
+      on E: Exception do
+      begin
+        ModulDB.Koneksi.Rollback;
+        ShowMessage('Gagal menyimpan data barang masuk: ' + E.Message);
+      end;
     end;
+  finally
+    Q.Free;
   end;
-  Q.Free;
 end;
 
 procedure TForm2.EdCariChange(Sender: TObject);

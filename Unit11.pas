@@ -126,7 +126,8 @@ begin
   ModulDB.Koneksi.StartTransaction;
   Q := TFDQuery.Create(nil);
   try
-    Q.Connection := ModulDB.Koneksi;
+    try
+      Q.Connection := ModulDB.Koneksi;
 
     if IsPengurangan then
     begin
@@ -190,14 +191,16 @@ begin
     ModulDB.Koneksi.Commit;
     ShowMessage('BERHASIL! Penyesuaian stok untuk barang "' + Nama + '" telah disimpan.');
     ModalResult := mrOk;
-  except
-    on E: Exception do
-    begin
-      ModulDB.Koneksi.Rollback;
-      ShowMessage('GAGAL MENYIMPAN: ' + E.Message);
+    except
+      on E: Exception do
+      begin
+        ModulDB.Koneksi.Rollback;
+        ShowMessage('GAGAL MENYIMPAN: ' + E.Message);
+      end;
     end;
+  finally
+    Q.Free;
   end;
-  Q.Free;
 end;
 
 procedure TForm11.BtnBatalClick(Sender: TObject);

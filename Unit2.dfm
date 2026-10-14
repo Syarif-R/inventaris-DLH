@@ -293,7 +293,7 @@ object Form2: TForm2
       Color = clWhitesmoke
       ParentBackground = False
       TabOrder = 3
-      object PnlKontelKanan: TPanel
+      object PnlKontrolKanan: TPanel
         Left = 680
         Top = 0
         Width = 320

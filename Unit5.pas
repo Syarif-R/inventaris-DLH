@@ -248,7 +248,7 @@ end;
 procedure TForm5.GridHistoryDblClick(Sender: TObject);
 var
   RowIdx: Integer;
-  Jenis, NoPGJ, BuktiFile, BastFile, Msg, NoRcv, NoDok, AsalB: string;
+  Jenis, NoPGJ, BuktiFile, ResolvedBukti, BastFile, Msg, NoRcv, NoDok, AsalB, RefStr, ExeDir: string;
   Q: TFDQuery;
 begin
   RowIdx := GridHistory.Row;
@@ -262,11 +262,15 @@ begin
       Q := TFDQuery.Create(nil);
       try
         Q.Connection := ModulDB.Koneksi;
+        RefStr := Trim(GridHistory.Cells[3, RowIdx]);
         Q.SQL.Text := 'SELECT M.No_Penerimaan, M.No_Dokumen, M.Asal_Barang, M.Kode_Rekening ' +
                       'FROM Tabel_Masuk M LEFT JOIN Tabel_Barang B ON M.Kode_Rekening = B.Kode_Rekening ' +
-                      'WHERE M.Tanggal = :tgl AND B.Nama_Barang = :nama LIMIT 1';
+                      'WHERE M.Tanggal = :tgl AND B.Nama_Barang = :nama ' +
+                      '  AND (M.No_Penerimaan = :ref OR M.No_Dokumen = :ref OR M.Kode_Rekening = :ref OR :ref = '''') ' +
+                      'LIMIT 1';
         Q.ParamByName('tgl').AsString := GridHistory.Cells[1, RowIdx];
         Q.ParamByName('nama').AsString := GridHistory.Cells[4, RowIdx];
+        Q.ParamByName('ref').AsString := RefStr;
         Q.Open;
 
         NoRcv := '';
@@ -299,7 +303,11 @@ begin
 
         BastFile := '';
         if NoRcv <> '' then
-          BastFile := ExtractFilePath(ParamStr(0)) + 'arsip_surat\BAST_Masuk_' + NoRcv + '.html';
+        begin
+          BastFile := ExtractFilePath(ParamStr(0)) + 'arsip_surat\BAST_Penerimaan_' + NoRcv + '.html';
+          if not FileExists(BastFile) then
+            BastFile := ExtractFilePath(ParamStr(0)) + 'arsip_surat\BAST_Masuk_' + NoRcv + '.html';
+        end;
 
         if (BastFile <> '') and FileExists(BastFile) then
         begin
@@ -340,13 +348,25 @@ begin
         Q.Free;
       end;
 
-      if (BuktiFile <> '') and FileExists(BuktiFile) then
+      ResolvedBukti := BuktiFile;
+      if not FileExists(ResolvedBukti) and (BuktiFile <> '') then
+      begin
+        ExeDir := ExtractFilePath(ParamStr(0));
+        if FileExists(ExeDir + BuktiFile) then
+          ResolvedBukti := ExeDir + BuktiFile
+        else if FileExists(ExeDir + 'arsip_bukti\' + ExtractFileName(BuktiFile)) then
+          ResolvedBukti := ExeDir + 'arsip_bukti\' + ExtractFileName(BuktiFile)
+        else if FileExists(ExeDir + 'arsip_bukti\' + ExtractFileName(ExtractFileDir(BuktiFile)) + '\' + ExtractFileName(BuktiFile)) then
+          ResolvedBukti := ExeDir + 'arsip_bukti\' + ExtractFileName(ExtractFileDir(BuktiFile)) + '\' + ExtractFileName(BuktiFile);
+      end;
+
+      if (ResolvedBukti <> '') and FileExists(ResolvedBukti) then
       begin
         Msg := Msg + sLineBreak + sLineBreak +
-               'Berkas Bukti Fisik: ' + ExtractFileName(BuktiFile) + sLineBreak +
+               'Berkas Bukti Fisik: ' + ExtractFileName(ResolvedBukti) + sLineBreak +
                'Apakah Anda ingin membuka berkas dokumen bukti ini sekarang?';
         if MessageDlg(Msg, mtInformation, [mbYes, mbNo], 0) = mrYes then
-          ShellExecute(0, 'open', PChar(BuktiFile), nil, nil, SW_SHOWNORMAL);
+          ShellExecute(0, 'open', PChar(ResolvedBukti), nil, nil, SW_SHOWNORMAL);
       end
       else
         ShowMessage(Msg);

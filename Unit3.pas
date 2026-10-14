@@ -881,7 +881,8 @@ begin
   ModulDB.Koneksi.StartTransaction;
   Q := TFDQuery.Create(nil);
   try
-    Q.Connection := ModulDB.Koneksi;
+    try
+      Q.Connection := ModulDB.Koneksi;
 
     Q.SQL.Text := 'INSERT INTO Tabel_Pengajuan (No_Pengajuan, Tanggal, Bidang, Status) VALUES (:no, :tgl, :bidang, ''PENDING'')';
     Q.ParamByName('no').AsString := NoPengajuan;
@@ -1083,14 +1084,16 @@ begin
 
     FJumlahDiajukanList.Clear;
     Self.Close;
-  except
-    on E: Exception do
-    begin
-      ModulDB.Koneksi.Rollback;
-      ShowMessage('Gagal menyimpan pengajuan barang: ' + E.Message);
+    except
+      on E: Exception do
+      begin
+        ModulDB.Koneksi.Rollback;
+        ShowMessage('Gagal menyimpan pengajuan barang: ' + E.Message);
+      end;
     end;
+  finally
+    Q.Free;
   end;
-  Q.Free;
 end;
 
 procedure TForm3.EdCariChange(Sender: TObject);
