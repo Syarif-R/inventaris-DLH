@@ -311,22 +311,9 @@ object Form3: TForm3
         TabOrder = 0
         ExplicitLeft = 678
         ExplicitHeight = 462
-        object LblBidang: TLabel
-          Left = 15
-          Top = 10
-          Width = 110
-          Height = 17
-          Caption = 'Bidang Pemohon:'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = 3308846
-          Font.Height = -13
-          Font.Name = 'Segoe UI'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
         object LblPanelKananJudul: TLabel
           Left = 15
-          Top = 66
+          Top = 12
           Width = 164
           Height = 20
           Caption = 'Atur Jumlah Pengajuan'
@@ -339,7 +326,7 @@ object Form3: TForm3
         end
         object LblInputManual: TLabel
           Left = 15
-          Top = 195
+          Top = 143
           Width = 155
           Height = 17
           Caption = 'Jumlah Barang Diajukan:'
@@ -350,31 +337,16 @@ object Form3: TForm3
           Font.Style = [fsBold]
           ParentFont = False
         end
-        object CboBidang: TComboBox
-          Left = 15
-          Top = 30
-          Width = 290
-          Height = 25
-          Style = csDropDownList
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -13
-          Font.Name = 'Segoe UI'
-          Font.Style = []
-          ParentFont = False
-          TabOrder = 0
-          OnChange = CboBidangChange
-        end
         object PnlCardBarang: TPanel
           Left = 15
-          Top = 90
+          Top = 38
           Width = 290
           Height = 95
           BevelKind = bkFlat
           BevelOuter = bvNone
           Color = clWhite
           ParentBackground = False
-          TabOrder = 1
+          TabOrder = 0
           object LblNamaBarangPilih: TLabel
             Left = 10
             Top = 8
@@ -419,13 +391,13 @@ object Form3: TForm3
         end
         object PnlInputBaris: TPanel
           Left = 15
-          Top = 216
+          Top = 164
           Width = 290
           Height = 40
           BevelOuter = bvNone
           Color = clWhitesmoke
           ParentBackground = False
-          TabOrder = 2
+          TabOrder = 1
           object BtnKurang1: TButton
             Left = 0
             Top = 0
@@ -479,13 +451,13 @@ object Form3: TForm3
         end
         object PnlTombolNominal: TPanel
           Left = 15
-          Top = 262
+          Top = 210
           Width = 290
           Height = 35
           BevelOuter = bvNone
           Color = clWhitesmoke
           ParentBackground = False
-          TabOrder = 3
+          TabOrder = 2
           object BtnPlus5: TButton
             Left = 0
             Top = 0
@@ -553,7 +525,7 @@ object Form3: TForm3
         end
         object BtnResetBarang: TButton
           Left = 15
-          Top = 306
+          Top = 252
           Width = 290
           Height = 32
           Cursor = crHandPoint
@@ -564,19 +536,19 @@ object Form3: TForm3
           Font.Name = 'Segoe UI'
           Font.Style = [fsBold]
           ParentFont = False
-          TabOrder = 4
+          TabOrder = 3
           OnClick = BtnResetBarangClick
         end
         object PnlInfoBantuan: TPanel
           Left = 15
-          Top = 348
+          Top = 295
           Width = 290
           Height = 85
           BevelKind = bkFlat
           BevelOuter = bvNone
           Color = clInfoBk
           ParentBackground = False
-          TabOrder = 5
+          TabOrder = 4
           object LblBantuan: TLabel
             Left = 10
             Top = 8
