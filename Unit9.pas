@@ -144,10 +144,31 @@ begin
 end;
 
 procedure TForm9.TambahLog(const Pesan: string);
+var
+  LogMsg: string;
 begin
-  MemoLog.Lines.Add('[' + FormatDateTime('hh:nn:ss', Now) + '] ' + Pesan);
-  MemoLog.Perform(EM_SCROLLCARET, 0, 0);
-  Application.ProcessMessages;
+  LogMsg := '[' + FormatDateTime('hh:nn:ss', Now) + '] ' + Pesan;
+  if TThread.CurrentThread.ThreadID = MainThreadID then
+  begin
+    if Assigned(MemoLog) then
+    begin
+      MemoLog.Lines.Add(LogMsg);
+      MemoLog.Perform(EM_SCROLLCARET, 0, 0);
+      Application.ProcessMessages;
+    end;
+  end
+  else
+  begin
+    TThread.Queue(nil,
+      procedure
+      begin
+        if Assigned(MemoLog) then
+        begin
+          MemoLog.Lines.Add(LogMsg);
+          MemoLog.Perform(EM_SCROLLCARET, 0, 0);
+        end;
+      end);
+  end;
 end;
 
 function TForm9.EscapeJson(const S: string): string;
@@ -210,25 +231,48 @@ end;
 
 function TForm9.LakukanBackupCloud(const Silent: Boolean = False): Boolean;
 var
-  Url, Token, ExeDir, DbSource, TempDbCopy, DbB64, JsonPayload, Resp: string;
+  Url, Token, ExeDir, DbSource, TempDbCopy, DbB64, JsonPayload, Resp, StatusCaption: string;
   ArsipBuktiDir, MonthDir, MonthName, PhotoPath, PhotoB64, PhotoFileName: string;
   SRMonth, SRFile: TSearchRec;
   TotalUploadedPhotos, TotalSkippedPhotos: Integer;
-  SuccessDb: Boolean;
+  SuccessDb, IsMainThread: Boolean;
   Ini: TIniFile;
 begin
   Result := False;
-  Url := Trim(EdtUrl.Text);
-  Token := Trim(EdtToken.Text);
+  IsMainThread := (TThread.CurrentThread.ThreadID = MainThreadID);
+
+  if IsMainThread then
+  begin
+    Url := Trim(EdtUrl.Text);
+    Token := Trim(EdtToken.Text);
+    SaveConfig;
+    if Assigned(MemoLog) then
+      MemoLog.Clear;
+  end
+  else
+  begin
+    Ini := TIniFile.Create(FConfigFile);
+    try
+      Url := Ini.ReadString('GoogleDrive', 'WebhookUrl', DEFAULT_WEBHOOK_URL);
+      Token := Ini.ReadString('GoogleDrive', 'SecretToken', DEFAULT_SECRET_TOKEN);
+    finally
+      Ini.Free;
+    end;
+
+    TThread.Queue(nil,
+      procedure
+      begin
+        if Assigned(MemoLog) then
+          MemoLog.Clear;
+      end);
+  end;
 
   if Url = '' then
   begin
-    if not Silent then ShowMessage('URL Web App Google Drive belum diisi!');
+    if (not Silent) and IsMainThread then
+      ShowMessage('URL Web App Google Drive belum diisi!');
     Exit;
   end;
-
-  SaveConfig;
-  MemoLog.Clear;
   TambahLog('=== MEMULAI SINKRONISASI BACKUP GOOGLE DRIVE ===');
   TambahLog('Menghubungkan ke Google Apps Script Dinas...');
 
@@ -357,11 +401,27 @@ begin
     if SuccessDb then
     begin
       Ini.WriteString('GoogleDrive', 'LastBackupStatus', 'Berhasil: DB + ' + IntToStr(TotalUploadedPhotos) + ' foto baru');
-      LblStatusTerakhir.Caption := 'Status Terakhir: ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) + ' (Berhasil)';
+      StatusCaption := 'Status Terakhir: ' + FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) + ' (Berhasil)';
+
+      if IsMainThread then
+      begin
+        if Assigned(LblStatusTerakhir) then
+          LblStatusTerakhir.Caption := StatusCaption;
+      end
+      else
+      begin
+        TThread.Queue(nil,
+          procedure
+          begin
+            if Assigned(LblStatusTerakhir) then
+              LblStatusTerakhir.Caption := StatusCaption;
+          end);
+      end;
+
       TambahLog('=== SELESAI: Backup Google Drive Berhasil 100%! ===');
       TambahLog('Ringkasan: Database berhasil, ' + IntToStr(TotalUploadedPhotos) + ' foto baru diunggah, ' + IntToStr(TotalSkippedPhotos) + ' foto telah sinkron.');
 
-      if not Silent then
+      if (not Silent) and IsMainThread then
         ShowMessage('SELESAI!' + sLineBreak + sLineBreak +
                     'Database inventaris dan seluruh foto bukti fisik berhasil' + sLineBreak +
                     'dicadangkan ke Google Drive Dinas (Folder: "backup").' + sLineBreak + sLineBreak +
@@ -372,8 +432,25 @@ begin
     else
     begin
       Ini.WriteString('GoogleDrive', 'LastBackupStatus', 'Gagal upload database');
+      StatusCaption := 'Status Terakhir: Gagal upload database (' + FormatDateTime('yyyy-mm-dd hh:nn:ss', Now) + ')';
+
+      if IsMainThread then
+      begin
+        if Assigned(LblStatusTerakhir) then
+          LblStatusTerakhir.Caption := StatusCaption;
+      end
+      else
+      begin
+        TThread.Queue(nil,
+          procedure
+          begin
+            if Assigned(LblStatusTerakhir) then
+              LblStatusTerakhir.Caption := StatusCaption;
+          end);
+      end;
+
       TambahLog('=== GAGAL: Terjadi kendala saat upload database ke Google Drive ===');
-      if not Silent then
+      if (not Silent) and IsMainThread then
         ShowMessage('Gagal mencadangkan ke Google Drive Dinas. Periksa koneksi internet Anda.');
     end;
   finally
