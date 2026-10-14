@@ -19,6 +19,7 @@ type
     LblKategori: TLabel;
     CboKategori: TComboBox;
     BtnResetCari: TButton;
+    ChkHanyaDiisi: TCheckBox;
     LblPetunjukCepat: TLabel;
     LblNoDokumen: TLabel;
     EdtNoDokumen: TEdit;
@@ -60,6 +61,7 @@ type
     procedure EdCariChange(Sender: TObject);
     procedure CboKategoriChange(Sender: TObject);
     procedure BtnResetCariClick(Sender: TObject);
+    procedure ChkHanyaDiisiClick(Sender: TObject);
     procedure GridBarangClick(Sender: TObject);
     procedure GridBarangDblClick(Sender: TObject);
     procedure GridBarangSelectCell(Sender: TObject; ACol, ARow: Longint; var CanSelect: Boolean);
@@ -117,6 +119,7 @@ end;
 procedure TForm2.FormShow(Sender: TObject);
 begin
   FJumlahMasukList.Clear;
+  ChkHanyaDiisi.Checked := False;
   LoadKategoriCombo;
   EdCari.Clear;
   EdtNoDokumen.Clear;
@@ -219,14 +222,15 @@ begin
         Kat := Q.FieldByName('Kategori').AsString;
         StokSisa := Q.FieldByName('Stok_Sisa').AsInteger;
 
-        if (SearchKey = '') or
+        JmlMasuk := StrToIntDef(FJumlahMasukList.Values[KodeRek], 0);
+
+        if ((SearchKey = '') or
            (Pos(SearchKey, LowerCase(KodeRek)) > 0) or
-           (Pos(SearchKey, LowerCase(NamaBrg)) > 0) then
+           (Pos(SearchKey, LowerCase(NamaBrg)) > 0)) and
+           (not (ChkHanyaDiisi.Checked and (JmlMasuk <= 0))) then
         begin
           if Baris >= GridBarang.RowCount then
             GridBarang.RowCount := Baris + 1;
-
-          JmlMasuk := StrToIntDef(FJumlahMasukList.Values[KodeRek], 0);
 
           GridBarang.Cells[0, Baris] := IntToStr(Baris);
           GridBarang.Cells[1, Baris] := KodeRek;
@@ -547,8 +551,8 @@ begin
                 mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
     FJumlahMasukList.Clear;
-    for I := 1 to GridBarang.RowCount - 1 do
-      GridBarang.Cells[6, I] := '0';
+    ChkHanyaDiisi.Checked := False;
+    MuatSemuaBarang;
     UpdateBarangTerpilih;
     UpdateTotalRingkasan;
   end;
@@ -749,8 +753,16 @@ begin
         BastText.Add('  .sig-table td { width: 50%; text-align: center; vertical-align: top; }');
         BastText.Add('  .sig-space { height: 85px; }');
         BastText.Add('  .sig-name { font-weight: bold; text-decoration: underline; }');
+        BastText.Add('  @media print {');
+        BastText.Add('    .no-print { display: none !important; }');
+        BastText.Add('    body { padding: 0 !important; }');
+        BastText.Add('  }');
         BastText.Add('</style>');
         BastText.Add('</head><body>');
+        BastText.Add('<div class="no-print" style="position: sticky; top: 0; background: #2E7D32; color: #fff; padding: 10px 20px; margin: -25px -25px 20px -25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.25); z-index: 9999;">');
+        BastText.Add('  <div style="font-size: 13pt; font-weight: bold; font-family: Arial, sans-serif;">&#128196; Pratinjau Dokumen BAST Penerimaan &bull; DLH Kota Banjarmasin</div>');
+        BastText.Add('  <button onclick="window.print()" style="background: #ffffff; color: #2E7D32; font-family: Arial, sans-serif; font-size: 11pt; font-weight: bold; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">&#128438;&#65039; Cetak Dokumen / Simpan PDF</button>');
+        BastText.Add('</div>');
 
         BastText.Add('<table class="kop-table"><tr>');
         if LogoB64 <> '' then
@@ -862,10 +874,16 @@ begin
   MuatSemuaBarang;
 end;
 
+procedure TForm2.ChkHanyaDiisiClick(Sender: TObject);
+begin
+  MuatSemuaBarang;
+end;
+
 procedure TForm2.BtnResetCariClick(Sender: TObject);
 begin
   EdCari.Clear;
   CboKategori.ItemIndex := 0;
+  ChkHanyaDiisi.Checked := False;
   MuatSemuaBarang;
 end;
 

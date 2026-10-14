@@ -308,7 +308,17 @@ procedure TForm1.FormShow(Sender: TObject);
 begin
   LoadKategoriCombo;
   TampilDataAwal;
-  Form9.AutoBackupIfNeeded;
+
+  // Jalankan sinkronisasi cadangan harian di Background Thread agar Dashboard langsung responsif tanpa freeze
+  TThread.CreateAnonymousThread(
+    procedure
+    begin
+      try
+        Form9.AutoBackupIfNeeded;
+      except
+      end;
+    end
+  ).Start;
 end;
 
 procedure TForm1.BtnDashboardClick(Sender: TObject);
@@ -492,6 +502,15 @@ begin
   QAlert := TFDQuery.Create(nil);
   try
     QAlert.Connection := ModulDB.Koneksi;
+
+    // Hitung barang stok 0 untuk memberi kejelasan visual pada filter
+    QAlert.SQL.Text := 'SELECT COUNT(*) FROM Tabel_Barang WHERE Stok_Sisa <= 0';
+    QAlert.Open;
+    if QAlert.Fields[0].AsInteger > 0 then
+      ChkHideZero.Caption := 'Sembunyikan Stok 0 (' + IntToStr(QAlert.Fields[0].AsInteger) + ' disembunyikan)'
+    else
+      ChkHideZero.Caption := 'Sembunyikan Stok 0';
+
     QAlert.SQL.Text := 'SELECT COUNT(*) FROM Tabel_Barang WHERE Stok_Sisa <= 5 AND Stok_Sisa > 0';
     QAlert.Open;
     CountKritis := QAlert.Fields[0].AsInteger;

@@ -587,8 +587,16 @@ begin
       SuratText.Add('  .sig-table td { width: 50%; text-align: center; vertical-align: top; }');
       SuratText.Add('  .sig-space { height: 85px; }');
       SuratText.Add('  .sig-name { font-weight: bold; text-decoration: underline; }');
+      SuratText.Add('  @media print {');
+      SuratText.Add('    .no-print { display: none !important; }');
+      SuratText.Add('    body { padding: 0 !important; }');
+      SuratText.Add('  }');
       SuratText.Add('</style>');
       SuratText.Add('</head><body>');
+      SuratText.Add('<div class="no-print" style="position: sticky; top: 0; background: #2E7D32; color: #fff; padding: 10px 20px; margin: -25px -25px 20px -25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.25); z-index: 9999;">');
+      SuratText.Add('  <div style="font-size: 13pt; font-weight: bold; font-family: Arial, sans-serif;">&#128196; Pratinjau Surat Tanda Terima Pengambilan &bull; DLH Kota Banjarmasin</div>');
+      SuratText.Add('  <button onclick="window.print()" style="background: #ffffff; color: #2E7D32; font-family: Arial, sans-serif; font-size: 11pt; font-weight: bold; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">&#128438;&#65039; Cetak Dokumen / Simpan PDF</button>');
+      SuratText.Add('</div>');
 
       SuratText.Add('<table class="kop-table"><tr>');
       if LogoB64 <> '' then
@@ -686,14 +694,14 @@ end;
 
 procedure TForm8.DTPDariChange(Sender: TObject);
 begin
-  if ChkFilterTanggal.Checked then
-    TampilDataArsip;
+  ChkFilterTanggal.Checked := True;
+  TampilDataArsip;
 end;
 
 procedure TForm8.DTPSampaiChange(Sender: TObject);
 begin
-  if ChkFilterTanggal.Checked then
-    TampilDataArsip;
+  ChkFilterTanggal.Checked := True;
+  TampilDataArsip;
 end;
 
 procedure TForm8.ChkFilterTanggalClick(Sender: TObject);

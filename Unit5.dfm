@@ -205,9 +205,9 @@ object Form5: TForm5
         OnChange = DTPSampaiChange
       end
       object ChkFilterTanggal: TCheckBox
-        Left = 720
-        Top = 31
-        Width = 95
+      Left = 440
+      Top = 15
+      Width = 125
         Height = 20
         Caption = 'Aktifkan Filter'
         Font.Charset = DEFAULT_CHARSET

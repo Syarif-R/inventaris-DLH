@@ -48,6 +48,7 @@ type
     procedure GridMasterClick(Sender: TObject);
     procedure CboKategoriChange(Sender: TObject);
     procedure EdtKodeKeyPress(Sender: TObject; var Key: Char);
+    procedure EdtHargaChange(Sender: TObject);
     procedure BtnTambahClick(Sender: TObject);
     procedure BtnEditClick(Sender: TObject);
     procedure BtnHapusClick(Sender: TObject);
@@ -290,6 +291,12 @@ begin
   EdtStok.Text := '0';
   EdtStok.Enabled := True;
   EdtHarga.Text := '0';
+  LblHarga.Caption := 'Harga Satuan (Rp):';
+
+  // State Kontekstual Mode Tambah: Tombol Tambah Aktif, Edit & Hapus Dinonaktifkan
+  BtnTambah.Enabled := True;
+  BtnEdit.Enabled := False;
+  BtnHapus.Enabled := False;
 end;
 
 procedure TForm6.GridMasterClick(Sender: TObject);
@@ -332,6 +339,11 @@ begin
       Q.Open;
       // Jika sudah bertransaksi, kunci kolom stok agar integritas data audit terjaga
       EdtStok.Enabled := (Q.Fields[0].AsInteger = 0);
+
+      // State Kontekstual Mode Edit: Kunci Tombol Tambah, Nyalakan Simpan Edit & Hapus
+      BtnTambah.Enabled := False;
+      BtnEdit.Enabled := True;
+      BtnHapus.Enabled := (Q.Fields[0].AsInteger = 0); // Cegah hapus jika sudah ada transaksi
     finally
       Q.Free;
     end;
@@ -354,6 +366,19 @@ begin
 end;
 
 { --- FITUR TAMBAH BARANG BARU DENGAN VALIDASI KETAT --- }
+procedure TForm6.EdtHargaChange(Sender: TObject);
+var
+  HrgStr: string;
+  HrgVal: Double;
+begin
+  HrgStr := StringReplace(StringReplace(Trim(EdtHarga.Text), '.', '', [rfReplaceAll]), ',', '.', [rfReplaceAll]);
+  HrgVal := StrToFloatDef(HrgStr, 0);
+  if HrgVal > 0 then
+    LblHarga.Caption := 'Harga Satuan: Rp ' + FormatFloat('#,##0', HrgVal)
+  else
+    LblHarga.Caption := 'Harga Satuan (Rp):';
+end;
+
 procedure TForm6.EdtKodeKeyPress(Sender: TObject; var Key: Char);
 begin
   if not CharInSet(Key, ['0'..'9', '.', #8]) then

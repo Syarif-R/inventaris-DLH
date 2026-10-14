@@ -225,12 +225,12 @@ object Form10: TForm10
           TabOrder = 0
         end
         object BtnBukaBackup: TButton
-          Left = 454
-          Top = 45
-          Width = 130
-          Height = 28
-          Cursor = crHandPoint
-          Caption = 'Buka Layar Backup && Restore'
+        Left = 320
+        Top = 13
+        Width = 165
+        Height = 32
+        Cursor = crHandPoint
+        Caption = 'Menu Backup & Restore'
           Font.Style = [fsBold]
           TabOrder = 1
           OnClick = BtnBukaBackupClick

@@ -248,6 +248,7 @@ object Form6: TForm6
         ParentFont = False
         TabOrder = 5
         Text = '0'
+        OnChange = EdtHargaChange
       end
       object BtnTambah: TButton
         Left = 20

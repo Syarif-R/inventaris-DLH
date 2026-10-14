@@ -49,7 +49,7 @@ type
     PnlTabel: TPanel;
     LblJudulTabel: TLabel;
     GridBarang: TStringGrid;
-    SaveDialog1: TSaveDialog;
+    ChkHanyaDiisi: TCheckBox;
 
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -59,6 +59,7 @@ type
     procedure EdCariChange(Sender: TObject);
     procedure CboKategoriChange(Sender: TObject);
     procedure BtnResetCariClick(Sender: TObject);
+    procedure ChkHanyaDiisiClick(Sender: TObject);
     procedure GridBarangClick(Sender: TObject);
     procedure GridBarangDblClick(Sender: TObject);
     procedure GridBarangSelectCell(Sender: TObject; ACol, ARow: Longint; var CanSelect: Boolean);
@@ -154,6 +155,7 @@ end;
 procedure TForm3.FormShow(Sender: TObject);
 begin
   FJumlahDiajukanList.Clear;
+  ChkHanyaDiisi.Checked := False;
   LoadBidangCombo;
   LoadKategoriCombo;
   EdCari.Clear;
@@ -334,14 +336,15 @@ begin
         Kat := Q.FieldByName('Kategori').AsString;
         StokSisa := Q.FieldByName('Stok_Sisa').AsInteger;
 
-        if (SearchKey = '') or
+        JmlDiajukan := StrToIntDef(FJumlahDiajukanList.Values[KodeRek], 0);
+
+        if ((SearchKey = '') or
            (Pos(SearchKey, LowerCase(KodeRek)) > 0) or
-           (Pos(SearchKey, LowerCase(NamaBrg)) > 0) then
+           (Pos(SearchKey, LowerCase(NamaBrg)) > 0)) and
+           (not (ChkHanyaDiisi.Checked and (JmlDiajukan <= 0))) then
         begin
           if Baris >= GridBarang.RowCount then
             GridBarang.RowCount := Baris + 1;
-
-          JmlDiajukan := StrToIntDef(FJumlahDiajukanList.Values[KodeRek], 0);
 
           GridBarang.Cells[0, Baris] := IntToStr(Baris);
           GridBarang.Cells[1, Baris] := KodeRek;
@@ -788,8 +791,8 @@ begin
                 mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
     FJumlahDiajukanList.Clear;
-    for I := 1 to GridBarang.RowCount - 1 do
-      GridBarang.Cells[6, I] := '0';
+    ChkHanyaDiisi.Checked := False;
+    MuatSemuaBarang;
     UpdateBarangTerpilih;
     UpdateTotalRingkasan;
   end;
@@ -798,7 +801,7 @@ end;
 procedure TForm3.BtnSimpanCetakClick(Sender: TObject);
 var
   I, Jml, TotalJenis, TotalUnit, StokSisaDb, ItemNo: Integer;
-  KodeRek, NamaBrg, Satuan, TglNow, TglFormat, NoPengajuan, LogoB64, ExtFile, PesanKonfirmasi: string;
+  KodeRek, NamaBrg, Satuan, TglNow, TglFormat, NoPengajuan, LogoB64, OutDir, OutPath, PesanKonfirmasi: string;
   Q, QItem: TFDQuery;
   SuratText: TStringList;
 begin
@@ -926,59 +929,55 @@ begin
 
     ModulDB.Koneksi.Commit;
 
-    SaveDialog1.Title := 'Pilih Lokasi Penyimpanan Surat Izin Pengajuan Barang (Dokumen Web / PDF)';
-    SaveDialog1.Filter := 'Dokumen Cetak / Web (*.html)|*.html|Dokumen Web (*.htm)|*.htm|Semua File (*.*)|*.*';
-    SaveDialog1.DefaultExt := 'html';
-    SaveDialog1.FileName := 'Surat_Izin_Pengajuan_' + NoPengajuan + '.html';
+    OutDir := ExtractFilePath(ParamStr(0)) + 'arsip_surat';
+    if not DirectoryExists(OutDir) then
+      ForceDirectories(OutDir);
 
-    if SaveDialog1.Execute then
-    begin
-      ExtFile := LowerCase(ExtractFileExt(SaveDialog1.FileName));
-
-      if (ExtFile <> '.html') and (ExtFile <> '.htm') then
-      begin
-        SaveDialog1.FileName := ChangeFileExt(SaveDialog1.FileName, '.html');
-        ExtFile := '.html';
-      end;
-
-      if (ExtFile = '.html') or (ExtFile = '.htm') then
-      begin
-        LogoB64 := GetLogoBase64;
-        TglFormat := FormatDateTime('dd mmmm yyyy', Now);
-        SuratText := TStringList.Create;
-        try
-          SuratText.Add('<!DOCTYPE html>');
-          SuratText.Add('<html>');
-          SuratText.Add('<head>');
-          SuratText.Add('<meta charset="utf-8">');
-          SuratText.Add('<title>SURAT IZIN & TANDA TERIMA PENGAJUAN BARANG GUDANG</title>');
-          SuratText.Add('<style>');
-          SuratText.Add('  @page { size: A4 portrait; margin: 1.5cm; }');
-          SuratText.Add('  body { font-family: Arial, sans-serif; color: #000; background: #fff; margin: 0; padding: 25px; }');
-          SuratText.Add('  .kop-table { width: 100%; border-collapse: collapse; border-bottom: 3.5px solid #000; padding-bottom: 8px; margin-bottom: 12px; }');
-          SuratText.Add('  .kop-logo { width: 2.31cm; height: 3.3cm; object-fit: contain; }');
-          SuratText.Add('  .kop-text-container { text-align: center; vertical-align: middle; }');
-          SuratText.Add('  .kop-h1 { font-family: Arial, sans-serif; font-size: 18pt; font-weight: bold; margin: 0; line-height: 1.2; text-transform: uppercase; }');
-          SuratText.Add('  .kop-sub { font-family: Arial, sans-serif; font-size: 12pt; font-weight: normal; margin: 3px 0 0 0; line-height: 1.3; }');
-          SuratText.Add('  .kop-city { font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold; margin: 3px 0 0 0; }');
-          SuratText.Add('  .date-right { text-align: right; font-family: Arial, sans-serif; font-size: 11pt; margin-top: 10px; margin-bottom: 20px; }');
-          SuratText.Add('  .doc-title { text-align: center; font-family: Arial, sans-serif; font-size: 14pt; font-weight: bold; text-decoration: underline; margin-bottom: 25px; text-transform: uppercase; }');
-          SuratText.Add('  .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11pt; }');
-          SuratText.Add('  .meta-table td { padding: 5px 0; vertical-align: top; }');
-          SuratText.Add('  .meta-label { width: 150px; font-weight: bold; }');
-          SuratText.Add('  .item-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 11pt; }');
-          SuratText.Add('  .item-table th, .item-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; }');
-          SuratText.Add('  .item-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; }');
-          SuratText.Add('  .item-table td.center { text-align: center; }');
-          SuratText.Add('  .notes { font-size: 10.5pt; margin-bottom: 35px; line-height: 1.5; }');
-          SuratText.Add('  .notes ol { margin: 5px 0 0 20px; padding: 0; }');
-          SuratText.Add('  .sig-table { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 11pt; }');
-          SuratText.Add('  .sig-table td { width: 50%; text-align: center; vertical-align: top; }');
-          SuratText.Add('  .sig-space { height: 85px; }');
-          SuratText.Add('  .sig-name { font-weight: bold; text-decoration: underline; }');
-          SuratText.Add('</style>');
-          SuratText.Add('</head>');
-          SuratText.Add('<body>');
+    OutPath := OutDir + '\Surat_Izin_Pengajuan_' + NoPengajuan + '.html';
+    LogoB64 := GetLogoBase64;
+    TglFormat := FormatDateTime('dd mmmm yyyy', Now);
+    SuratText := TStringList.Create;
+    try
+      SuratText.Add('<!DOCTYPE html>');
+      SuratText.Add('<html>');
+      SuratText.Add('<head>');
+      SuratText.Add('<meta charset="utf-8">');
+      SuratText.Add('<title>SURAT IZIN & TANDA TERIMA PENGAJUAN BARANG GUDANG</title>');
+      SuratText.Add('<style>');
+      SuratText.Add('  @page { size: A4 portrait; margin: 1.5cm; }');
+      SuratText.Add('  body { font-family: Arial, sans-serif; color: #000; background: #fff; margin: 0; padding: 25px; }');
+      SuratText.Add('  @media print {');
+      SuratText.Add('    .no-print { display: none !important; }');
+      SuratText.Add('    body { padding: 0 !important; }');
+      SuratText.Add('  }');
+      SuratText.Add('  .kop-table { width: 100%; border-collapse: collapse; border-bottom: 3.5px solid #000; padding-bottom: 8px; margin-bottom: 12px; }');
+      SuratText.Add('  .kop-logo { width: 2.31cm; height: 3.3cm; object-fit: contain; }');
+      SuratText.Add('  .kop-text-container { text-align: center; vertical-align: middle; }');
+      SuratText.Add('  .kop-h1 { font-family: Arial, sans-serif; font-size: 18pt; font-weight: bold; margin: 0; line-height: 1.2; text-transform: uppercase; }');
+      SuratText.Add('  .kop-sub { font-family: Arial, sans-serif; font-size: 12pt; font-weight: normal; margin: 3px 0 0 0; line-height: 1.3; }');
+      SuratText.Add('  .kop-city { font-family: Arial, sans-serif; font-size: 12pt; font-weight: bold; margin: 3px 0 0 0; }');
+      SuratText.Add('  .date-right { text-align: right; font-family: Arial, sans-serif; font-size: 11pt; margin-top: 10px; margin-bottom: 20px; }');
+      SuratText.Add('  .doc-title { text-align: center; font-family: Arial, sans-serif; font-size: 14pt; font-weight: bold; text-decoration: underline; margin-bottom: 25px; text-transform: uppercase; }');
+      SuratText.Add('  .meta-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 11pt; }');
+      SuratText.Add('  .meta-table td { padding: 5px 0; vertical-align: top; }');
+      SuratText.Add('  .meta-label { width: 150px; font-weight: bold; }');
+      SuratText.Add('  .item-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 11pt; }');
+      SuratText.Add('  .item-table th, .item-table td { border: 1px solid #000; padding: 8px 10px; text-align: left; }');
+      SuratText.Add('  .item-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; }');
+      SuratText.Add('  .item-table td.center { text-align: center; }');
+      SuratText.Add('  .notes { font-size: 10.5pt; margin-bottom: 35px; line-height: 1.5; }');
+      SuratText.Add('  .notes ol { margin: 5px 0 0 20px; padding: 0; }');
+      SuratText.Add('  .sig-table { width: 100%; border-collapse: collapse; margin-top: 30px; font-size: 11pt; }');
+      SuratText.Add('  .sig-table td { width: 50%; text-align: center; vertical-align: top; }');
+      SuratText.Add('  .sig-space { height: 85px; }');
+      SuratText.Add('  .sig-name { font-weight: bold; text-decoration: underline; }');
+      SuratText.Add('</style>');
+      SuratText.Add('</head>');
+      SuratText.Add('<body>');
+      SuratText.Add('<div class="no-print" style="position: sticky; top: 0; background: #2E7D32; color: #fff; padding: 10px 20px; margin: -25px -25px 20px -25px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 6px rgba(0,0,0,0.25); z-index: 9999;">');
+      SuratText.Add('  <div style="font-size: 13pt; font-weight: bold; font-family: Arial, sans-serif;">&#128196; Pratinjau Surat Izin &amp; Bukti Pengajuan &bull; DLH Kota Banjarmasin</div>');
+      SuratText.Add('  <button onclick="window.print()" style="background: #ffffff; color: #2E7D32; font-family: Arial, sans-serif; font-size: 11pt; font-weight: bold; border: none; padding: 8px 18px; border-radius: 4px; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">&#128438;&#65039; Cetak Dokumen / Simpan PDF</button>');
+      SuratText.Add('</div>');
 
           SuratText.Add('<table class="kop-table">');
           SuratText.Add('  <tr>');
@@ -1065,21 +1064,15 @@ begin
           SuratText.Add('</body>');
           SuratText.Add('</html>');
 
-          SuratText.SaveToFile(SaveDialog1.FileName, TEncoding.UTF8);
-          ShellExecute(0, 'open', PChar(SaveDialog1.FileName), nil, nil, SW_SHOWNORMAL);
+      SuratText.SaveToFile(OutPath, TEncoding.UTF8);
+      ShellExecute(0, 'open', PChar(OutPath), nil, nil, SW_SHOWNORMAL);
 
-          ShowMessage('PENGAJUAN BERHASIL DISIMPAN & SURAT IZIN TERUNDUH!' + sLineBreak + sLineBreak +
-                      'No. Pengajuan: ' + NoPengajuan + sLineBreak +
-                      'File Surat Izin: ' + SaveDialog1.FileName);
-        finally
-          SuratText.Free;
-        end;
-      end;
-    end
-    else
-    begin
-      ShowMessage('PENGAJUAN BERHASIL DISIMPAN!' + sLineBreak +
-                  'No. Pengajuan: ' + NoPengajuan);
+      ShowMessage('PENGAJUAN BERHASIL DISIMPAN & SURAT IZIN DICETAK!' + sLineBreak + sLineBreak +
+                  'No. Pengajuan : ' + NoPengajuan + sLineBreak +
+                  'Bidang Pemohon: ' + CboBidang.Text + sLineBreak +
+                  'Dokumen Surat: ' + OutPath);
+    finally
+      SuratText.Free;
     end;
 
     FJumlahDiajukanList.Clear;
@@ -1106,10 +1099,16 @@ begin
   MuatSemuaBarang;
 end;
 
+procedure TForm3.ChkHanyaDiisiClick(Sender: TObject);
+begin
+  MuatSemuaBarang;
+end;
+
 procedure TForm3.BtnResetCariClick(Sender: TObject);
 begin
   EdCari.Clear;
   CboKategori.ItemIndex := 0;
+  ChkHanyaDiisi.Checked := False;
   MuatSemuaBarang;
 end;
 

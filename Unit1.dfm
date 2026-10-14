@@ -824,7 +824,7 @@ object Form1: TForm1
         ParentFont = False
       end
       object LblPetunjukGrid: TLabel
-        Left = 540
+        Left = 620
         Top = 44
         Width = 220
         Height = 15
@@ -855,7 +855,7 @@ object Form1: TForm1
       object ChkHideZero: TCheckBox
         Left = 228
         Top = 41
-        Width = 140
+        Width = 220
         Height = 22
         Caption = 'Sembunyikan Stok 0'
         Checked = True
@@ -870,7 +870,7 @@ object Form1: TForm1
         OnClick = ChkHideZeroClick
       end
       object BtnEditBarang: TButton
-        Left = 378
+        Left = 458
         Top = 39
         Width = 72
         Height = 26
@@ -886,7 +886,7 @@ object Form1: TForm1
         OnClick = BtnEditBarangClick
       end
       object BtnHapusBarang: TButton
-        Left = 456
+        Left = 536
         Top = 39
         Width = 72
         Height = 26
@@ -919,9 +919,9 @@ object Form1: TForm1
         OnClick = BtnTambahBarangClick
       end
       object BtnPenyesuaianStok: TButton
-        Left = 972
+        Left = 955
         Top = 4
-        Width = 215
+        Width = 232
         Height = 30
         Anchors = [akTop, akRight]
         Cursor = crHandPoint

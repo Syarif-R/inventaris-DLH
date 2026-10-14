@@ -79,7 +79,7 @@ object Form3: TForm3
       Left = 0
       Top = 60
       Width = 1000
-      Height = 55
+      Height = 85
       Align = alTop
       BevelOuter = bvNone
       Color = clWhite
@@ -88,66 +88,24 @@ object Form3: TForm3
       ExplicitWidth = 998
       DesignSize = (
         1000
-        55)
-      object LblCari: TLabel
+        85)
+      object LblBidang: TLabel
         Left = 20
-        Top = 18
-        Width = 66
+        Top = 14
+        Width = 110
         Height = 15
-        Caption = 'Cari Barang:'
+        Caption = 'Bidang Pemohon:'
         Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
+        Font.Color = 3308846
         Font.Height = -12
         Font.Name = 'Segoe UI'
         Font.Style = [fsBold]
         ParentFont = False
       end
-      object LblKategori: TLabel
-        Left = 335
-        Top = 18
-        Width = 51
-        Height = 15
-        Caption = 'Kategori:'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -12
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-      end
-      object LblPetunjukCepat: TLabel
-        Left = 700
-        Top = 18
-        Width = 243
-        Height = 13
-        Anchors = [akTop, akRight]
-        Caption = '[Tips] Klik barang di tabel, lalu atur di panel kanan.'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clGrayText
-        Font.Height = -11
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsItalic]
-        ParentFont = False
-      end
-      object EdCari: TEdit
-        Left = 95
-        Top = 14
-        Width = 220
-        Height = 25
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -13
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-        TabOrder = 0
-        TextHint = 'Ketik nama / kode...'
-        OnChange = EdCariChange
-      end
-      object CboKategori: TComboBox
-        Left = 392
-        Top = 14
-        Width = 150
+      object CboBidang: TComboBox
+        Left = 135
+        Top = 10
+        Width = 270
         Height = 25
         Style = csDropDownList
         Font.Charset = DEFAULT_CHARSET
@@ -156,13 +114,28 @@ object Form3: TForm3
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
+        TabOrder = 0
+        OnChange = CboBidangChange
+      end
+      object ChkHanyaDiisi: TCheckBox
+        Left = 425
+        Top = 12
+        Width = 210
+        Height = 22
+        Caption = 'Tampilkan yang Diisi Saja (> 0)'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = 3308846
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
         TabOrder = 1
-        OnChange = CboKategoriChange
+        OnClick = ChkHanyaDiisiClick
       end
       object BtnResetCari: TButton
-        Left = 555
-        Top = 13
-        Width = 125
+        Left = 650
+        Top = 9
+        Width = 110
         Height = 27
         Caption = 'Reset Filter'
         Font.Charset = DEFAULT_CHARSET
@@ -173,6 +146,76 @@ object Form3: TForm3
         ParentFont = False
         TabOrder = 2
         OnClick = BtnResetCariClick
+      end
+      object LblCari: TLabel
+        Left = 20
+        Top = 50
+        Width = 66
+        Height = 15
+        Caption = 'Cari Barang:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object EdCari: TEdit
+        Left = 135
+        Top = 46
+        Width = 270
+        Height = 25
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 3
+        TextHint = 'Ketik nama / kode...'
+        OnChange = EdCariChange
+      end
+      object LblKategori: TLabel
+        Left = 425
+        Top = 50
+        Width = 51
+        Height = 15
+        Caption = 'Kategori:'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -12
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsBold]
+        ParentFont = False
+      end
+      object CboKategori: TComboBox
+        Left = 485
+        Top = 46
+        Width = 150
+        Height = 25
+        Style = csDropDownList
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -13
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        TabOrder = 4
+        OnChange = CboKategoriChange
+      end
+      object LblPetunjukCepat: TLabel
+        Left = 650
+        Top = 50
+        Width = 243
+        Height = 13
+        Anchors = [akTop, akRight]
+        Caption = '[Tips] Klik barang di tabel, lalu atur di panel kanan.'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clGrayText
+        Font.Height = -11
+        Font.Name = 'Segoe UI'
+        Font.Style = [fsItalic]
+        ParentFont = False
       end
     end
     object PnlBawah: TPanel
@@ -204,13 +247,13 @@ object Form3: TForm3
         ParentFont = False
       end
       object BtnResetSemua: TButton
-        Left = 540
+        Left = 530
         Top = 15
-        Width = 135
+        Width = 145
         Height = 36
         Cursor = crHandPoint
         Anchors = [akTop, akRight]
-        Caption = 'Kosongkan Input Transaksi'
+        Caption = 'Reset Semua (0)'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -12
@@ -613,9 +656,5 @@ object Form3: TForm3
         end
       end
     end
-  end
-  object SaveDialog1: TSaveDialog
-    Left = 400
-    Top = 20
   end
 end

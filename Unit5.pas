@@ -386,14 +386,14 @@ end;
 
 procedure TForm5.DTPDariChange(Sender: TObject);
 begin
-  if ChkFilterTanggal.Checked then
-    TampilHistory;
+  ChkFilterTanggal.Checked := True;
+  TampilHistory;
 end;
 
 procedure TForm5.DTPSampaiChange(Sender: TObject);
 begin
-  if ChkFilterTanggal.Checked then
-    TampilHistory;
+  ChkFilterTanggal.Checked := True;
+  TampilHistory;
 end;
 
 procedure TForm5.ChkFilterTanggalClick(Sender: TObject);
